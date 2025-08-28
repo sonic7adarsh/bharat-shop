@@ -4,9 +4,11 @@ com\bharatshop\platform\dto\TenantCreateDto.class
 com\bharatshop\platform\dto\auth\LoginRequest.class
 com\bharatshop\platform\dto\auth\RegisterVendorRequest.class
 com\bharatshop\platform\config\CacheConfig.class
+com\bharatshop\platform\service\VendorService.class
 com\bharatshop\platform\dto\TenantResponseDto$TenantResponseDtoBuilder.class
 com\bharatshop\platform\tenant\TenantContext.class
 com\bharatshop\platform\dto\auth\AuthResponse$UserInfo.class
+com\bharatshop\platform\controller\VendorController.class
 com\bharatshop\platform\config\DatabaseConfig.class
 com\bharatshop\platform\dto\auth\LoginRequest$LoginRequestBuilder.class
 com\bharatshop\platform\dto\auth\AuthResponse.class

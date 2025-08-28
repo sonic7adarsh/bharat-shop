@@ -1,3 +1,4 @@
+com\bharatshop\storefront\controller\StorefrontVendorController.class
 com\bharatshop\storefront\shared\ApiResponse.class
 com\bharatshop\storefront\dto\auth\OtpVerificationRequest.class
 com\bharatshop\storefront\entity\StorefrontUser.class
@@ -19,6 +20,7 @@ com\bharatshop\storefront\model\Product$ProductBuilder.class
 com\bharatshop\storefront\repository\StorefrontUserRepository.class
 com\bharatshop\storefront\entity\StorefrontUser$StorefrontRole.class
 com\bharatshop\storefront\dto\auth\PhoneLoginRequest$PhoneLoginRequestBuilder.class
+com\bharatshop\storefront\service\VendorService.class
 com\bharatshop\storefront\dto\auth\CustomerProfileResponse$CustomerProfileResponseBuilder.class
 com\bharatshop\storefront\dto\auth\EmailLoginRequest.class
 com\bharatshop\storefront\dto\auth\PhoneLoginRequest.class
