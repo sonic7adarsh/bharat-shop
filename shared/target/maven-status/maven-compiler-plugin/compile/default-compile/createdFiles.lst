@@ -1,0 +1,9 @@
+com\bharatshop\shared\service\OtpService$OtpData.class
+com\bharatshop\shared\config\PasswordConfig.class
+com\bharatshop\shared\filter\SessionAuthenticationFilter.class
+com\bharatshop\shared\entity\BaseEntity.class
+com\bharatshop\shared\repository\TenantAwareRepository.class
+com\bharatshop\shared\service\OtpService.class
+com\bharatshop\shared\config\SecurityConfig.class
+com\bharatshop\shared\filter\JwtAuthenticationFilter.class
+com\bharatshop\shared\service\JwtService.class
