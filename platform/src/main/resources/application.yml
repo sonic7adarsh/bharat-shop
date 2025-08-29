@@ -124,6 +124,16 @@ app:
     aws:
       region: us-east-1
       bucket-name: bharatshop-platform
+
+# AWS S3/MinIO Configuration
+aws:
+  s3:
+    access-key: ${AWS_ACCESS_KEY:minioadmin}
+    secret-key: ${AWS_SECRET_KEY:minioadmin}
+    region: ${AWS_REGION:us-east-1}
+    endpoint: ${AWS_S3_ENDPOINT:http://localhost:9000}
+    bucket-name: ${AWS_S3_BUCKET:bharatshop-platform}
+    path-style-access: ${AWS_S3_PATH_STYLE_ACCESS:true}
   
   payment:
     razorpay:

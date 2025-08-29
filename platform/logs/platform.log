@@ -9418,3 +9418,441 @@ Caused by: java.lang.IllegalArgumentException: Not a managed type: class com.bha
 2025-08-29 17:44:39 [main] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - ControllerAdvice beans: 1 @ExceptionHandler, 1 ResponseBodyAdvice
 2025-08-29 17:44:40 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/api'
 2025-08-29 17:44:40 [main] INFO  c.b.platform.PlatformApplication - Started PlatformApplication in 9.986 seconds (process running for 10.561)
+2025-08-29 22:20:40 [main] INFO  c.b.platform.PlatformApplication - Starting PlatformApplication using Java 17.0.12 with PID 4776 (C:\Users\Adarsh\Downloads\bharatshop\platform\target\classes started by Adarsh in C:\Users\Adarsh\Downloads\bharatshop\platform)
+2025-08-29 22:20:40 [main] DEBUG c.b.platform.PlatformApplication - Running with Spring Boot v3.2.1, Spring v6.1.2
+2025-08-29 22:20:40 [main] INFO  c.b.platform.PlatformApplication - The following 1 profile is active: "test"
+2025-08-29 22:20:41 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-08-29 22:20:41 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-08-29 22:20:41 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 261 ms. Found 13 JPA repository interfaces.
+2025-08-29 22:20:42 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-08-29 22:20:42 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-08-29 22:20:42 [main] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.bharatshop.platform.repository.PlatformUserRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-08-29 22:20:42 [main] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.bharatshop.platform.repository.TenantRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-08-29 22:20:42 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 23 ms. Found 0 Redis repository interfaces.
+2025-08-29 22:20:43 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2025-08-29 22:20:43 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-08-29 22:20:43 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.17]
+2025-08-29 22:20:43 [main] INFO  o.a.c.c.C.[.[localhost].[/api] - Initializing Spring embedded WebApplicationContext
+2025-08-29 22:20:43 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 3281 ms
+2025-08-29 22:20:44 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-08-29 22:20:44 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:testdb user=SA
+2025-08-29 22:20:44 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-08-29 22:20:44 [main] INFO  o.s.b.a.h.H2ConsoleAutoConfiguration - H2 console available at '/h2-console'. Database available at 'jdbc:h2:mem:testdb'
+2025-08-29 22:20:44 [main] DEBUG c.b.s.filter.JwtAuthenticationFilter - Filter 'jwtAuthenticationFilter' configured for use
+2025-08-29 22:20:44 [main] DEBUG o.s.w.f.ServerHttpObservationFilter - Filter 'webMvcObservationFilter' configured for use
+2025-08-29 22:20:44 [main] DEBUG c.b.s.f.SessionAuthenticationFilter - Filter 'sessionAuthenticationFilter' configured for use
+2025-08-29 22:20:44 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-08-29 22:20:44 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.4.1.Final
+2025-08-29 22:20:44 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-08-29 22:20:45 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-08-29 22:20:45 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-08-29 22:20:46 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists categories cascade 
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists customer_addresses cascade 
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists pages cascade 
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists payment_gateways cascade 
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists payments cascade 
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists plans cascade 
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists platform_user_roles cascade 
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists platform_users cascade 
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists product_categories cascade 
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists product_images cascade 
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists products cascade 
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists subscriptions cascade 
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists templates cascade 
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists tenants cascade 
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    drop table if exists vendors cascade 
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    create table categories (
+        is_active boolean not null,
+        sort_order integer,
+        created_at timestamp(6) not null,
+        deleted_at timestamp(6),
+        parent_id bigint,
+        updated_at timestamp(6),
+        id uuid not null,
+        tenant_id uuid,
+        description TEXT,
+        name varchar(255) not null,
+        slug varchar(255) not null,
+        primary key (id)
+    )
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    create table customer_addresses (
+        is_active boolean not null,
+        is_default boolean not null,
+        created_at timestamp(6) not null,
+        customer_id bigint not null,
+        id bigint generated by default as identity,
+        tenant_id bigint not null,
+        updated_at timestamp(6) not null,
+        pincode varchar(10) not null,
+        phone varchar(15) not null,
+        city varchar(100) not null,
+        country varchar(100) not null,
+        name varchar(100) not null,
+        state varchar(100) not null,
+        line1 varchar(255) not null,
+        line2 varchar(255),
+        primary key (id)
+    )
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    create table pages (
+        active boolean not null,
+        published boolean not null,
+        sort_order integer,
+        created_at timestamp(6) not null,
+        deleted_at timestamp(6),
+        updated_at timestamp(6),
+        id uuid not null,
+        tenant_id uuid,
+        status varchar(50),
+        author varchar(100),
+        slug varchar(100) not null,
+        template varchar(100),
+        meta_title varchar(200),
+        title varchar(200) not null,
+        excerpt varchar(500),
+        featured_image varchar(500),
+        meta_description varchar(500),
+        meta_keywords varchar(1000),
+        content TEXT,
+        custom_css TEXT,
+        custom_js TEXT,
+        layout JSON,
+        page_type varchar(255) not null check (page_type in ('STATIC','DYNAMIC','LANDING','LEGAL')),
+        seo JSON,
+        template_id varchar(255),
+        primary key (id)
+    )
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    create table payment_gateways (
+        is_active boolean not null,
+        is_test_mode boolean not null,
+        created_at timestamp(6) not null,
+        tenant_id bigint not null,
+        updated_at timestamp(6) not null,
+        id uuid not null,
+        callback_url varchar(255),
+        currency varchar(255) not null,
+        gateway_name varchar(255) not null,
+        gateway_type varchar(255) not null check (gateway_type in ('RAZORPAY','PAYU','STRIPE','PAYPAL')),
+        key_id varchar(255) not null,
+        key_secret varchar(255) not null,
+        merchant_id varchar(255),
+        webhook_secret varchar(255),
+        webhook_url varchar(255),
+        primary key (id)
+    )
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    create table payments (
+        amount numeric(10,2) not null,
+        refund_amount numeric(10,2),
+        webhook_verified boolean not null,
+        created_at timestamp(6) not null,
+        failed_at timestamp(6),
+        id bigint generated by default as identity,
+        order_id bigint not null,
+        paid_at timestamp(6),
+        tenant_id bigint not null,
+        updated_at timestamp(6) not null,
+        payment_gateway_id uuid not null,
+        currency varchar(255) not null,
+        description varchar(255),
+        failure_reason varchar(255),
+        gateway_response TEXT,
+        method varchar(255) check (method in ('CARD','NETBANKING','WALLET','UPI','EMI','PAYLATER')),
+        notes TEXT,
+        razorpay_order_id varchar(255) unique,
+        razorpay_payment_id varchar(255) unique,
+        razorpay_signature varchar(255),
+        receipt varchar(255),
+        refund_id varchar(255),
+        status varchar(255) not null check (status in ('CREATED','AUTHORIZED','CAPTURED','REFUNDED','FAILED','CANCELLED')),
+        primary key (id)
+    )
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    create table plans (
+        active boolean not null,
+        display_order integer,
+        duration_days integer not null,
+        is_popular boolean,
+        price numeric(10,2) not null,
+        created_at timestamp(6) not null,
+        deleted_at timestamp(6),
+        updated_at timestamp(6),
+        id uuid not null,
+        tenant_id uuid,
+        name varchar(100) not null,
+        description varchar(500),
+        features json,
+        primary key (id)
+    )
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    create table platform_user_roles (
+        user_id uuid not null,
+        role varchar(255) check (role in ('ADMIN','VENDOR','STAFF'))
+    )
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    create table platform_users (
+        account_non_expired boolean not null,
+        account_non_locked boolean not null,
+        credentials_non_expired boolean not null,
+        enabled boolean not null,
+        created_at timestamp(6) not null,
+        deleted_at timestamp(6),
+        updated_at timestamp(6),
+        id uuid not null,
+        tenant_id uuid,
+        email varchar(255) not null unique,
+        password varchar(255) not null,
+        primary key (id)
+    )
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    create table product_categories (
+        category_id uuid,
+        product_id uuid not null
+    )
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    create table product_images (
+        is_primary boolean,
+        sort_order integer not null,
+        created_at timestamp(6) not null,
+        deleted_at timestamp(6),
+        media_id bigint not null,
+        updated_at timestamp(6),
+        id uuid not null,
+        product_id uuid not null,
+        tenant_id uuid,
+        image_url varchar(500) not null,
+        alt_text varchar(255),
+        primary key (id)
+    )
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    create table products (
+        price numeric(10,2) not null,
+        stock integer not null,
+        created_at timestamp(6) not null,
+        deleted_at timestamp(6),
+        updated_at timestamp(6),
+        id uuid not null,
+        tenant_id uuid,
+        attributes JSON,
+        description TEXT,
+        name varchar(255) not null,
+        slug varchar(255) not null unique,
+        status varchar(255) not null check (status in ('DRAFT','ACTIVE','INACTIVE','OUT_OF_STOCK','DISCONTINUED')),
+        primary key (id)
+    )
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    create table subscriptions (
+        auto_renew boolean,
+        cancelled_at timestamp(6),
+        created_at timestamp(6) not null,
+        deleted_at timestamp(6),
+        end_date timestamp(6) not null,
+        next_billing_date timestamp(6),
+        start_date timestamp(6) not null,
+        updated_at timestamp(6),
+        id uuid not null,
+        plan_id uuid not null,
+        tenant_id uuid,
+        vendor_id uuid not null,
+        cancelled_reason varchar(255),
+        razorpay_order_id varchar(255),
+        razorpay_payment_id varchar(255),
+        razorpay_subscription_id varchar(255),
+        status varchar(255) not null check (status in ('PENDING','ACTIVE','EXPIRED','CANCELLED','SUSPENDED','TRIAL','PAYMENT_FAILED','RENEWAL_PENDING')),
+        primary key (id)
+    )
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    create table templates (
+        is_active boolean not null,
+        sort_order integer,
+        created_at timestamp(6) not null,
+        deleted_at timestamp(6),
+        updated_at timestamp(6),
+        id uuid not null,
+        tenant_id uuid,
+        category varchar(100),
+        preview_image varchar(500),
+        config JSON,
+        description TEXT,
+        name varchar(255) not null,
+        primary key (id)
+    )
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    create table tenants (
+        active boolean not null,
+        created_at timestamp(6) not null,
+        deleted_at timestamp(6),
+        updated_at timestamp(6),
+        id uuid not null,
+        tenant_id uuid,
+        code varchar(50) not null unique,
+        name varchar(100) not null unique,
+        description varchar(500),
+        primary key (id)
+    )
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    create table vendors (
+        is_active boolean not null,
+        created_at timestamp(6) not null,
+        deleted_at timestamp(6),
+        updated_at timestamp(6),
+        currency varchar(10),
+        preferred_language varchar(10),
+        id uuid not null,
+        tenant_id uuid,
+        logo varchar(500),
+        description TEXT,
+        domain varchar(255) unique,
+        name varchar(255) not null,
+        status varchar(255) not null check (status in ('PENDING','ACTIVE','SUSPENDED','INACTIVE')),
+        store_name varchar(255) not null,
+        subscription_id varchar(255),
+        theme_config JSON,
+        primary key (id)
+    )
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    create index idx_category_tenant_id 
+       on categories (tenant_id)
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    create index idx_category_slug 
+       on categories (slug)
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    create index idx_category_parent_id 
+       on categories (parent_id)
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    create index idx_category_sort_order 
+       on categories (sort_order)
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    create index idx_address_customer_tenant 
+       on customer_addresses (customer_id, tenant_id)
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    create index idx_address_tenant 
+       on customer_addresses (tenant_id)
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    create index idx_address_customer 
+       on customer_addresses (customer_id)
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    create index idx_page_slug 
+       on pages (slug)
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    create index idx_page_tenant_slug 
+       on pages (tenant_id, slug)
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    create index idx_page_active 
+       on pages (active)
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    create index idx_page_published 
+       on pages (published)
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    create index idx_page_type 
+       on pages (page_type)
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    create index idx_product_tenant_id 
+       on products (tenant_id)
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    create index idx_product_slug 
+       on products (slug)
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    create index idx_product_status 
+       on products (status)
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    create index idx_product_name 
+       on products (name)
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    create index idx_template_name 
+       on templates (name)
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    create index idx_template_tenant_id 
+       on templates (tenant_id)
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    create index idx_tenant_active 
+       on tenants (active)
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    create index idx_vendor_name 
+       on vendors (name)
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    create index idx_vendor_store_name 
+       on vendors (store_name)
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    alter table if exists payments 
+       add constraint FKsg72b95wtfmuek6xmpk76en5v 
+       foreign key (payment_gateway_id) 
+       references payment_gateways
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    alter table if exists platform_user_roles 
+       add constraint FKpd8qg4xvkj8b97khs1cqmkun4 
+       foreign key (user_id) 
+       references platform_users
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    alter table if exists product_categories 
+       add constraint FKlda9rad6s180ha3dl1ncsp8n7 
+       foreign key (product_id) 
+       references products
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    alter table if exists product_images 
+       add constraint FKqnq71xsohugpqwf3c9gxmsuy 
+       foreign key (product_id) 
+       references products
+2025-08-29 22:20:46 [main] DEBUG org.hibernate.SQL - 
+    alter table if exists subscriptions 
+       add constraint FKb1uf5qnxi6uj95se8ykydntl1 
+       foreign key (plan_id) 
+       references plans
+2025-08-29 22:20:46 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-08-29 22:20:47 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-08-29 22:20:48 [main] INFO  c.b.shared.config.RazorpayConfig - Initializing Razorpay client with key: rzp_test_key
+2025-08-29 22:20:49 [main] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 4 endpoint(s) beneath base path '/actuator'
+2025-08-29 22:20:50 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-08-29 22:20:50 [main] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - 85 mappings in 'requestMappingHandlerMapping'
+2025-08-29 22:20:50 [main] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Patterns [/webjars/**, /**, /swagger-ui*/*swagger-initializer.js, /swagger-ui*/**] in 'resourceHandlerMapping'
+2025-08-29 22:20:50 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@44be43d0, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@1e0815f4, org.springframework.security.web.context.SecurityContextHolderFilter@71320e97, org.springframework.security.web.header.HeaderWriterFilter@174d3944, org.springframework.web.filter.CorsFilter@6e3eefd4, org.springframework.security.web.authentication.logout.LogoutFilter@17bbb291, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@328429ef, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@1401d1d7, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@114e8064, org.springframework.security.web.session.SessionManagementFilter@5eba1893, org.springframework.security.web.access.ExceptionTranslationFilter@32d8185c, org.springframework.security.web.access.intercept.AuthorizationFilter@3e12f767]
+2025-08-29 22:20:50 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will secure Or [Mvc [pattern='/api/platform/**']] with [org.springframework.security.web.session.DisableEncodeUrlFilter@59ffc4a6, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@7626a59, org.springframework.security.web.context.SecurityContextHolderFilter@55ba52cc, org.springframework.security.web.header.HeaderWriterFilter@7f5a6622, org.springframework.security.web.authentication.logout.LogoutFilter@4c724636, com.bharatshop.shared.filter.JwtAuthenticationFilter@5383bf08, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@616de3e0, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@4d2af299, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@33ad9708, org.springframework.security.web.session.SessionManagementFilter@788fdf40, org.springframework.security.web.access.ExceptionTranslationFilter@3ee15053, org.springframework.security.web.access.intercept.AuthorizationFilter@58aa5259]
+2025-08-29 22:20:50 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will secure Or [Mvc [pattern='/api/storefront/**']] with [org.springframework.security.web.session.DisableEncodeUrlFilter@6e9e3321, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@1acdbb4e, org.springframework.security.web.context.SecurityContextHolderFilter@70dc8c9a, org.springframework.security.web.header.HeaderWriterFilter@43825183, org.springframework.security.web.authentication.logout.LogoutFilter@785b5503, com.bharatshop.shared.filter.SessionAuthenticationFilter@1c2fb9e8, org.springframework.security.web.session.ConcurrentSessionFilter@37d6ea99, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@4201ca80, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@404289da, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@2a2f88c7, org.springframework.security.web.session.SessionManagementFilter@49a5c387, org.springframework.security.web.access.ExceptionTranslationFilter@16c58781, org.springframework.security.web.access.intercept.AuthorizationFilter@6ab93e29]
+2025-08-29 22:20:50 [main] INFO  o.s.s.web.DefaultSecurityFilterChain - Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@5ecce5d7, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@3eb60a78, org.springframework.security.web.context.SecurityContextHolderFilter@1cbd1315, org.springframework.security.web.header.HeaderWriterFilter@5f96763c, org.springframework.security.web.authentication.logout.LogoutFilter@35eaae18, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@3f2cb144, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@2d708c95, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@65806fd1, org.springframework.security.web.access.ExceptionTranslationFilter@71ec7440, org.springframework.security.web.access.intercept.AuthorizationFilter@46aba223]
+2025-08-29 22:20:50 [main] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerAdapter - ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2025-08-29 22:20:50 [main] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - ControllerAdvice beans: 1 @ExceptionHandler, 1 ResponseBodyAdvice
+2025-08-29 22:20:51 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/api'
+2025-08-29 22:20:51 [main] INFO  c.b.platform.PlatformApplication - Started PlatformApplication in 11.852 seconds (process running for 12.441)
+2025-08-29 22:20:58 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[.[localhost].[/api] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-08-29 22:20:58 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-08-29 22:20:58 [http-nio-8080-exec-1] DEBUG o.s.web.servlet.DispatcherServlet - Detected StandardServletMultipartResolver
+2025-08-29 22:20:58 [http-nio-8080-exec-1] DEBUG o.s.web.servlet.DispatcherServlet - Detected AcceptHeaderLocaleResolver
+2025-08-29 22:20:58 [http-nio-8080-exec-1] DEBUG o.s.web.servlet.DispatcherServlet - Detected FixedThemeResolver
+2025-08-29 22:20:58 [http-nio-8080-exec-1] DEBUG o.s.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@2cd27045
+2025-08-29 22:20:58 [http-nio-8080-exec-1] DEBUG o.s.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.support.SessionFlashMapManager@77c8dd61
+2025-08-29 22:20:58 [http-nio-8080-exec-1] DEBUG o.s.web.servlet.DispatcherServlet - enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2025-08-29 22:20:58 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2025-08-29 22:20:58 [http-nio-8080-exec-1] DEBUG o.s.security.web.FilterChainProxy - Securing GET /?ide_webview_request_time=1756486258690
+2025-08-29 22:20:59 [http-nio-8080-exec-1] DEBUG o.s.security.web.FilterChainProxy - Secured GET /?ide_webview_request_time=1756486258690
+2025-08-29 22:20:59 [http-nio-8080-exec-1] DEBUG o.s.web.servlet.DispatcherServlet - GET "/api/?ide_webview_request_time=1756486258690", parameters={masked}
+2025-08-29 22:20:59 [http-nio-8080-exec-1] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Mapped to ResourceHttpRequestHandler [classpath [META-INF/resources/], classpath [resources/], classpath [static/], classpath [public/], ServletContext [/]]
+2025-08-29 22:20:59 [http-nio-8080-exec-1] DEBUG o.s.w.s.r.ResourceHttpRequestHandler - Resource not found
+2025-08-29 22:20:59 [http-nio-8080-exec-1] DEBUG o.s.w.s.m.s.DefaultHandlerExceptionResolver - Resolved [org.springframework.web.servlet.resource.NoResourceFoundException: No static resource .]
+2025-08-29 22:20:59 [http-nio-8080-exec-1] DEBUG o.s.web.servlet.DispatcherServlet - Completed 404 NOT_FOUND
+2025-08-29 22:20:59 [http-nio-8080-exec-1] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
+2025-08-29 22:20:59 [http-nio-8080-exec-1] DEBUG o.s.security.web.FilterChainProxy - Securing GET /error?ide_webview_request_time=1756486258690
+2025-08-29 22:20:59 [http-nio-8080-exec-1] DEBUG o.s.security.web.FilterChainProxy - Secured GET /error?ide_webview_request_time=1756486258690
+2025-08-29 22:20:59 [http-nio-8080-exec-1] DEBUG o.s.web.servlet.DispatcherServlet - "ERROR" dispatch for GET "/api/error?ide_webview_request_time=1756486258690", parameters={masked}
+2025-08-29 22:20:59 [http-nio-8080-exec-1] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController#errorHtml(HttpServletRequest, HttpServletResponse)
+2025-08-29 22:20:59 [http-nio-8080-exec-1] DEBUG o.s.w.s.v.ContentNegotiatingViewResolver - Selected 'text/html' given [text/html, text/html;q=0.8]
+2025-08-29 22:20:59 [http-nio-8080-exec-1] DEBUG o.s.web.servlet.DispatcherServlet - Exiting from "ERROR" dispatch, status 404
+2025-08-29 22:20:59 [http-nio-8080-exec-1] DEBUG o.s.s.w.a.AnonymousAuthenticationFilter - Set SecurityContextHolder to anonymous SecurityContext
