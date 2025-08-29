@@ -1,3 +1,4 @@
+C:\Users\Adarsh\Downloads\bharatshop\platform\src\main\java\com\bharatshop\platform\security\PlatformSecurityConfig.java
 C:\Users\Adarsh\Downloads\bharatshop\platform\src\main\java\com\bharatshop\platform\dto\auth\RegisterVendorRequest.java
 C:\Users\Adarsh\Downloads\bharatshop\platform\src\main\java\com\bharatshop\platform\service\CategoryService.java
 C:\Users\Adarsh\Downloads\bharatshop\platform\src\main\java\com\bharatshop\platform\tenant\TenantContext.java
@@ -13,7 +14,6 @@ C:\Users\Adarsh\Downloads\bharatshop\platform\src\main\java\com\bharatshop\platf
 C:\Users\Adarsh\Downloads\bharatshop\platform\src\main\java\com\bharatshop\platform\dto\auth\AuthResponse.java
 C:\Users\Adarsh\Downloads\bharatshop\platform\src\main\java\com\bharatshop\platform\service\ProductImportExportService.java
 C:\Users\Adarsh\Downloads\bharatshop\platform\src\main\java\com\bharatshop\platform\PlatformApplication.java
-C:\Users\Adarsh\Downloads\bharatshop\platform\src\main\java\com\bharatshop\platform\security\SecurityConfig.java
 C:\Users\Adarsh\Downloads\bharatshop\platform\src\main\java\com\bharatshop\platform\dto\auth\RefreshTokenRequest.java
 C:\Users\Adarsh\Downloads\bharatshop\platform\src\main\java\com\bharatshop\platform\controller\VendorController.java
 C:\Users\Adarsh\Downloads\bharatshop\platform\src\main\java\com\bharatshop\platform\controller\PageController.java

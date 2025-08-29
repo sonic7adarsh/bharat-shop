@@ -7,8 +7,7 @@ import com.bharatshop.shared.service.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -33,7 +32,6 @@ public class PlatformAuthService implements UserDetailsService {
     private final PlatformUserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
-    private final AuthenticationManager authenticationManager;
 
     public AuthResponse registerVendor(RegisterVendorRequest request) {
         log.info("Registering new vendor with email: {}", request.getEmail());
@@ -85,20 +83,21 @@ public class PlatformAuthService implements UserDetailsService {
     public AuthResponse login(LoginRequest request) {
         log.info("Login attempt for email: {}", request.getEmail());
         
-        // Authenticate user
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
-                        request.getPassword()
-                )
-        );
-        
         // Get user details
         PlatformUser user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         
+        // Authenticate user manually
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new BadCredentialsException("Invalid credentials");
+        }
+        
+        if (!user.getEnabled()) {
+            throw new BadCredentialsException("Account is disabled");
+        }
+        
         // Generate tokens
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        UserDetails userDetails = loadUserByUsername(request.getEmail());
         String accessToken = jwtService.generateAccessToken(userDetails);
         String refreshToken = jwtService.generateRefreshToken(userDetails);
         

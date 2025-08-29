@@ -7,6 +7,9 @@ spring:
   application:
     name: bharatshop-platform
   
+  main:
+    allow-circular-references: true
+  
   profiles:
     active: test
   

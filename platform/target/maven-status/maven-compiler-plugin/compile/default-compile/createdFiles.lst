@@ -25,6 +25,7 @@ com\bharatshop\platform\service\ProductImportExportService$ImportResult.class
 com\bharatshop\platform\dto\TenantResponseDto$TenantResponseDtoBuilder.class
 com\bharatshop\platform\dto\auth\AuthResponse$UserInfo.class
 com\bharatshop\platform\controller\TemplateController.class
+com\bharatshop\platform\security\PlatformSecurityConfig.class
 com\bharatshop\platform\controller\CategoryController.class
 com\bharatshop\platform\dto\auth\LoginRequest$LoginRequestBuilder.class
 com\bharatshop\platform\dto\auth\AuthResponse.class
@@ -37,7 +38,6 @@ com\bharatshop\platform\controller\ProductImageController.class
 com\bharatshop\platform\entity\PlatformUser.class
 com\bharatshop\platform\entity\PlatformUser$PlatformRole.class
 com\bharatshop\platform\service\PlatformAuthService.class
-com\bharatshop\platform\security\SecurityConfig.class
 com\bharatshop\platform\dto\TenantCreateDto$TenantCreateDtoBuilder.class
 com\bharatshop\platform\PlatformApplication.class
 com\bharatshop\platform\service\ProductService.class

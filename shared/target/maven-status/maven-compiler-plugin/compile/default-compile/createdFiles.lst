@@ -43,6 +43,7 @@ com\bharatshop\shared\repository\SubscriptionRepository.class
 com\bharatshop\shared\entity\Product.class
 com\bharatshop\shared\entity\Template$TemplateBuilderImpl.class
 com\bharatshop\shared\entity\Template$TemplateBuilder.class
+com\bharatshop\shared\controller\SubscriptionController.class
 com\bharatshop\shared\entity\Vendor$VendorStatus.class
 com\bharatshop\shared\repository\CategoryRepository.class
 com\bharatshop\shared\dto\RazorpayOrderResponseDto$RazorpayOrderResponseDtoBuilder.class

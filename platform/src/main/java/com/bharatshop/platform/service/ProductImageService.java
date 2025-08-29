@@ -47,7 +47,7 @@ public class ProductImageService {
             throw new RuntimeException("Product not found or access denied");
         }
         
-        return productImageRepository.findByProductIdAndIsDeletedFalseOrderBySortOrderAsc(productId);
+        return productImageRepository.findActiveByProductIdOrderBySortOrder(productId);
     }
 
     /**
@@ -60,7 +60,7 @@ public class ProductImageService {
             throw new RuntimeException("Product not found or access denied");
         }
         
-        return productImageRepository.findByProductIdAndIsPrimaryTrueAndIsDeletedFalse(productId);
+        return productImageRepository.findActivePrimaryByProductId(productId);
     }
 
     /**
@@ -247,7 +247,7 @@ public class ProductImageService {
         }
         
         // Get all images for the product
-        List<ProductImage> images = productImageRepository.findByProductIdAndIsDeletedFalseOrderBySortOrderAsc(productId);
+        List<ProductImage> images = productImageRepository.findActiveByProductIdOrderBySortOrder(productId);
         Map<UUID, ProductImage> imageMap = images.stream()
                 .collect(Collectors.toMap(ProductImage::getId, img -> img));
         
@@ -276,7 +276,7 @@ public class ProductImageService {
             throw new RuntimeException("Product not found or access denied");
         }
         
-        List<ProductImage> images = productImageRepository.findByProductIdAndIsDeletedFalseOrderBySortOrderAsc(productId);
+        List<ProductImage> images = productImageRepository.findActiveByProductIdOrderBySortOrder(productId);
         
         // Delete files from disk
         for (ProductImage image : images) {
@@ -321,7 +321,7 @@ public class ProductImageService {
         long totalStorage = 0;
         for (Product product : products) {
             // Get all images for each product
-            List<ProductImage> images = productImageRepository.findByProductIdAndIsDeletedFalseOrderBySortOrderAsc(product.getId());
+            List<ProductImage> images = productImageRepository.findActiveByProductIdOrderBySortOrder(product.getId());
             
             for (ProductImage image : images) {
                 try {

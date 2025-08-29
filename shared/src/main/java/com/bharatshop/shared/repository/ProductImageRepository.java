@@ -14,28 +14,32 @@ import java.util.UUID;
 @Repository
 public interface ProductImageRepository extends JpaRepository<ProductImage, UUID> {
 
-    List<ProductImage> findByProductIdAndIsDeletedFalseOrderBySortOrderAsc(UUID productId);
+    @Query("SELECT pi FROM ProductImage pi WHERE pi.productId = :productId AND pi.deletedAt IS NULL ORDER BY pi.sortOrder ASC")
+    List<ProductImage> findActiveByProductIdOrderBySortOrder(@Param("productId") UUID productId);
 
-    Optional<ProductImage> findByIdAndProductIdAndIsDeletedFalse(UUID id, UUID productId);
+    @Query("SELECT pi FROM ProductImage pi WHERE pi.id = :id AND pi.productId = :productId AND pi.deletedAt IS NULL")
+    Optional<ProductImage> findActiveByIdAndProductId(@Param("id") UUID id, @Param("productId") UUID productId);
 
-    List<ProductImage> findByProductIdAndIsPrimaryAndIsDeletedFalse(UUID productId, Boolean isPrimary);
+    @Query("SELECT pi FROM ProductImage pi WHERE pi.productId = :productId AND pi.isPrimary = :isPrimary AND pi.deletedAt IS NULL")
+    List<ProductImage> findActiveByProductIdAndIsPrimary(@Param("productId") UUID productId, @Param("isPrimary") Boolean isPrimary);
 
-    Optional<ProductImage> findByProductIdAndIsPrimaryTrueAndIsDeletedFalse(UUID productId);
+    @Query("SELECT pi FROM ProductImage pi WHERE pi.productId = :productId AND pi.isPrimary = true AND pi.deletedAt IS NULL")
+    Optional<ProductImage> findActivePrimaryByProductId(@Param("productId") UUID productId);
 
-    @Query("SELECT pi FROM ProductImage pi WHERE pi.productId = :productId AND pi.isDeleted = false ORDER BY pi.sortOrder ASC")
+    @Query("SELECT pi FROM ProductImage pi WHERE pi.productId = :productId AND pi.deletedAt IS NULL ORDER BY pi.sortOrder ASC")
     List<ProductImage> findByProductIdOrderBySortOrder(@Param("productId") UUID productId);
 
     @Modifying
-    @Query("UPDATE ProductImage pi SET pi.isPrimary = false WHERE pi.productId = :productId AND pi.isDeleted = false")
+    @Query("UPDATE ProductImage pi SET pi.isPrimary = false WHERE pi.productId = :productId AND pi.deletedAt IS NULL")
     void clearPrimaryImageForProduct(@Param("productId") UUID productId);
 
     @Modifying
-    @Query("UPDATE ProductImage pi SET pi.isDeleted = true WHERE pi.productId = :productId")
+    @Query("UPDATE ProductImage pi SET pi.deletedAt = CURRENT_TIMESTAMP WHERE pi.productId = :productId")
     void deleteByProductId(@Param("productId") UUID productId);
 
-    @Query("SELECT COUNT(pi) FROM ProductImage pi WHERE pi.productId = :productId AND pi.isDeleted = false")
+    @Query("SELECT COUNT(pi) FROM ProductImage pi WHERE pi.productId = :productId AND pi.deletedAt IS NULL")
     long countByProductId(@Param("productId") UUID productId);
 
-    @Query("SELECT MAX(pi.sortOrder) FROM ProductImage pi WHERE pi.productId = :productId AND pi.isDeleted = false")
+    @Query("SELECT MAX(pi.sortOrder) FROM ProductImage pi WHERE pi.productId = :productId AND pi.deletedAt IS NULL")
     Integer findMaxSortOrderByProductId(@Param("productId") UUID productId);
 }
