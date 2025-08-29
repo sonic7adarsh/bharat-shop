@@ -71,4 +71,85 @@ public class PageRequestDto {
     private String author;
     
     private String status;
+    
+    // Manual getters for fields that Lombok might not be generating
+    public String getTitle() {
+        return title;
+    }
+    
+    public String getSlug() {
+        return slug;
+    }
+    
+    public String getContent() {
+        return content;
+    }
+    
+    public String getExcerpt() {
+        return excerpt;
+    }
+    
+    public String getMetaTitle() {
+        return metaTitle;
+    }
+    
+    public String getMetaDescription() {
+        return metaDescription;
+    }
+    
+    public String getMetaKeywords() {
+        return metaKeywords;
+    }
+    
+    public String getLayout() {
+        return layout;
+    }
+    
+    public String getSeo() {
+        return seo;
+    }
+    
+    public Boolean getActive() {
+        return active;
+    }
+    
+    public Boolean getPublished() {
+        return published;
+    }
+    
+    public Integer getSortOrder() {
+        return sortOrder;
+    }
+    
+    public PageType getPageType() {
+        return pageType;
+    }
+    
+    public String getTemplate() {
+        return template;
+    }
+    
+    public String getTemplateId() {
+        return templateId;
+    }
+    
+    public String getCustomCss() {
+        return customCss;
+    }
+    
+    public String getCustomJs() {
+        return customJs;
+    }
+    
+    public String getFeaturedImage() {
+        return featuredImage;
+    }
+    
+    public String getAuthor() {
+        return author;
+    }
+    
+    public String getStatus() {
+        return status;
+    }
 }

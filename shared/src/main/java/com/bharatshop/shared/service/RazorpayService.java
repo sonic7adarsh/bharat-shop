@@ -11,6 +11,8 @@ import com.razorpay.Utils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.Mac;
@@ -25,6 +27,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Slf4j
 public class RazorpayService {
+    
+    private static final Logger log = LoggerFactory.getLogger(RazorpayService.class);
 
     private final RazorpayClient razorpayClient;
     private final RazorpayConfig razorpayConfig;

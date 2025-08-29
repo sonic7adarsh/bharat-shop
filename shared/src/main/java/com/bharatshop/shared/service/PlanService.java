@@ -13,6 +13,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +22,8 @@ import java.util.UUID;
 @Transactional
 public class PlanService {
 
+    private static final Logger log = LoggerFactory.getLogger(PlanService.class);
+    
     private final PlanRepository planRepository;
 
     /**

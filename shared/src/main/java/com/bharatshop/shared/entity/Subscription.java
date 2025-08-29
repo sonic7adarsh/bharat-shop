@@ -21,11 +21,6 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = true)
 public class Subscription extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "id", updatable = false, nullable = false)
-    private UUID id;
-
     @Column(name = "vendor_id", nullable = false)
     private UUID vendorId;
 
@@ -86,5 +81,135 @@ public class Subscription extends BaseEntity {
             return 0;
         }
         return java.time.Duration.between(LocalDateTime.now(), endDate).toDays();
+    }
+
+    // Manual getters for fields that Lombok might not be generating
+    public UUID getId() {
+        return this.id;
+    }
+    
+    public LocalDateTime getCreatedAt() {
+        return this.createdAt;
+    }
+    
+    public LocalDateTime getUpdatedAt() {
+        return this.updatedAt;
+    }
+    
+    public LocalDateTime getDeletedAt() {
+        return this.deletedAt;
+    }
+    
+    public UUID getTenantId() {
+        return this.tenantId;
+    }
+
+    public LocalDateTime getStartDate() {
+        return startDate;
+    }
+
+    public LocalDateTime getEndDate() {
+        return endDate;
+    }
+
+    public SubscriptionStatus getStatus() {
+        return status;
+    }
+
+    public UUID getVendorId() {
+        return vendorId;
+    }
+
+    public UUID getPlanId() {
+        return planId;
+    }
+
+    public Plan getPlan() {
+        return plan;
+    }
+
+    public String getRazorpaySubscriptionId() {
+        return razorpaySubscriptionId;
+    }
+
+    public String getRazorpayOrderId() {
+        return razorpayOrderId;
+    }
+
+    public String getRazorpayPaymentId() {
+        return razorpayPaymentId;
+    }
+
+    public Boolean getAutoRenew() {
+        return autoRenew;
+    }
+
+    public LocalDateTime getCancelledAt() {
+        return cancelledAt;
+    }
+
+    public String getCancelledReason() {
+        return cancelledReason;
+    }
+
+    public LocalDateTime getNextBillingDate() {
+        return nextBillingDate;
+    }
+    
+    // Setter methods
+    public void setVendorId(UUID vendorId) {
+        this.vendorId = vendorId;
+    }
+    
+    public void setPlanId(UUID planId) {
+        this.planId = planId;
+    }
+    
+    public void setPlan(Plan plan) {
+        this.plan = plan;
+    }
+    
+    public void setStartDate(LocalDateTime startDate) {
+        this.startDate = startDate;
+    }
+    
+    public void setEndDate(LocalDateTime endDate) {
+        this.endDate = endDate;
+    }
+    
+    public void setStatus(SubscriptionStatus status) {
+        this.status = status;
+    }
+    
+    public void setRazorpaySubscriptionId(String razorpaySubscriptionId) {
+        this.razorpaySubscriptionId = razorpaySubscriptionId;
+    }
+    
+    public void setRazorpayOrderId(String razorpayOrderId) {
+        this.razorpayOrderId = razorpayOrderId;
+    }
+    
+    public void setRazorpayPaymentId(String razorpayPaymentId) {
+        this.razorpayPaymentId = razorpayPaymentId;
+    }
+    
+    public void setAutoRenew(Boolean autoRenew) {
+        this.autoRenew = autoRenew;
+    }
+    
+    public void setCancelledAt(LocalDateTime cancelledAt) {
+        this.cancelledAt = cancelledAt;
+    }
+    
+    public void setCancelledReason(String cancelledReason) {
+        this.cancelledReason = cancelledReason;
+    }
+    
+    public void setNextBillingDate(LocalDateTime nextBillingDate) {
+        this.nextBillingDate = nextBillingDate;
+    }
+    
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

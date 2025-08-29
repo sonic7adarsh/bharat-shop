@@ -76,4 +76,110 @@ public class Plan extends BaseEntity {
         }
         return false;
     }
+
+    // Manual getters for fields that Lombok might not be generating
+    public UUID getId() {
+        return this.id;
+    }
+    
+    public LocalDateTime getCreatedAt() {
+        return this.createdAt;
+    }
+    
+    public LocalDateTime getUpdatedAt() {
+        return this.updatedAt;
+    }
+    
+    public LocalDateTime getDeletedAt() {
+        return this.deletedAt;
+    }
+    
+    public UUID getTenantId() {
+        return this.tenantId;
+    }
+    
+    // Manual setter methods for compilation compatibility
+    public void setId(UUID id) {
+        this.id = id;
+    }
+    
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+    
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+    
+    public void setDeletedAt(LocalDateTime deletedAt) {
+        this.deletedAt = deletedAt;
+    }
+    
+    public void setTenantId(UUID tenantId) {
+        this.tenantId = tenantId;
+    }
+    
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+    
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    public void setDescription(String description) {
+        this.description = description;
+    }
+    
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+    
+    public void setDisplayOrder(Integer displayOrder) {
+        this.displayOrder = displayOrder;
+    }
+    
+    public void setIsPopular(Boolean isPopular) {
+        this.isPopular = isPopular;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public JsonNode getFeatures() {
+        return features;
+    }
+
+    public void setFeatures(JsonNode features) {
+        this.features = features;
+    }
+
+    public Integer getDurationDays() {
+        return durationDays;
+    }
+
+    public void setDurationDays(Integer durationDays) {
+        this.durationDays = durationDays;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public Integer getDisplayOrder() {
+        return displayOrder;
+    }
+
+    public Boolean getIsPopular() {
+        return isPopular;
+    }
 }

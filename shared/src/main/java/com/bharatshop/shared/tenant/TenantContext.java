@@ -1,6 +1,8 @@
 package com.bharatshop.shared.tenant;
 
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utility class for managing tenant context in multi-tenant applications.
@@ -8,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class TenantContext {
+    
+    private static final Logger log = LoggerFactory.getLogger(TenantContext.class);
     
     private static final ThreadLocal<String> currentTenant = new ThreadLocal<>();
     

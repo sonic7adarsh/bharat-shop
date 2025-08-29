@@ -101,4 +101,129 @@ public class SubscriptionResponseDto {
             return "Expires today";
         }
     }
+    
+    // Manual builder method for compilation compatibility
+    public static SubscriptionResponseDtoBuilder builder() {
+        return new SubscriptionResponseDtoBuilder();
+    }
+    
+    public static class SubscriptionResponseDtoBuilder {
+        private UUID id;
+        private UUID vendorId;
+        private UUID planId;
+        private PlanResponseDto plan;
+        private LocalDateTime startDate;
+        private LocalDateTime endDate;
+        private SubscriptionStatus status;
+        private String razorpaySubscriptionId;
+        private String razorpayOrderId;
+        private String razorpayPaymentId;
+        private Boolean autoRenew;
+        private LocalDateTime cancelledAt;
+        private String cancelledReason;
+        private LocalDateTime nextBillingDate;
+        private LocalDateTime createdAt;
+        private LocalDateTime updatedAt;
+        
+        public SubscriptionResponseDtoBuilder id(UUID id) {
+            this.id = id;
+            return this;
+        }
+        
+        public SubscriptionResponseDtoBuilder vendorId(UUID vendorId) {
+            this.vendorId = vendorId;
+            return this;
+        }
+        
+        public SubscriptionResponseDtoBuilder planId(UUID planId) {
+            this.planId = planId;
+            return this;
+        }
+        
+        public SubscriptionResponseDtoBuilder plan(PlanResponseDto plan) {
+            this.plan = plan;
+            return this;
+        }
+        
+        public SubscriptionResponseDtoBuilder startDate(LocalDateTime startDate) {
+            this.startDate = startDate;
+            return this;
+        }
+        
+        public SubscriptionResponseDtoBuilder endDate(LocalDateTime endDate) {
+            this.endDate = endDate;
+            return this;
+        }
+        
+        public SubscriptionResponseDtoBuilder status(SubscriptionStatus status) {
+            this.status = status;
+            return this;
+        }
+        
+        public SubscriptionResponseDtoBuilder razorpaySubscriptionId(String razorpaySubscriptionId) {
+            this.razorpaySubscriptionId = razorpaySubscriptionId;
+            return this;
+        }
+        
+        public SubscriptionResponseDtoBuilder razorpayOrderId(String razorpayOrderId) {
+            this.razorpayOrderId = razorpayOrderId;
+            return this;
+        }
+        
+        public SubscriptionResponseDtoBuilder razorpayPaymentId(String razorpayPaymentId) {
+            this.razorpayPaymentId = razorpayPaymentId;
+            return this;
+        }
+        
+        public SubscriptionResponseDtoBuilder autoRenew(Boolean autoRenew) {
+            this.autoRenew = autoRenew;
+            return this;
+        }
+        
+        public SubscriptionResponseDtoBuilder cancelledAt(LocalDateTime cancelledAt) {
+            this.cancelledAt = cancelledAt;
+            return this;
+        }
+        
+        public SubscriptionResponseDtoBuilder cancelledReason(String cancelledReason) {
+            this.cancelledReason = cancelledReason;
+            return this;
+        }
+        
+        public SubscriptionResponseDtoBuilder nextBillingDate(LocalDateTime nextBillingDate) {
+            this.nextBillingDate = nextBillingDate;
+            return this;
+        }
+        
+        public SubscriptionResponseDtoBuilder createdAt(LocalDateTime createdAt) {
+            this.createdAt = createdAt;
+            return this;
+        }
+        
+        public SubscriptionResponseDtoBuilder updatedAt(LocalDateTime updatedAt) {
+            this.updatedAt = updatedAt;
+            return this;
+        }
+        
+        public SubscriptionResponseDto build() {
+            SubscriptionResponseDto dto = new SubscriptionResponseDto();
+            dto.id = this.id;
+            dto.vendorId = this.vendorId;
+            dto.planId = this.planId;
+            dto.plan = this.plan;
+            dto.startDate = this.startDate;
+            dto.endDate = this.endDate;
+            dto.status = this.status;
+            dto.razorpaySubscriptionId = this.razorpaySubscriptionId;
+            dto.razorpayOrderId = this.razorpayOrderId;
+            dto.razorpayPaymentId = this.razorpayPaymentId;
+            dto.autoRenew = this.autoRenew;
+            dto.cancelledAt = this.cancelledAt;
+            dto.cancelledReason = this.cancelledReason;
+            dto.nextBillingDate = this.nextBillingDate;
+            dto.createdAt = this.createdAt;
+            dto.updatedAt = this.updatedAt;
+            return dto;
+        }
+    }
 }

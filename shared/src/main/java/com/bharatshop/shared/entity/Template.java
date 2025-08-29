@@ -43,4 +43,62 @@ public class Template extends BaseEntity {
     
     @Column(name = "sort_order")
     private Integer sortOrder = 0;
+    
+    // Manual getter methods for compilation compatibility
+    public String getName() {
+        return name;
+    }
+    
+    public String getConfig() {
+        return config;
+    }
+    
+    public String getDescription() {
+        return description;
+    }
+    
+    public String getPreviewImage() {
+        return previewImage;
+    }
+    
+    public Boolean getIsActive() {
+        return isActive;
+    }
+    
+    public String getCategory() {
+        return category;
+    }
+    
+    public Integer getSortOrder() {
+        return sortOrder;
+    }
+    
+    // Manual setter methods for compilation compatibility
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    public void setConfig(String config) {
+        this.config = config;
+    }
+    
+    public void setDescription(String description) {
+        this.description = description;
+    }
+    
+    public void setPreviewImage(String previewImage) {
+        this.previewImage = previewImage;
+    }
+    
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
+    }
+    
+    public void setCategory(String category) {
+        this.category = category;
+    }
+    
+    public void setSortOrder(Integer sortOrder) {
+        this.sortOrder = sortOrder;
+    }
 }

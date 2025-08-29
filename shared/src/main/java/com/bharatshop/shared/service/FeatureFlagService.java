@@ -6,6 +6,8 @@ import com.bharatshop.shared.repository.SubscriptionRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -16,6 +18,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Slf4j
 public class FeatureFlagService {
+    
+    private static final Logger log = LoggerFactory.getLogger(FeatureFlagService.class);
 
     private final SubscriptionRepository subscriptionRepository;
 
