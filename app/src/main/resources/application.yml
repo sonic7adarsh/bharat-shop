@@ -1,0 +1,126 @@
+# Default application configuration
+spring:
+  application:
+    name: bharatshop
+  profiles:
+    active: dev
+  
+  # JPA Configuration
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true
+        use_sql_comments: true
+        # Enable Hibernate filters for multi-tenancy
+        enable_lazy_load_no_trans: true
+    open-in-view: false
+  
+  # Actuator
+  management:
+    endpoints:
+      web:
+        exposure:
+          include: health,info,metrics
+    endpoint:
+      health:
+        show-details: when-authorized
+
+# Multi-tenancy configuration
+app:
+  tenant:
+    header-name: X-Tenant-ID
+    default-tenant: system
+    enable-subdomain-resolution: true
+  
+  # Payment configuration
+  payment:
+    razorpay:
+      key-id: ${RAZORPAY_KEY_ID:rzp_test_1234567890}
+      key-secret: ${RAZORPAY_KEY_SECRET:test_secret_key}
+      webhook-secret: ${RAZORPAY_WEBHOOK_SECRET:webhook_secret}
+      currency: INR
+
+# Logging
+logging:
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} [%X{traceId:-},%X{tenantId:-}] - %msg%n"
+
+---
+# Development Profile
+spring:
+  config:
+    activate:
+      on-profile: dev
+  
+  # H2 Database for development
+  datasource:
+    url: jdbc:h2:mem:bharatshop
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+  
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+
+# Server configuration
+server:
+  port: 8080
+
+---
+# Production Profile
+spring:
+  config:
+    activate:
+      on-profile: prod
+  
+  # MySQL Database for production
+  datasource:
+    url: jdbc:mysql://localhost:3306/bharatshop?useSSL=false&serverTimezone=UTC
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${DB_USERNAME:bharatshop}
+    password: ${DB_PASSWORD:password}
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+  
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+
+# Server configuration
+server:
+  port: ${PORT:8080}
+
+---
+# Test Profile
+spring:
+  config:
+    activate:
+      on-profile: test
+  
+  # H2 Database for testing
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+  
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false

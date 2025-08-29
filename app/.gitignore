@@ -14,7 +14,6 @@ Thumbs.db
 
 # Log files
 *.log
-logs/
 
 # Temporary files
 *.tmp
@@ -27,18 +26,3 @@ logs/
 *.zip
 *.tar.gz
 *.rar
-
-# Spring Boot
-*.pid
-
-# Database
-*.db
-*.sqlite
-
-# Environment files
-.env
-.env.local
-.env.production
-
-# Node modules (if any)
-node_modules/
