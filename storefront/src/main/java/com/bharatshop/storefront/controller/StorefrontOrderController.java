@@ -68,6 +68,44 @@ public class StorefrontOrderController {
     }
     
     /**
+     * Create payment order (Razorpay order)
+     * POST /store/orders/{id}/payment
+     */
+    @PostMapping("/orders/{id}/payment")
+    public ResponseEntity<ApiResponse<String>> createPaymentOrder(
+            @PathVariable Long id,
+            HttpServletRequest httpRequest) {
+        
+        try {
+            Long customerId = extractCustomerId(httpRequest);
+            Long tenantId = extractTenantId(httpRequest);
+            
+            // Verify that the order belongs to the customer
+            Optional<Order> existingOrder = orderService.getOrderById(id, customerId, tenantId);
+            
+            if (existingOrder.isEmpty()) {
+                return ResponseEntity.badRequest().body(
+                        ApiResponse.error("Order not found or access denied")
+                );
+            }
+            
+            String razorpayOrderId = orderService.createPaymentOrder(id);
+            
+            log.info("Payment order created for order: {} by customer: {}", id, customerId);
+            
+            return ResponseEntity.ok(
+                    ApiResponse.success(razorpayOrderId, "Payment order created successfully")
+            );
+            
+        } catch (Exception e) {
+            log.error("Error creating payment order: {}", e.getMessage(), e);
+            return ResponseEntity.badRequest().body(
+                    ApiResponse.error(e.getMessage())
+            );
+        }
+    }
+    
+    /**
      * Process payment for order
      * POST /store/checkout/pay
      */
@@ -92,10 +130,9 @@ public class StorefrontOrderController {
             
             Order order = orderService.processPayment(
                     request.getOrderId(),
-                    request.getPaymentGatewayId(),
-                    request.getPaymentGatewayOrderId(),
-                    request.getPaymentGatewayPaymentId(),
-                    request.getPaymentGatewaySignature()
+                    request.getRazorpayOrderId(),
+                    request.getRazorpayPaymentId(),
+                    request.getRazorpaySignature()
             );
             
             OrderResponse response = OrderResponse.fromEntity(order);

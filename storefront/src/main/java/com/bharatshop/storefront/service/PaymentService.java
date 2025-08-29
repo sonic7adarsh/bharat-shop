@@ -4,7 +4,7 @@ import com.bharatshop.shared.entity.Payment;
 import com.bharatshop.shared.entity.PaymentGateway;
 import com.bharatshop.shared.repository.PaymentGatewayRepository;
 import com.bharatshop.shared.repository.PaymentRepository;
-import com.bharatshop.storefront.context.TenantContext;
+import com.bharatshop.platform.tenant.TenantContext;
 import com.razorpay.Order;
 import com.razorpay.RazorpayClient;
 import com.razorpay.RazorpayException;
@@ -42,7 +42,7 @@ public class PaymentService {
     
     @Transactional
     public Payment createRazorpayOrder(Long orderId, BigDecimal amount, String receipt, String notes) {
-        Long tenantId = Long.valueOf(TenantContext.getCurrentTenant());
+        Long tenantId = Long.valueOf(TenantContext.getTenantId());
         
         try {
             // Get payment gateway configuration for tenant
@@ -91,7 +91,7 @@ public class PaymentService {
     
     @Transactional
     public Payment verifyPayment(String razorpayOrderId, String razorpayPaymentId, String razorpaySignature) {
-        Long tenantId = Long.valueOf(TenantContext.getCurrentTenant());
+        Long tenantId = Long.valueOf(TenantContext.getTenantId());
         
         try {
             // Find payment by Razorpay order ID
@@ -143,7 +143,7 @@ public class PaymentService {
     
     @Transactional(readOnly = true)
     public Optional<Payment> getPaymentByOrderId(Long orderId) {
-        Long tenantId = Long.valueOf(TenantContext.getCurrentTenant());
+        Long tenantId = Long.valueOf(TenantContext.getTenantId());
         return paymentRepository.findByTenantIdAndOrderIdAndStatus(
             tenantId, orderId, Payment.PaymentStatus.CAPTURED
         ).stream().findFirst();

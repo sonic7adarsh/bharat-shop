@@ -1,5 +1,6 @@
 package com.bharatshop.storefront.service;
 
+import com.bharatshop.shared.entity.Payment;
 import com.bharatshop.shared.entity.Product;
 import com.bharatshop.shared.repository.ProductRepository;
 import com.bharatshop.storefront.entity.*;
@@ -30,6 +31,7 @@ public class OrderService {
     private final OrderItemRepository orderItemRepository;
     private final ProductRepository productRepository;
     private final CartService cartService;
+    private final PaymentService paymentService;
     
     /**
      * Create order from cart (checkout)
@@ -97,10 +99,40 @@ public class OrderService {
     }
     
     /**
+     * Create Razorpay order for payment
+     */
+    public String createPaymentOrder(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found: " + orderId));
+        
+        if (order.getPaymentStatus() != Order.PaymentStatus.PENDING) {
+            throw new RuntimeException("Order payment is not in pending status");
+        }
+        
+        try {
+            String receipt = "order_" + order.getOrderNumber();
+            Payment payment = paymentService.createRazorpayOrder(orderId, order.getTotalAmount(), receipt, null);
+            
+            // Update order with Razorpay order ID
+            order.setPaymentGatewayOrderId(payment.getRazorpayOrderId());
+            orderRepository.save(order);
+            
+            String razorpayOrderId = payment.getRazorpayOrderId();
+            
+            log.info("Razorpay order created for order: {} with Razorpay order ID: {}", order.getOrderNumber(), razorpayOrderId);
+            
+            return razorpayOrderId;
+            
+        } catch (Exception e) {
+            log.error("Failed to create Razorpay order for order: {}", orderId, e);
+            throw new RuntimeException("Failed to create payment order: " + e.getMessage());
+        }
+    }
+    
+    /**
      * Process payment for order
      */
-    public Order processPayment(Long orderId, String paymentGatewayId, String paymentGatewayOrderId, 
-                               String paymentGatewayPaymentId, String paymentGatewaySignature) {
+    public Order processPayment(Long orderId, String razorpayOrderId, String razorpayPaymentId, String razorpaySignature) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found: " + orderId));
         
@@ -112,17 +144,27 @@ public class OrderService {
             throw new RuntimeException("Cannot process payment for cancelled order");
         }
         
-        // Update payment information
-        order.setPaymentGatewayId(paymentGatewayId);
-        order.setPaymentGatewayOrderId(paymentGatewayOrderId);
-        order.setPaymentGatewayPaymentId(paymentGatewayPaymentId);
-        order.setPaymentGatewaySignature(paymentGatewaySignature);
-        order.setPaymentStatus(Order.PaymentStatus.COMPLETED);
-        order.setStatus(Order.OrderStatus.CONFIRMED);
-        
-        log.info("Payment processed successfully for order: {}", order.getOrderNumber());
-        
-        return orderRepository.save(order);
+        try {
+            // Verify payment with Razorpay through PaymentService
+            Payment payment = paymentService.verifyPayment(razorpayOrderId, razorpayPaymentId, razorpaySignature);
+            
+            // Update order with payment information
+            order.setPaymentGatewayOrderId(razorpayOrderId);
+            order.setPaymentGatewayPaymentId(razorpayPaymentId);
+            order.setPaymentGatewaySignature(razorpaySignature);
+            order.setPaymentStatus(Order.PaymentStatus.COMPLETED);
+            order.setStatus(Order.OrderStatus.CONFIRMED);
+            
+            log.info("Payment processed successfully for order: {} with payment ID: {}", order.getOrderNumber(), payment.getId());
+            
+            return orderRepository.save(order);
+            
+        } catch (Exception e) {
+            log.error("Payment verification failed for order: {}", orderId, e);
+            order.setPaymentStatus(Order.PaymentStatus.FAILED);
+            orderRepository.save(order);
+            throw new RuntimeException("Payment verification failed: " + e.getMessage());
+        }
     }
     
     /**

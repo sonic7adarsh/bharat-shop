@@ -6,14 +6,13 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Data
 @Builder
 public class PaymentResponse {
     
-    private UUID id;
-    private UUID orderId;
+    private Long id;
+    private Long orderId;
     private String razorpayOrderId;
     private String razorpayPaymentId;
     private BigDecimal amount;
