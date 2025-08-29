@@ -133,6 +133,37 @@ public class OrderService {
     }
     
     /**
+     * Get order by ID (for payment processing)
+     */
+    public Optional<Order> getOrderById(Long orderId) {
+        return orderRepository.findById(orderId);
+    }
+    
+    /**
+     * Confirm order after successful payment
+     */
+    public Order confirmOrder(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found: " + orderId));
+        
+        if (order.getStatus() == Order.OrderStatus.CONFIRMED) {
+            log.info("Order already confirmed: {}", order.getOrderNumber());
+            return order;
+        }
+        
+        if (order.getStatus() == Order.OrderStatus.CANCELLED) {
+            throw new RuntimeException("Cannot confirm cancelled order: " + order.getOrderNumber());
+        }
+        
+        order.setStatus(Order.OrderStatus.CONFIRMED);
+        order.setPaymentStatus(Order.PaymentStatus.COMPLETED);
+        
+        log.info("Order confirmed after payment: {}", order.getOrderNumber());
+        
+        return orderRepository.save(order);
+    }
+    
+    /**
      * Get customer orders with pagination
      */
     public Page<Order> getCustomerOrders(Long customerId, Long tenantId, Pageable pageable) {
