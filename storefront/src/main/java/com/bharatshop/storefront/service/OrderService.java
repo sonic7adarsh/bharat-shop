@@ -1,11 +1,14 @@
 package com.bharatshop.storefront.service;
 
+import com.bharatshop.shared.entity.CustomerAddress;
 import com.bharatshop.shared.entity.Payment;
 import com.bharatshop.shared.entity.Product;
+import com.bharatshop.shared.repository.CustomerAddressRepository;
 import com.bharatshop.shared.repository.ProductRepository;
 import com.bharatshop.storefront.entity.*;
 import com.bharatshop.storefront.repository.OrderItemRepository;
 import com.bharatshop.storefront.repository.OrderRepository;
+import com.bharatshop.storefront.service.AddressService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -32,6 +35,8 @@ public class OrderService {
     private final ProductRepository productRepository;
     private final CartService cartService;
     private final PaymentService paymentService;
+    private final AddressService addressService;
+    private final CustomerAddressRepository customerAddressRepository;
     
     /**
      * Create order from cart (checkout)
@@ -53,6 +58,13 @@ public class OrderService {
         BigDecimal shippingAmount = calculateShipping(subtotal);
         BigDecimal totalAmount = subtotal.add(taxAmount).add(shippingAmount);
         
+        // Get and capture shipping address details
+        CustomerAddress shippingAddress = null;
+        if (addressId != null) {
+            shippingAddress = customerAddressRepository.findByIdAndCustomerIdAndTenantId(addressId, customerId, tenantId)
+                    .orElseThrow(() -> new RuntimeException("Shipping address not found or inactive"));
+        }
+        
         // Create order
         Order order = Order.builder()
                 .tenantId(tenantId)
@@ -63,11 +75,24 @@ public class OrderService {
                 .taxAmount(taxAmount)
                 .shippingAmount(shippingAmount)
                 .paymentStatus(Order.PaymentStatus.PENDING)
-                .addressId(addressId)
+                .shippingAddressId(addressId)
                 .orderNumber(generateOrderNumber())
                 .notes(notes)
                 .items(new ArrayList<>())
                 .build();
+        
+        // Capture shipping address details for historical reference
+        if (shippingAddress != null) {
+            order.setShippingAddressId(shippingAddress.getId());
+            order.setShippingName(shippingAddress.getName());
+            order.setShippingPhone(shippingAddress.getPhone());
+            order.setShippingLine1(shippingAddress.getLine1());
+            order.setShippingLine2(shippingAddress.getLine2());
+            order.setShippingCity(shippingAddress.getCity());
+            order.setShippingState(shippingAddress.getState());
+            order.setShippingPincode(shippingAddress.getPincode());
+            order.setShippingCountry(shippingAddress.getCountry());
+        }
         
         order = orderRepository.save(order);
         
@@ -246,6 +271,42 @@ public class OrderService {
     }
     
     /**
+     * Mark order as packed
+     */
+    public Order markOrderAsPacked(Long orderId, Long tenantId) {
+        Order order = orderRepository.findByIdAndTenantId(orderId, tenantId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+        
+        if (!order.canBePacked()) {
+            throw new RuntimeException("Order cannot be packed in current status: " + order.getStatus());
+        }
+        
+        order.markAsPacked();
+        
+        log.info("Order marked as packed: {}", order.getOrderNumber());
+        
+        return orderRepository.save(order);
+    }
+    
+    /**
+     * Mark order as shipped
+     */
+    public Order markOrderAsShipped(Long orderId, Long tenantId, String trackingNumber, String courierPartner) {
+        Order order = orderRepository.findByIdAndTenantId(orderId, tenantId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+        
+        if (!order.canBeShipped()) {
+            throw new RuntimeException("Order cannot be shipped in current status: " + order.getStatus());
+        }
+        
+        order.markAsShipped(trackingNumber, courierPartner);
+        
+        log.info("Order marked as shipped: {} with tracking: {}", order.getOrderNumber(), trackingNumber);
+        
+        return orderRepository.save(order);
+    }
+    
+    /**
      * Mark order as delivered
      */
     public Order markOrderAsDelivered(Long orderId, Long tenantId) {
@@ -279,8 +340,20 @@ public class OrderService {
         
         order.setStatus(newStatus);
         
-        if (newStatus == Order.OrderStatus.DELIVERED) {
-            order.setDeliveredAt(LocalDateTime.now());
+        // Set appropriate timestamps based on status
+        switch (newStatus) {
+            case PACKED:
+                order.setPackedAt(LocalDateTime.now());
+                break;
+            case SHIPPED:
+                order.setShippedAt(LocalDateTime.now());
+                break;
+            case DELIVERED:
+                order.setDeliveredAt(LocalDateTime.now());
+                break;
+            case CANCELLED:
+                order.setCancelledAt(LocalDateTime.now());
+                break;
         }
         
         log.info("Order status updated: {} from {} to {}", order.getOrderNumber(), currentStatus, newStatus);
@@ -356,8 +429,8 @@ public class OrderService {
             case PENDING:
                 return to == Order.OrderStatus.CONFIRMED || to == Order.OrderStatus.CANCELLED;
             case CONFIRMED:
-                return to == Order.OrderStatus.PROCESSING || to == Order.OrderStatus.CANCELLED;
-            case PROCESSING:
+                return to == Order.OrderStatus.PACKED || to == Order.OrderStatus.CANCELLED;
+            case PACKED:
                 return to == Order.OrderStatus.SHIPPED || to == Order.OrderStatus.CANCELLED;
             case SHIPPED:
                 return to == Order.OrderStatus.DELIVERED;

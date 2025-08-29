@@ -8,6 +8,7 @@ C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\repository\CategoryRepository.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\entity\BaseEntity.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\entity\ProductImage.java
+C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\entity\CustomerAddress.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\entity\Category.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\repository\VendorRepository.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\entity\Vendor.java
@@ -17,4 +18,5 @@ C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\repository\PaymentRepository.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\entity\Product.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\repository\PaymentGatewayRepository.java
+C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\repository\CustomerAddressRepository.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\service\OtpService.java

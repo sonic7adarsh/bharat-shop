@@ -59,8 +59,34 @@ public class Order {
     @Column(nullable = false)
     private PaymentStatus paymentStatus;
     
+    // Shipping Address Information
     @Column
-    private Long addressId;
+    private Long shippingAddressId; // Reference to CustomerAddress
+    
+    // Captured shipping address details (for historical reference)
+    @Column(length = 100)
+    private String shippingName;
+    
+    @Column(length = 20)
+    private String shippingPhone;
+    
+    @Column(length = 255)
+    private String shippingLine1;
+    
+    @Column(length = 255)
+    private String shippingLine2;
+    
+    @Column(length = 100)
+    private String shippingCity;
+    
+    @Column(length = 100)
+    private String shippingState;
+    
+    @Column(length = 10)
+    private String shippingPincode;
+    
+    @Column(length = 100)
+    private String shippingCountry;
     
     // Payment gateway integration fields
     @Column
@@ -98,12 +124,24 @@ public class Order {
     @Column
     private LocalDateTime cancelledAt;
     
+    @Column
+    private LocalDateTime packedAt;
+    
+    @Column
+    private LocalDateTime shippedAt;
+    
+    @Column(length = 100)
+    private String trackingNumber;
+    
+    @Column(length = 100)
+    private String courierPartner;
+    
     // Enums
     public enum OrderStatus {
         DRAFT,
         PENDING,
         CONFIRMED,
-        PROCESSING,
+        PACKED,
         SHIPPED,
         DELIVERED,
         CANCELLED,
@@ -136,7 +174,8 @@ public class Order {
     public boolean canBeCancelled() {
         return status == OrderStatus.DRAFT || 
                status == OrderStatus.PENDING || 
-               status == OrderStatus.CONFIRMED;
+               status == OrderStatus.CONFIRMED || 
+               status == OrderStatus.PACKED;
     }
     
     public boolean isPaymentCompleted() {
@@ -155,5 +194,48 @@ public class Order {
     public void markAsCancelled() {
         this.status = OrderStatus.CANCELLED;
         this.cancelledAt = LocalDateTime.now();
+    }
+    
+    public void markAsPacked() {
+        this.status = OrderStatus.PACKED;
+        this.packedAt = LocalDateTime.now();
+    }
+    
+    public void markAsShipped(String trackingNumber, String courierPartner) {
+        this.status = OrderStatus.SHIPPED;
+        this.shippedAt = LocalDateTime.now();
+        this.trackingNumber = trackingNumber;
+        this.courierPartner = courierPartner;
+    }
+    
+    public boolean canBeShipped() {
+        return status == OrderStatus.PACKED;
+    }
+    
+    public boolean canBePacked() {
+        return status == OrderStatus.CONFIRMED && isPaymentCompleted();
+    }
+    
+    public String getFullShippingAddress() {
+        if (shippingLine1 == null) return null;
+        
+        StringBuilder address = new StringBuilder();
+        address.append(shippingLine1);
+        
+        if (shippingLine2 != null && !shippingLine2.trim().isEmpty()) {
+            address.append(", ").append(shippingLine2);
+        }
+        
+        address.append(", ").append(shippingCity)
+               .append(", ").append(shippingState)
+               .append(" - ").append(shippingPincode)
+               .append(", ").append(shippingCountry);
+        
+        return address.toString();
+    }
+    
+    public String getShortShippingAddress() {
+        if (shippingCity == null) return null;
+        return shippingCity + ", " + shippingState + " - " + shippingPincode;
     }
 }

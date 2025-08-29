@@ -1,5 +1,6 @@
 com\bharatshop\storefront\dto\CartItemResponse.class
 com\bharatshop\storefront\dto\CartResponse$CartResponseBuilder.class
+com\bharatshop\storefront\dto\AddressRequest$AddressRequestBuilder.class
 com\bharatshop\storefront\repository\CartItemRepository.class
 com\bharatshop\storefront\shared\ApiResponse.class
 com\bharatshop\storefront\entity\CartItem$CartItemBuilder.class
@@ -22,8 +23,10 @@ com\bharatshop\storefront\repository\OrderRepository.class
 com\bharatshop\storefront\dto\CheckoutRequest.class
 com\bharatshop\storefront\model\Page.class
 com\bharatshop\storefront\entity\Order$PaymentStatus.class
+com\bharatshop\storefront\dto\AddressResponse$AddressResponseBuilder.class
 com\bharatshop\storefront\dto\CartResponse.class
 com\bharatshop\storefront\repository\OrderItemRepository.class
+com\bharatshop\storefront\controller\AddressController.class
 com\bharatshop\storefront\model\Page$PageType.class
 com\bharatshop\storefront\dto\PageResponseDto.class
 com\bharatshop\storefront\dto\auth\EmailLoginRequest$EmailLoginRequestBuilder.class
@@ -39,6 +42,7 @@ com\bharatshop\storefront\service\OrderService$OrderStatistics.class
 com\bharatshop\storefront\model\Product.class
 com\bharatshop\storefront\controller\StorefrontCategoryController.class
 com\bharatshop\storefront\entity\Order$OrderBuilder.class
+com\bharatshop\storefront\service\AddressService.class
 com\bharatshop\storefront\service\OrderService$OrderStatistics$OrderStatisticsBuilder.class
 com\bharatshop\storefront\controller\StorefrontVendorController.class
 com\bharatshop\storefront\entity\Cart.class
@@ -46,6 +50,7 @@ com\bharatshop\storefront\dto\AddToCartRequest$AddToCartRequestBuilder.class
 com\bharatshop\storefront\controller\StorefrontOrderController.class
 com\bharatshop\storefront\dto\AddToCartRequest.class
 com\bharatshop\storefront\repository\PageRepository.class
+com\bharatshop\storefront\dto\AddressResponse.class
 com\bharatshop\storefront\service\CartService.class
 com\bharatshop\storefront\controller\StorefrontPageController.class
 com\bharatshop\storefront\service\PaymentService.class
@@ -71,6 +76,7 @@ com\bharatshop\storefront\repository\ProductRepository.class
 com\bharatshop\storefront\model\Product$ProductBuilder.class
 com\bharatshop\storefront\service\OrderService$1.class
 com\bharatshop\storefront\entity\StorefrontUser$StorefrontRole.class
+com\bharatshop\storefront\dto\AddressRequest.class
 com\bharatshop\storefront\dto\auth\PhoneLoginRequest$PhoneLoginRequestBuilder.class
 com\bharatshop\storefront\service\VendorService.class
 com\bharatshop\storefront\dto\WebhookRequest.class
@@ -83,3 +89,4 @@ com\bharatshop\storefront\dto\OrderItemResponse.class
 com\bharatshop\storefront\dto\UpdateCartRequest.class
 com\bharatshop\storefront\service\OrderService.class
 com\bharatshop\storefront\dto\WebhookRequest$PaymentEntity.class
+com\bharatshop\storefront\service\AddressService$CustomerInfo.class

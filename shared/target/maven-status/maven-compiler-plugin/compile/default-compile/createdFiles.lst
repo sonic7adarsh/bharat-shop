@@ -14,8 +14,10 @@ com\bharatshop\shared\entity\Product.class
 com\bharatshop\shared\entity\Category$CategoryBuilder.class
 com\bharatshop\shared\entity\Vendor$VendorStatus.class
 com\bharatshop\shared\repository\CategoryRepository.class
+com\bharatshop\shared\entity\CustomerAddress$CustomerAddressBuilder.class
 com\bharatshop\shared\entity\Payment.class
 com\bharatshop\shared\entity\BaseEntity.class
+com\bharatshop\shared\entity\CustomerAddress.class
 com\bharatshop\shared\repository\TenantAwareRepository.class
 com\bharatshop\shared\repository\PaymentGatewayRepository.class
 com\bharatshop\shared\entity\Payment$PaymentStatus.class
@@ -23,6 +25,7 @@ com\bharatshop\shared\entity\PaymentGateway$GatewayType.class
 com\bharatshop\shared\entity\Vendor.class
 com\bharatshop\shared\entity\ProductImage.class
 com\bharatshop\shared\entity\PaymentGateway$PaymentGatewayBuilder.class
+com\bharatshop\shared\repository\CustomerAddressRepository.class
 com\bharatshop\shared\entity\Category$CategoryBuilderImpl.class
 com\bharatshop\shared\entity\Product$ProductBuilder.class
 com\bharatshop\shared\repository\ProductImageRepository.class

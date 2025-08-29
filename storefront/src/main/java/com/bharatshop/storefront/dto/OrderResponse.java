@@ -27,7 +27,20 @@ public class OrderResponse {
     private BigDecimal taxAmount;
     private BigDecimal shippingAmount;
     private BigDecimal subtotal;
-    private Long addressId;
+    
+    // Shipping Address Information
+    private Long shippingAddressId;
+    private String shippingName;
+    private String shippingPhone;
+    private String shippingLine1;
+    private String shippingLine2;
+    private String shippingCity;
+    private String shippingState;
+    private String shippingPincode;
+    private String shippingCountry;
+    private String fullShippingAddress;
+    private String shortShippingAddress;
+    
     private String notes;
     private List<OrderItemResponse> items;
     private Integer totalItems;
@@ -41,6 +54,12 @@ public class OrderResponse {
     private LocalDateTime updatedAt;
     private LocalDateTime deliveredAt;
     private LocalDateTime cancelledAt;
+    private LocalDateTime packedAt;
+    private LocalDateTime shippedAt;
+    private String trackingNumber;
+    private String courierPartner;
+    private boolean canBePacked;
+    private boolean canBeShipped;
     
     public static OrderResponse fromEntity(Order order) {
         List<OrderItemResponse> itemResponses = order.getItems() != null ? 
@@ -60,7 +79,17 @@ public class OrderResponse {
                 .taxAmount(order.getTaxAmount())
                 .shippingAmount(order.getShippingAmount())
                 .subtotal(order.getSubtotal())
-                .addressId(order.getAddressId())
+                .shippingAddressId(order.getShippingAddressId())
+                .shippingName(order.getShippingName())
+                .shippingPhone(order.getShippingPhone())
+                .shippingLine1(order.getShippingLine1())
+                .shippingLine2(order.getShippingLine2())
+                .shippingCity(order.getShippingCity())
+                .shippingState(order.getShippingState())
+                .shippingPincode(order.getShippingPincode())
+                .shippingCountry(order.getShippingCountry())
+                .fullShippingAddress(order.getFullShippingAddress())
+                .shortShippingAddress(order.getShortShippingAddress())
                 .notes(order.getNotes())
                 .items(itemResponses)
                 .totalItems(order.getTotalItems())
@@ -74,6 +103,12 @@ public class OrderResponse {
                 .updatedAt(order.getUpdatedAt())
                 .deliveredAt(order.getDeliveredAt())
                 .cancelledAt(order.getCancelledAt())
+                .packedAt(order.getPackedAt())
+                .shippedAt(order.getShippedAt())
+                .trackingNumber(order.getTrackingNumber())
+                .courierPartner(order.getCourierPartner())
+                .canBePacked(order.canBePacked())
+                .canBeShipped(order.canBeShipped())
                 .build();
     }
 }
