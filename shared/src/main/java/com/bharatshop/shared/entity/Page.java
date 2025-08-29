@@ -1,6 +1,6 @@
-package com.bharatshop.storefront.model;
+package com.bharatshop.shared.entity;
 
-import com.bharatshop.shared.entity.BaseEntity;
+import com.bharatshop.shared.enums.PageType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,14 +9,16 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 /**
- * CMS Page entity for storefront content management.
- * Represents static pages like About Us, Privacy Policy, Terms of Service, etc.
+ * Page entity for content management system.
+ * Represents pages that can be customized and rendered in the storefront.
  */
 @Entity
 @Table(name = "pages", indexes = {
     @Index(name = "idx_page_slug", columnList = "slug"),
-    @Index(name = "idx_page_tenant_slug", columnList = "tenantId, slug"),
-    @Index(name = "idx_page_active", columnList = "active")
+    @Index(name = "idx_page_tenant_slug", columnList = "tenant_id, slug"),
+    @Index(name = "idx_page_active", columnList = "active"),
+    @Index(name = "idx_page_published", columnList = "published"),
+    @Index(name = "idx_page_type", columnList = "page_type")
 })
 @Getter
 @Setter
@@ -28,7 +30,7 @@ public class Page extends BaseEntity {
     @Column(nullable = false, length = 200)
     private String title;
     
-    @Column(nullable = false, unique = true, length = 100)
+    @Column(nullable = false, length = 100)
     private String slug;
     
     @Column(columnDefinition = "TEXT")
@@ -58,20 +60,31 @@ public class Page extends BaseEntity {
     @Column(nullable = false)
     private Boolean published = false;
     
-    @Column
+    @Column(name = "sort_order")
     private Integer sortOrder = 0;
     
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "page_type", nullable = false)
     private PageType pageType = PageType.STATIC;
     
     @Column(length = 100)
     private String template;
     
-    public enum PageType {
-        STATIC,     // Static content pages
-        DYNAMIC,    // Dynamic content pages
-        LANDING,    // Landing pages
-        LEGAL       // Legal pages (Privacy, Terms, etc.)
-    }
+    @Column(name = "template_id")
+    private String templateId;
+    
+    @Column(name = "custom_css", columnDefinition = "TEXT")
+    private String customCss;
+    
+    @Column(name = "custom_js", columnDefinition = "TEXT")
+    private String customJs;
+    
+    @Column(name = "featured_image", length = 500)
+    private String featuredImage;
+    
+    @Column(name = "author", length = 100)
+    private String author;
+    
+    @Column(name = "status", length = 50)
+    private String status = "draft";
 }

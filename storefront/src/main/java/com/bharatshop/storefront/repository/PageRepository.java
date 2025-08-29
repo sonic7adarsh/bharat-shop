@@ -52,4 +52,10 @@ public interface PageRepository extends TenantAwareRepository<Page> {
      */
     @Query("SELECT COUNT(p) > 0 FROM Page p WHERE p.slug = :slug AND p.tenantId = :tenantId AND p.deletedAt IS NULL")
     boolean existsBySlugAndTenantId(@Param("slug") String slug, @Param("tenantId") UUID tenantId);
+    
+    /**
+     * Find active page by ID
+     */
+    @Query("SELECT p FROM Page p WHERE p.id = :id AND p.active = true AND p.deletedAt IS NULL")
+    Optional<Page> findActiveById(@Param("id") UUID id);
 }

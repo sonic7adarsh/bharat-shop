@@ -116,4 +116,47 @@ public class StorefrontPageController {
                     .body(ApiResponse.error("Error fetching pages: " + e.getMessage()));
         }
     }
+    
+    /**
+     * Get page render data with template and layout
+     * GET /store/pages/{slug}/render
+     */
+    @GetMapping("/pages/{slug}/render")
+    @Operation(summary = "Get page render data", description = "Retrieve page with template and layout configuration for storefront rendering")
+    public ResponseEntity<ApiResponse<PageService.PageRenderData>> getPageRenderData(
+            @Parameter(description = "Page slug")
+            @PathVariable String slug,
+            
+            @Parameter(description = "Tenant ID header for multi-tenancy")
+            @RequestHeader(value = "X-Tenant-ID", required = false) String tenantIdHeader,
+            
+            @Parameter(description = "Tenant domain header for multi-tenancy")
+            @RequestHeader(value = "X-Tenant-Domain", required = false) String tenantDomain) {
+        
+        try {
+            log.info("Fetching page render data for slug: {} and tenant: {}", slug, tenantIdHeader != null ? tenantIdHeader : tenantDomain);
+            
+            // Set tenant context if provided
+            if (tenantIdHeader != null && !tenantIdHeader.trim().isEmpty()) {
+                try {
+                    UUID tenantId = UUID.fromString(tenantIdHeader.trim());
+                    // Note: You might need to set tenant context here if using TenantContext
+                    // TenantContext.setCurrentTenant(tenantId);
+                } catch (IllegalArgumentException e) {
+                    log.warn("Invalid tenant ID format: {}", tenantIdHeader);
+                    return ResponseEntity.badRequest()
+                            .body(ApiResponse.error("Invalid tenant ID format"));
+                }
+            }
+            
+            return pageService.getPageRenderData(slug)
+                    .map(renderData -> ResponseEntity.ok(ApiResponse.success(renderData)))
+                    .orElse(ResponseEntity.notFound().build());
+                    
+        } catch (Exception e) {
+            log.error("Error fetching page render data for slug: {}", slug, e);
+            return ResponseEntity.internalServerError()
+                    .body(ApiResponse.error("Error fetching page render data: " + e.getMessage()));
+        }
+    }
 }

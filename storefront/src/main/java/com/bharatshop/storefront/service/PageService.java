@@ -3,13 +3,18 @@ package com.bharatshop.storefront.service;
 import com.bharatshop.storefront.dto.PageResponseDto;
 import com.bharatshop.storefront.model.Page;
 import com.bharatshop.storefront.repository.PageRepository;
+import com.bharatshop.shared.entity.Template;
+import com.bharatshop.shared.service.TemplateService;
+import com.bharatshop.shared.tenant.TenantContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -20,10 +25,11 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@Transactional(readOnly = true)
+@Transactional
 public class PageService {
     
     private final PageRepository pageRepository;
+    private final TemplateService templateService;
     
     /**
      * Get page by slug (tenant-aware)
@@ -78,6 +84,75 @@ public class PageService {
     }
     
     /**
+     * Get page with merged template and layout configuration for rendering
+     */
+    @Transactional(readOnly = true)
+    public Optional<PageRenderData> getPageRenderData(String slug) {
+        String tenantIdStr = TenantContext.getCurrentTenant();
+        UUID tenantId = UUID.fromString(tenantIdStr);
+        Optional<Page> pageOpt = pageRepository.findBySlugAndTenantId(slug, tenantId);
+        
+        if (pageOpt.isEmpty()) {
+            return Optional.empty();
+        }
+        
+        Page page = pageOpt.get();
+        PageRenderData renderData = new PageRenderData();
+        renderData.setPage(page);
+        
+        // Get template configuration if template is specified
+        if (page.getTemplate() != null && !page.getTemplate().trim().isEmpty()) {
+            Optional<Template> templateOpt = templateService.getTemplateByName(page.getTemplate());
+            templateOpt.ifPresent(renderData::setTemplate);
+        }
+        
+        return Optional.of(renderData);
+    }
+    
+    /**
+     * Update page layout (for template customization)
+     */
+    public Page updatePageLayout(UUID id, String layoutJson) {
+        Page page = pageRepository.findActiveById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Page not found with ID: " + id));
+        
+        if (layoutJson != null && !isValidJson(layoutJson)) {
+            throw new IllegalArgumentException("Invalid JSON format in layout configuration");
+        }
+        
+        page.setLayout(layoutJson);
+        
+        log.info("Updated layout for page: {}", page.getTitle());
+        return pageRepository.save(page);
+    }
+    
+    /**
+     * Update page SEO settings
+     */
+    public Page updatePageSeo(UUID id, String seoJson) {
+        Page page = pageRepository.findActiveById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Page not found with ID: " + id));
+        
+        if (seoJson != null && !isValidJson(seoJson)) {
+            throw new IllegalArgumentException("Invalid JSON format in SEO configuration");
+        }
+        
+        page.setSeo(seoJson);
+        
+        log.info("Updated SEO for page: {}", page.getTitle());
+        return pageRepository.save(page);
+    }
+    
+    /**
+     * Basic JSON validation
+     */
+    private boolean isValidJson(String json) {
+        json = json.trim();
+        return (json.startsWith("{") && json.endsWith("}")) || 
+               (json.startsWith("[") && json.endsWith("]"));
+    }
+    
+    /**
      * Map Page entity to PageResponseDto
      */
     private PageResponseDto mapToResponseDto(Page page) {
@@ -92,9 +167,25 @@ public class PageService {
                 .metaKeywords(page.getMetaKeywords())
                 .pageType(page.getPageType())
                 .template(page.getTemplate())
+                .layout(page.getLayout())
+                .seo(page.getSeo())
                 .sortOrder(page.getSortOrder())
                 .createdAt(page.getCreatedAt())
                 .updatedAt(page.getUpdatedAt())
                 .build();
+    }
+    
+    /**
+     * Data class for page rendering with template
+     */
+    public static class PageRenderData {
+        private Page page;
+        private Template template;
+        
+        public Page getPage() { return page; }
+        public void setPage(Page page) { this.page = page; }
+        
+        public Template getTemplate() { return template; }
+        public void setTemplate(Template template) { this.template = template; }
     }
 }
