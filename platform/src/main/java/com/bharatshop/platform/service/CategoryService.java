@@ -2,6 +2,7 @@ package com.bharatshop.platform.service;
 
 import com.bharatshop.shared.entity.Category;
 import com.bharatshop.shared.repository.CategoryRepository;
+import com.bharatshop.shared.service.FeatureFlagService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ import org.springframework.data.domain.Pageable;
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
+    private final FeatureFlagService featureFlagService;
 
     public List<Category> getAllCategoriesByTenant(UUID tenantId) {
         return categoryRepository.findByTenantIdAndDeletedAtIsNullOrderBySortOrderAsc(tenantId);
@@ -65,6 +67,10 @@ public class CategoryService {
 
     public Category createCategory(Category category, UUID tenantId) {
         validateCategory(category, tenantId);
+        
+        // Check category limit before creating
+        int currentCategoryCount = getAllCategoriesByTenant(tenantId).size();
+        featureFlagService.enforceCategoryLimit(tenantId, currentCategoryCount);
         
         category.setTenantId(tenantId);
         category.setSlug(generateSlug(category.getName(), tenantId));

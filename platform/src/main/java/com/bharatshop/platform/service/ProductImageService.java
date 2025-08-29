@@ -4,6 +4,7 @@ import com.bharatshop.shared.entity.Product;
 import com.bharatshop.shared.entity.ProductImage;
 import com.bharatshop.shared.repository.ProductImageRepository;
 import com.bharatshop.shared.repository.ProductRepository;
+import com.bharatshop.shared.service.FeatureFlagService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,7 @@ public class ProductImageService {
 
     private final ProductImageRepository productImageRepository;
     private final ProductRepository productRepository;
+    private final FeatureFlagService featureFlagService;
     
     // Configuration - these should be externalized to application.properties
     private static final String UPLOAD_DIR = "uploads/products";
@@ -82,6 +84,10 @@ public class ProductImageService {
         
         // Validate file
         validateImageFile(file);
+        
+        // Enforce storage limit
+        long currentStorageUsed = getCurrentStorageUsage(tenantId);
+        featureFlagService.enforceStorageLimit(tenantId, currentStorageUsed, file.getSize());
         
         // Generate unique filename
         String originalFilename = file.getOriginalFilename();
@@ -303,6 +309,37 @@ public class ProductImageService {
         }
         
         return productImageRepository.countByProductId(productId);
+    }
+    
+    /**
+     * Calculate current storage usage for a tenant
+     */
+    private long getCurrentStorageUsage(UUID tenantId) {
+        // Get all products for the tenant
+        List<Product> products = productRepository.findByTenantIdAndDeletedAtIsNull(tenantId);
+        
+        long totalStorage = 0;
+        for (Product product : products) {
+            // Get all images for each product
+            List<ProductImage> images = productImageRepository.findByProductIdAndIsDeletedFalseOrderBySortOrderAsc(product.getId());
+            
+            for (ProductImage image : images) {
+                try {
+                    String imageUrl = image.getImageUrl();
+                    if (imageUrl.startsWith("/")) {
+                        imageUrl = imageUrl.substring(1);
+                    }
+                    Path filePath = Paths.get(imageUrl);
+                    if (Files.exists(filePath)) {
+                        totalStorage += Files.size(filePath);
+                    }
+                } catch (IOException e) {
+                    log.warn("Failed to get file size for image: {}", image.getImageUrl(), e);
+                }
+            }
+        }
+        
+        return totalStorage;
     }
 
     private void validateImageFile(MultipartFile file) {

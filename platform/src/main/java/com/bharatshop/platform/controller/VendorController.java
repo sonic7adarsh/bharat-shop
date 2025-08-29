@@ -2,6 +2,7 @@ package com.bharatshop.platform.controller;
 
 import com.bharatshop.platform.service.VendorService;
 import com.bharatshop.shared.entity.Vendor;
+import com.bharatshop.shared.service.FeatureFlagService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,7 @@ import java.util.UUID;
 public class VendorController {
     
     private final VendorService vendorService;
+    private final FeatureFlagService featureFlagService;
     
     /**
      * Get current vendor profile
@@ -82,8 +84,13 @@ public class VendorController {
      */
     @PostMapping("/domain-availability")
     @PreAuthorize("hasRole('VENDOR')")
-    public ResponseEntity<?> checkDomainAvailability(@RequestBody Map<String, String> request) {
+    public ResponseEntity<?> checkDomainAvailability(@RequestBody Map<String, String> request, Principal principal) {
         try {
+            UUID vendorId = extractVendorIdFromPrincipal(principal);
+            
+            // Enforce custom domain feature access
+            featureFlagService.enforceFeatureAccess(vendorId, "customDomain");
+            
             String domain = request.get("domain");
             
             if (domain == null || domain.trim().isEmpty()) {

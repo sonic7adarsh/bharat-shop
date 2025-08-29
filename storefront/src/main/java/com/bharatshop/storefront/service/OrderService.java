@@ -5,6 +5,7 @@ import com.bharatshop.shared.entity.Payment;
 import com.bharatshop.shared.entity.Product;
 import com.bharatshop.shared.repository.CustomerAddressRepository;
 import com.bharatshop.shared.repository.ProductRepository;
+import com.bharatshop.shared.service.FeatureFlagService;
 import com.bharatshop.storefront.entity.*;
 import com.bharatshop.storefront.repository.OrderItemRepository;
 import com.bharatshop.storefront.repository.OrderRepository;
@@ -37,11 +38,17 @@ public class OrderService {
     private final PaymentService paymentService;
     private final AddressService addressService;
     private final CustomerAddressRepository customerAddressRepository;
+    private final FeatureFlagService featureFlagService;
     
     /**
      * Create order from cart (checkout)
      */
     public Order createOrderFromCart(Long customerId, Long tenantId, Long addressId, String notes) {
+        // Check order limit before creating
+        UUID tenantUuid = UUID.fromString(tenantId.toString());
+        int currentOrderCount = orderRepository.countByTenantId(tenantId).intValue();
+        featureFlagService.enforceOrderLimit(tenantUuid, currentOrderCount);
+        
         // Get customer's cart
         Cart cart = cartService.getOrCreateCart(customerId, tenantId);
         

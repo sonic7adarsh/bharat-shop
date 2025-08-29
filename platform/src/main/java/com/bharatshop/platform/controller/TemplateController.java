@@ -3,6 +3,8 @@ package com.bharatshop.platform.controller;
 import com.bharatshop.platform.shared.ApiResponse;
 import com.bharatshop.shared.entity.Template;
 import com.bharatshop.shared.service.TemplateService;
+import com.bharatshop.shared.service.FeatureFlagService;
+import com.bharatshop.shared.tenant.TenantContext;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -32,6 +34,7 @@ import java.util.UUID;
 public class TemplateController {
     
     private final TemplateService templateService;
+    private final FeatureFlagService featureFlagService;
     
     /**
      * Get all active templates
@@ -161,6 +164,11 @@ public class TemplateController {
             @Valid @RequestBody Template template) {
         
         try {
+            UUID tenantId = UUID.fromString(TenantContext.getCurrentTenant());
+            
+            // Enforce advanced features access for template creation
+            featureFlagService.enforceFeatureAccess(tenantId, "advancedFeatures");
+            
             Template createdTemplate = templateService.createTemplate(template);
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(ApiResponse.success(createdTemplate));
@@ -191,6 +199,11 @@ public class TemplateController {
             @Valid @RequestBody Template template) {
         
         try {
+            UUID tenantId = UUID.fromString(TenantContext.getCurrentTenant());
+            
+            // Enforce advanced features access for template updates
+            featureFlagService.enforceFeatureAccess(tenantId, "advancedFeatures");
+            
             Template updatedTemplate = templateService.updateTemplate(id, template);
             return ResponseEntity.ok(ApiResponse.success(updatedTemplate));
             

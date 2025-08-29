@@ -4,6 +4,8 @@ import com.bharatshop.platform.shared.ApiResponse;
 import com.bharatshop.shared.dto.PageRequestDto;
 import com.bharatshop.shared.dto.PageResponseDto;
 import com.bharatshop.shared.service.PageService;
+import com.bharatshop.shared.service.FeatureFlagService;
+import com.bharatshop.shared.tenant.TenantContext;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -32,6 +34,7 @@ import java.util.UUID;
 public class PageController {
     
     private final PageService pageService;
+    private final FeatureFlagService featureFlagService;
     
     /**
      * Get all pages with pagination
@@ -121,6 +124,11 @@ public class PageController {
             @Valid @RequestBody PageRequestDto pageRequest) {
         
         try {
+            UUID tenantId = UUID.fromString(TenantContext.getCurrentTenant());
+            
+            // Enforce advanced features access for page creation
+            featureFlagService.enforceFeatureAccess(tenantId, "advancedFeatures");
+            
             PageResponseDto createdPage = pageService.createPage(pageRequest);
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(ApiResponse.success(createdPage));
@@ -151,6 +159,11 @@ public class PageController {
             @Valid @RequestBody PageRequestDto pageRequest) {
         
         try {
+            UUID tenantId = UUID.fromString(TenantContext.getCurrentTenant());
+            
+            // Enforce advanced features access for page updates
+            featureFlagService.enforceFeatureAccess(tenantId, "advancedFeatures");
+            
             PageResponseDto updatedPage = pageService.updatePage(id, pageRequest);
             return ResponseEntity.ok(ApiResponse.success(updatedPage));
             

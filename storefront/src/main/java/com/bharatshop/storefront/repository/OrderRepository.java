@@ -83,6 +83,11 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
                                                   @Param("cutoffTime") LocalDateTime cutoffTime);
     
     /**
+     * Count orders by tenant
+     */
+    Long countByTenantId(Long tenantId);
+    
+    /**
      * Count orders by customer and tenant
      */
     Long countByCustomerIdAndTenantId(Long customerId, Long tenantId);

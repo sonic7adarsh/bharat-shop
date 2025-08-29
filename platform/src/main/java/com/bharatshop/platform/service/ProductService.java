@@ -2,6 +2,7 @@ package com.bharatshop.platform.service;
 
 import com.bharatshop.shared.entity.Product;
 import com.bharatshop.shared.repository.ProductRepository;
+import com.bharatshop.shared.service.FeatureFlagService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -22,6 +23,7 @@ import java.util.UUID;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final FeatureFlagService featureFlagService;
 
     public List<Product> getAllProductsByTenant(UUID tenantId) {
         return productRepository.findByTenantIdAndDeletedAtIsNull(tenantId);
@@ -60,6 +62,10 @@ public class ProductService {
 
     public Product createProduct(Product product, UUID tenantId) {
         validateProduct(product);
+        
+        // Check product limit before creating
+        int currentProductCount = (int) getProductCount(tenantId);
+        featureFlagService.enforceProductLimit(tenantId, currentProductCount);
         
         product.setTenantId(tenantId);
         product.setSlug(generateSlug(product.getName(), tenantId));

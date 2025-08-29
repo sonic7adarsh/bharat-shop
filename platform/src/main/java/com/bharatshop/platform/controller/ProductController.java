@@ -2,6 +2,7 @@ package com.bharatshop.platform.controller;
 
 import com.bharatshop.platform.service.ProductService;
 import com.bharatshop.shared.entity.Product;
+import com.bharatshop.shared.service.FeatureFlagService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,6 +25,7 @@ import java.util.UUID;
 public class ProductController {
 
     private final ProductService productService;
+    private final FeatureFlagService featureFlagService;
 
     @GetMapping
     public ResponseEntity<Map<String, Object>> getAllProducts(
@@ -171,6 +173,9 @@ public class ProductController {
     @GetMapping("/stats")
     public ResponseEntity<Map<String, Object>> getProductStats(Authentication authentication) {
         UUID tenantId = getTenantIdFromAuth(authentication);
+        
+        // Enforce analytics feature access
+        featureFlagService.enforceFeatureAccess(tenantId, "analytics");
         
         Map<String, Object> stats = new HashMap<>();
         stats.put("totalProducts", productService.getProductCount(tenantId));

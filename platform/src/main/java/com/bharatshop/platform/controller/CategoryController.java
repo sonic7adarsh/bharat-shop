@@ -2,6 +2,7 @@ package com.bharatshop.platform.controller;
 
 import com.bharatshop.platform.service.CategoryService;
 import com.bharatshop.shared.entity.Category;
+import com.bharatshop.shared.service.FeatureFlagService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,6 +25,7 @@ import java.util.UUID;
 public class CategoryController {
 
     private final CategoryService categoryService;
+    private final FeatureFlagService featureFlagService;
 
     @GetMapping
     public ResponseEntity<Map<String, Object>> getAllCategories(
@@ -207,6 +209,9 @@ public class CategoryController {
     @GetMapping("/stats")
     public ResponseEntity<Map<String, Object>> getCategoryStats(Authentication authentication) {
         UUID tenantId = getTenantIdFromAuth(authentication);
+        
+        // Enforce analytics feature access
+        featureFlagService.enforceFeatureAccess(tenantId, "analytics");
         
         Map<String, Object> stats = new HashMap<>();
         stats.put("totalCategories", categoryService.getCategoryCount(tenantId));
