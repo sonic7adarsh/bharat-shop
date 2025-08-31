@@ -3,6 +3,10 @@ package com.bharatshop.storefront.service;
 import com.bharatshop.storefront.dto.ProductResponseDto;
 import com.bharatshop.storefront.model.Product;
 import com.bharatshop.storefront.repository.ProductRepository;
+import com.bharatshop.shared.dto.ProductVariantDto;
+import com.bharatshop.shared.dto.ProductOptionDto;
+import com.bharatshop.platform.service.ProductVariantService;
+import com.bharatshop.platform.service.ProductOptionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
@@ -12,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Customer-focused product service for storefront operations
@@ -24,6 +29,8 @@ import java.util.List;
 public class StorefrontProductService {
     
     private final ProductRepository productRepository;
+    private final ProductVariantService productVariantService;
+    private final ProductOptionService productOptionService;
     
     /**
      * Get products with customer-focused filtering and sorting
@@ -182,16 +189,26 @@ public class StorefrontProductService {
      * Includes customer-specific data formatting and calculations
      */
     private ProductResponseDto mapToCustomerResponseDto(Product product) {
-        return ProductResponseDto.builder()
+        // Get product variants
+        List<ProductVariantDto> variants = productVariantService.getVariantsByProduct(product.getId(), product.getTenantId());
+        
+        // Get default variant (first variant or null if no variants)
+        ProductVariantDto defaultVariant = variants.isEmpty() ? null : 
+            variants.stream()
+                .filter(v -> Boolean.TRUE.equals(v.getIsDefault()))
+                .findFirst()
+                .orElse(variants.get(0));
+        
+        // Get product options
+        List<ProductOptionDto> options = productOptionService.getProductOptions(product.getId(), product.getTenantId());
+        
+        // Use variant data for price and stock if available, otherwise use product data
+        ProductResponseDto.ProductResponseDtoBuilder builder = ProductResponseDto.builder()
                 .id(product.getId())
                 .name(product.getName())
                 .description(product.getDescription())
-                .price(product.getPrice())
-                .discountPrice(product.getDiscountPrice())
                 .category(product.getCategory())
                 .brand(product.getBrand())
-                .sku(product.getSku())
-                .stockQuantity(product.getStockQuantity())
                 .imageUrls(product.getImageUrls())
                 .featured(product.getFeatured())
                 .active(product.getActive())
@@ -204,6 +221,24 @@ public class StorefrontProductService {
                 .dimensions(product.getDimensions())
                 .createdAt(product.getCreatedAt())
                 .updatedAt(product.getUpdatedAt())
-                .build();
+                .defaultVariant(defaultVariant)
+                .variants(variants)
+                .options(options)
+                .hasVariants(!variants.isEmpty());
+        
+        // Use variant data if available, otherwise fallback to product data
+        if (defaultVariant != null) {
+            builder.price(defaultVariant.getPrice())
+                   .discountPrice(defaultVariant.getDiscountPrice())
+                   .sku(defaultVariant.getSku())
+                   .stockQuantity(defaultVariant.getStockQuantity());
+        } else {
+            builder.price(product.getPrice())
+                   .discountPrice(product.getDiscountPrice())
+                   .sku(product.getSku())
+                   .stockQuantity(product.getStockQuantity());
+        }
+        
+        return builder.build();
     }
 }

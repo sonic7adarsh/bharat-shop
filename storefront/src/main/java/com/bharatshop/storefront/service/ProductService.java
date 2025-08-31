@@ -3,6 +3,10 @@ package com.bharatshop.storefront.service;
 import com.bharatshop.storefront.dto.ProductResponseDto;
 import com.bharatshop.storefront.model.Product;
 import com.bharatshop.storefront.repository.ProductRepository;
+import com.bharatshop.shared.dto.ProductVariantDto;
+import com.bharatshop.shared.dto.ProductOptionDto;
+import com.bharatshop.platform.service.ProductVariantService;
+import com.bharatshop.platform.service.ProductOptionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -25,6 +29,8 @@ public class ProductService {
     
     private static final Logger log = LoggerFactory.getLogger(ProductService.class);
     private final ProductRepository productRepository;
+    private final ProductVariantService productVariantService;
+    private final ProductOptionService productOptionService;
     
     @Cacheable(value = "products", key = "#category + '_' + #search + '_' + #minPrice + '_' + #maxPrice + '_' + #pageable.pageNumber + '_' + #pageable.pageSize")
     public Page<ProductResponseDto> getAllProducts(String category, String search, Double minPrice, Double maxPrice, Pageable pageable) {
@@ -118,16 +124,26 @@ public class ProductService {
     }
     
     private ProductResponseDto mapToResponseDto(Product product) {
-        return ProductResponseDto.builder()
+        // Get product variants
+        List<ProductVariantDto> variants = productVariantService.getVariantsByProduct(product.getId(), product.getTenantId());
+        
+        // Get default variant (first variant or null if no variants)
+        ProductVariantDto defaultVariant = variants.isEmpty() ? null : 
+            variants.stream()
+                .filter(v -> Boolean.TRUE.equals(v.getIsDefault()))
+                .findFirst()
+                .orElse(variants.get(0));
+        
+        // Get product options
+        List<ProductOptionDto> options = productOptionService.getProductOptions(product.getId(), product.getTenantId());
+        
+        // Use variant data for price and stock if available, otherwise use product data
+        ProductResponseDto.ProductResponseDtoBuilder builder = ProductResponseDto.builder()
                 .id(product.getId())
                 .name(product.getName())
                 .description(product.getDescription())
-                .price(product.getPrice())
-                .discountPrice(product.getDiscountPrice())
                 .category(product.getCategory())
                 .brand(product.getBrand())
-                .sku(product.getSku())
-                .stockQuantity(product.getStockQuantity())
                 .imageUrls(product.getImageUrls())
                 .featured(product.getFeatured())
                 .active(product.getActive())
@@ -135,6 +151,24 @@ public class ProductService {
                 .reviewCount(product.getReviewCount())
                 .createdAt(product.getCreatedAt())
                 .updatedAt(product.getUpdatedAt())
-                .build();
+                .defaultVariant(defaultVariant)
+                .variants(variants)
+                .options(options)
+                .hasVariants(!variants.isEmpty());
+        
+        // Use variant data if available, otherwise fallback to product data
+        if (defaultVariant != null) {
+            builder.price(defaultVariant.getPrice())
+                   .discountPrice(defaultVariant.getDiscountPrice())
+                   .sku(defaultVariant.getSku())
+                   .stockQuantity(defaultVariant.getStockQuantity());
+        } else {
+            builder.price(product.getPrice())
+                   .discountPrice(product.getDiscountPrice())
+                   .sku(product.getSku())
+                   .stockQuantity(product.getStockQuantity());
+        }
+        
+        return builder.build();
     }
 }

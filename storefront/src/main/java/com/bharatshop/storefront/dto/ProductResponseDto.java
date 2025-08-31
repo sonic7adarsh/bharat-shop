@@ -11,6 +11,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import com.bharatshop.shared.dto.ProductVariantDto;
+import com.bharatshop.shared.dto.ProductOptionDto;
 
 @Data
 @Builder
@@ -84,6 +86,18 @@ public class ProductResponseDto {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedAt;
     
+    @Schema(description = "Default/selected product variant")
+    private ProductVariantDto defaultVariant;
+    
+    @Schema(description = "All available product variants")
+    private List<ProductVariantDto> variants;
+    
+    @Schema(description = "Product options (size, color, etc.)")
+    private List<ProductOptionDto> options;
+    
+    @Schema(description = "Whether product has variants")
+    private Boolean hasVariants;
+    
     @Schema(description = "Whether product is in stock")
     public Boolean getInStock() {
         return stockQuantity != null && stockQuantity > 0;
@@ -133,6 +147,10 @@ public class ProductResponseDto {
         private String dimensions;
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
+        private ProductVariantDto defaultVariant;
+        private List<ProductVariantDto> variants;
+        private List<ProductOptionDto> options;
+        private Boolean hasVariants;
         
         public ProductResponseDtoBuilder id(UUID id) {
             this.id = id;
@@ -239,6 +257,26 @@ public class ProductResponseDto {
             return this;
         }
         
+        public ProductResponseDtoBuilder defaultVariant(ProductVariantDto defaultVariant) {
+            this.defaultVariant = defaultVariant;
+            return this;
+        }
+        
+        public ProductResponseDtoBuilder variants(List<ProductVariantDto> variants) {
+            this.variants = variants;
+            return this;
+        }
+        
+        public ProductResponseDtoBuilder options(List<ProductOptionDto> options) {
+            this.options = options;
+            return this;
+        }
+        
+        public ProductResponseDtoBuilder hasVariants(Boolean hasVariants) {
+            this.hasVariants = hasVariants;
+            return this;
+        }
+        
         public ProductResponseDto build() {
             ProductResponseDto dto = new ProductResponseDto();
             dto.id = this.id;
@@ -262,6 +300,10 @@ public class ProductResponseDto {
             dto.dimensions = this.dimensions;
             dto.createdAt = this.createdAt;
             dto.updatedAt = this.updatedAt;
+            dto.defaultVariant = this.defaultVariant;
+            dto.variants = this.variants;
+            dto.options = this.options;
+            dto.hasVariants = this.hasVariants;
             return dto;
         }
     }

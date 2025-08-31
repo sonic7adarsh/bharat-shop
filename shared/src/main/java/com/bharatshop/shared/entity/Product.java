@@ -35,10 +35,12 @@ public class Product extends BaseEntity {
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
-    @Column(name = "price", nullable = false, precision = 10, scale = 2)
+    @Deprecated // Will be moved to ProductVariant
+    @Column(name = "price", precision = 10, scale = 2)
     private BigDecimal price;
 
-    @Column(name = "stock", nullable = false)
+    @Deprecated // Will be moved to ProductVariant
+    @Column(name = "stock")
     private Integer stock;
 
     @ElementCollection
@@ -58,11 +60,61 @@ public class Product extends BaseEntity {
     @Column(name = "status", nullable = false)
     private ProductStatus status;
 
+    // Relationships with variant entities
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ProductOption> productOptions;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ProductVariant> variants;
+
     public enum ProductStatus {
         DRAFT,
         ACTIVE,
         INACTIVE,
         OUT_OF_STOCK,
         DISCONTINUED
+    }
+
+    /**
+     * Get the default variant for this product
+     */
+    public ProductVariant getDefaultVariant() {
+        if (variants == null || variants.isEmpty()) {
+            return null;
+        }
+        return variants.stream()
+                .filter(ProductVariant::getIsDefault)
+                .findFirst()
+                .orElse(variants.get(0));
+    }
+
+    /**
+     * Check if product has variants
+     */
+    public boolean hasVariants() {
+        return variants != null && !variants.isEmpty();
+    }
+
+    /**
+     * Get effective price from default variant or fallback to product price
+     */
+    public BigDecimal getEffectivePrice() {
+        ProductVariant defaultVariant = getDefaultVariant();
+        if (defaultVariant != null) {
+            return defaultVariant.getEffectivePrice();
+        }
+        return price; // Fallback to deprecated price field
+    }
+
+    /**
+     * Get total stock from all variants or fallback to product stock
+     */
+    public Integer getTotalStock() {
+        if (variants != null && !variants.isEmpty()) {
+            return variants.stream()
+                    .mapToInt(ProductVariant::getAvailableStock)
+                    .sum();
+        }
+        return stock != null ? stock : 0; // Fallback to deprecated stock field
     }
 }

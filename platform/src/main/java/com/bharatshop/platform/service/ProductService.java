@@ -1,6 +1,8 @@
 package com.bharatshop.platform.service;
 
+import com.bharatshop.shared.dto.ProductVariantDto;
 import com.bharatshop.shared.entity.Product;
+import com.bharatshop.shared.entity.ProductVariant;
 import com.bharatshop.shared.repository.ProductRepository;
 import com.bharatshop.shared.service.FeatureFlagService;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -24,6 +27,7 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final FeatureFlagService featureFlagService;
+    private final ProductVariantService productVariantService;
 
     public List<Product> getAllProductsByTenant(UUID tenantId) {
         return productRepository.findByTenantIdAndDeletedAtIsNull(tenantId);
@@ -78,7 +82,14 @@ public class ProductService {
         }
         
         log.info("Creating product: {} for tenant: {}", product.getName(), tenantId);
-        return productRepository.save(product);
+        Product savedProduct = productRepository.save(product);
+        
+        // Create default variant if product has price and stock
+        if (product.getPrice() != null && product.getStock() != null) {
+            createDefaultVariant(savedProduct, tenantId);
+        }
+        
+        return savedProduct;
     }
 
     public Product updateProduct(UUID id, Product productUpdates, UUID tenantId) {
@@ -133,6 +144,9 @@ public class ProductService {
     public void deleteProduct(UUID id, UUID tenantId) {
         Product product = productRepository.findByIdAndTenantIdAndDeletedAtIsNull(id, tenantId)
                 .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
+        
+        // Delete all variants first
+        productVariantService.deleteVariantsByProduct(id, tenantId);
         
         product.setDeletedAt(LocalDateTime.now());
         product.setUpdatedAt(LocalDateTime.now());
@@ -190,5 +204,52 @@ public class ProductService {
         }
         
         return slug;
+    }
+    
+    /**
+     * Creates a default variant for a product using the product's price and stock.
+     */
+    private void createDefaultVariant(Product product, UUID tenantId) {
+        try {
+            ProductVariantDto defaultVariant = ProductVariantDto.builder()
+                    .productId(product.getId())
+                    .sku(generateVariantSku(product.getName(), tenantId))
+                    .price(product.getPrice())
+                    .stock(product.getStock())
+                    .isDefault(true)
+                    .status(ProductVariant.VariantStatus.ACTIVE)
+                    .sortOrder(0)
+                    .build();
+            
+            productVariantService.createVariant(defaultVariant, tenantId);
+            log.info("Created default variant for product: {} with SKU: {}", product.getName(), defaultVariant.getSku());
+        } catch (Exception e) {
+            log.warn("Failed to create default variant for product: {} - {}", product.getName(), e.getMessage());
+        }
+    }
+    
+    /**
+     * Generates a unique SKU for a variant.
+     */
+    private String generateVariantSku(String productName, UUID tenantId) {
+        String baseSku = productName.toUpperCase()
+                .replaceAll("[^A-Z0-9\\s-]", "")
+                .replaceAll("\\s+", "-")
+                .replaceAll("-+", "-")
+                .replaceAll("^-|-$", "");
+        
+        if (baseSku.length() > 20) {
+            baseSku = baseSku.substring(0, 20);
+        }
+        
+        String sku = baseSku;
+        int counter = 1;
+        
+        while (productVariantService.getVariantBySku(sku, tenantId).isPresent()) {
+            sku = baseSku + "-" + counter;
+            counter++;
+        }
+        
+        return sku;
     }
 }
