@@ -1,6 +1,7 @@
 com\bharatshop\platform\dto\auth\LoginRequest.class
 com\bharatshop\platform\dto\auth\RegisterVendorRequest.class
 com\bharatshop\platform\config\CacheConfig.class
+com\bharatshop\platform\controller\VendorAnalyticsController.class
 com\bharatshop\platform\service\VendorService.class
 com\bharatshop\platform\tenant\TenantContext.class
 com\bharatshop\platform\controller\VendorController.class
@@ -34,6 +35,7 @@ com\bharatshop\platform\service\CategoryService.class
 com\bharatshop\platform\controller\PageController.class
 com\bharatshop\platform\controller\TenantController.class
 com\bharatshop\platform\service\ProductImageService.class
+com\bharatshop\platform\service\VendorAnalyticsService.class
 com\bharatshop\platform\controller\ProductImageController.class
 com\bharatshop\platform\entity\PlatformUser.class
 com\bharatshop\platform\entity\PlatformUser$PlatformRole.class

@@ -7,8 +7,11 @@ import com.bharatshop.shared.repository.CustomerAddressRepository;
 import com.bharatshop.shared.repository.ProductRepository;
 import com.bharatshop.shared.service.FeatureFlagService;
 import com.bharatshop.storefront.entity.*;
+import com.bharatshop.shared.entity.Cart;
 import com.bharatshop.storefront.repository.OrderItemRepository;
 import com.bharatshop.storefront.repository.OrderRepository;
+import com.bharatshop.shared.entity.CartItem;
+import com.bharatshop.shared.entity.OrderItem;
 import com.bharatshop.storefront.service.AddressService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -106,17 +109,47 @@ public class OrderService {
         // Create order items from cart items
         List<OrderItem> orderItems = new ArrayList<>();
         for (CartItem cartItem : cart.getItems()) {
-            OrderItem orderItem = OrderItem.fromCartItem(cartItem, order);
+            // Create OrderItem manually since fromCartItem expects shared.entity.Order
+            Product product = cartItem.getProduct();
+            OrderItem orderItem = OrderItem.builder()
+                    .order(null) // Will be set after converting to shared.entity.Order
+                    .product(product)
+                    .quantity(cartItem.getQuantity())
+                    .price(cartItem.getUnitPrice())
+                    .productName(product.getName())
+                    .productSku(product.getSlug())
+                    .productImageUrl(product.getImages() != null && !product.getImages().isEmpty() ? 
+                        product.getImages().get(0) : null)
+                    .build();
             orderItems.add(orderItem);
             
             // Update product stock
-            Product product = cartItem.getProduct();
             int newStock = product.getStock() - cartItem.getQuantity();
             if (newStock < 0) {
                 throw new RuntimeException("Insufficient stock for product: " + product.getName());
             }
             product.setStock(newStock);
             productRepository.save(product);
+        }
+        
+        // Create a shared.entity.Order for OrderItem relationships
+        com.bharatshop.shared.entity.Order sharedOrder = com.bharatshop.shared.entity.Order.builder()
+                .id(order.getId())
+                .tenantId(order.getTenantId())
+                .customerId(order.getCustomerId())
+                .orderNumber(order.getOrderNumber())
+                .status(com.bharatshop.shared.entity.Order.OrderStatus.valueOf(order.getStatus().name()))
+                .totalAmount(order.getTotalAmount())
+                .discountAmount(order.getDiscountAmount())
+                .taxAmount(order.getTaxAmount())
+                .shippingAmount(order.getShippingAmount())
+                .paymentStatus(com.bharatshop.shared.entity.Order.PaymentStatus.valueOf(order.getPaymentStatus().name()))
+                .shippingAddressId(order.getShippingAddressId())
+                .build();
+        
+        // Set the shared order reference in each OrderItem
+        for (OrderItem orderItem : orderItems) {
+            orderItem.setOrder(sharedOrder);
         }
         
         orderItemRepository.saveAll(orderItems);

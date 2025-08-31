@@ -4,7 +4,7 @@ import com.bharatshop.storefront.shared.ApiResponse;
 import com.bharatshop.storefront.dto.AddToCartRequest;
 import com.bharatshop.storefront.dto.CartResponse;
 import com.bharatshop.storefront.dto.UpdateCartRequest;
-import com.bharatshop.storefront.entity.Cart;
+import com.bharatshop.shared.entity.Cart;
 import com.bharatshop.storefront.service.CartService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

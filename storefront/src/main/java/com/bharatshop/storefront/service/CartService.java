@@ -2,10 +2,10 @@ package com.bharatshop.storefront.service;
 
 import com.bharatshop.shared.entity.Product;
 import com.bharatshop.shared.repository.ProductRepository;
-import com.bharatshop.storefront.entity.Cart;
-import com.bharatshop.storefront.entity.CartItem;
-import com.bharatshop.storefront.repository.CartItemRepository;
-import com.bharatshop.storefront.repository.CartRepository;
+import com.bharatshop.shared.entity.Cart;
+import com.bharatshop.shared.entity.CartItem;
+import com.bharatshop.shared.repository.CartItemRepository;
+import com.bharatshop.shared.repository.CartRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;

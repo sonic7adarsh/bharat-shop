@@ -1,6 +1,6 @@
 package com.bharatshop.storefront.dto;
 
-import com.bharatshop.storefront.entity.CartItem;
+import com.bharatshop.shared.entity.CartItem;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;

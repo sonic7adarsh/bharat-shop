@@ -1,6 +1,6 @@
-package com.bharatshop.storefront.repository;
+package com.bharatshop.shared.repository;
 
-import com.bharatshop.storefront.entity.Cart;
+import com.bharatshop.shared.entity.Cart;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

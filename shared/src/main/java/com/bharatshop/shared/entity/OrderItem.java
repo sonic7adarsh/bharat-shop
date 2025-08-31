@@ -1,6 +1,7 @@
-package com.bharatshop.storefront.entity;
+package com.bharatshop.shared.entity;
 
 import com.bharatshop.shared.entity.Product;
+import com.bharatshop.shared.entity.CartItem;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

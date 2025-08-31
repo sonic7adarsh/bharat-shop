@@ -44,4 +44,7 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
 
     @Query("SELECT COUNT(p) FROM Product p WHERE p.tenantId = :tenantId AND p.status = :status AND p.deletedAt IS NULL")
     long countByTenantIdAndStatus(@Param("tenantId") UUID tenantId, @Param("status") Product.ProductStatus status);
+
+    @Query("SELECT COUNT(p) FROM Product p WHERE p.tenantId = :tenantId AND p.deletedAt IS NULL")
+    long countByTenantIdAndDeletedAtIsNull(@Param("tenantId") UUID tenantId);
 }
