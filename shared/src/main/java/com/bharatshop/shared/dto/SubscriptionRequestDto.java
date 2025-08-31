@@ -26,4 +26,25 @@ public class SubscriptionRequestDto {
     
     // For cancellation
     private String cancellationReason;
+    
+    // Manual getters to fix compilation issues
+    public UUID getPlanId() {
+        return this.planId;
+    }
+    
+    public String getRazorpayOrderId() {
+        return this.razorpayOrderId;
+    }
+    
+    public String getRazorpayPaymentId() {
+        return this.razorpayPaymentId;
+    }
+    
+    public String getRazorpaySignature() {
+        return this.razorpaySignature;
+    }
+    
+    public String getCancellationReason() {
+        return this.cancellationReason;
+    }
 }

@@ -39,6 +39,11 @@ public class RazorpayOrderResponseDto {
         return new RazorpayOrderResponseDtoBuilder();
     }
     
+    // Manual getter for orderId to fix compilation issue
+    public String getOrderId() {
+        return this.orderId;
+    }
+    
     public static class RazorpayOrderResponseDtoBuilder {
         private String orderId;
         private String currency;

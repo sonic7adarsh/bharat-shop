@@ -87,16 +87,13 @@ public class SubscriptionService {
         
         try {
             // Create pending subscription record
-            Subscription subscription = Subscription.builder()
-                    .vendorId(vendorId)
-                    .planId(planId)
-                    .status(SubscriptionStatus.PENDING)
-                    .startDate(LocalDateTime.now())
-                    .endDate(LocalDateTime.now().plusDays(plan.getDurationDays()))
-                    .autoRenew(true)
-                    .createdAt(LocalDateTime.now())
-                    .updatedAt(LocalDateTime.now())
-                    .build();
+            Subscription subscription = new Subscription();
+            subscription.setVendorId(vendorId);
+            subscription.setPlanId(planId);
+            subscription.setStatus(SubscriptionStatus.PENDING);
+            subscription.setStartDate(LocalDateTime.now());
+            subscription.setEndDate(LocalDateTime.now().plusDays(plan.getDurationDays()));
+            subscription.setAutoRenew(true);
             
             subscription = subscriptionRepository.save(subscription);
             

@@ -3,7 +3,6 @@ package com.bharatshop.shared.entity;
 import com.bharatshop.shared.enums.PageType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
@@ -288,116 +287,5 @@ public class Page extends BaseEntity {
         this.tenantId = tenantId;
     }
     
-    // Builder method for compatibility
-    public static PageBuilder builder() {
-        return new PageBuilder();
-    }
-    
-    public static class PageBuilder {
-        private Page page = new Page();
-        
-        public PageBuilder title(String title) {
-            page.title = title;
-            return this;
-        }
-        
-        public PageBuilder slug(String slug) {
-            page.slug = slug;
-            return this;
-        }
-        
-        public PageBuilder content(String content) {
-            page.content = content;
-            return this;
-        }
-        
-        public PageBuilder excerpt(String excerpt) {
-            page.excerpt = excerpt;
-            return this;
-        }
-        
-        public PageBuilder metaTitle(String metaTitle) {
-            page.metaTitle = metaTitle;
-            return this;
-        }
-        
-        public PageBuilder metaDescription(String metaDescription) {
-            page.metaDescription = metaDescription;
-            return this;
-        }
-        
-        public PageBuilder metaKeywords(String metaKeywords) {
-            page.metaKeywords = metaKeywords;
-            return this;
-        }
-        
-        public PageBuilder layout(String layout) {
-            page.layout = layout;
-            return this;
-        }
-        
-        public PageBuilder seo(String seo) {
-            page.seo = seo;
-            return this;
-        }
-        
-        public PageBuilder active(Boolean active) {
-            page.active = active;
-            return this;
-        }
-        
-        public PageBuilder published(Boolean published) {
-            page.published = published;
-            return this;
-        }
-        
-        public PageBuilder sortOrder(Integer sortOrder) {
-            page.sortOrder = sortOrder;
-            return this;
-        }
-        
-        public PageBuilder pageType(PageType pageType) {
-            page.pageType = pageType;
-            return this;
-        }
-        
-        public PageBuilder template(String template) {
-            page.template = template;
-            return this;
-        }
-        
-        public PageBuilder templateId(String templateId) {
-            page.templateId = templateId;
-            return this;
-        }
-        
-        public PageBuilder customCss(String customCss) {
-            page.customCss = customCss;
-            return this;
-        }
-        
-        public PageBuilder customJs(String customJs) {
-            page.customJs = customJs;
-            return this;
-        }
-        
-        public PageBuilder featuredImage(String featuredImage) {
-            page.featuredImage = featuredImage;
-            return this;
-        }
-        
-        public PageBuilder author(String author) {
-            page.author = author;
-            return this;
-        }
-        
-        public PageBuilder status(String status) {
-            page.status = status;
-            return this;
-        }
-        
-        public Page build() {
-            return page;
-        }
-    }
+
 }

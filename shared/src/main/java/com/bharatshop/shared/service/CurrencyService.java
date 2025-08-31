@@ -36,10 +36,10 @@ public class CurrencyService {
     /**
      * Format currency amount for a specific vendor
      * @param amount The amount to format
-     * @param vendorId The vendor ID
+     * @param vendorId The vendor ID to get currency for
      * @return Formatted currency string
      */
-    public String formatCurrency(BigDecimal amount, String vendorId) {
+    public String formatCurrencyForVendor(BigDecimal amount, String vendorId) {
         String currencyCode = getVendorCurrency(vendorId);
         return formatCurrency(amount, currencyCode);
     }

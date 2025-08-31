@@ -77,6 +77,13 @@ public class PlanResponseDto {
         private Boolean active;
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
+        private Integer maxProducts;
+        private Integer maxOrders;
+        private String maxStorage;
+        private Boolean hasAnalytics;
+        private Boolean hasCustomDomain;
+        private Boolean hasPrioritySupport;
+        private Long storageLimit;
         
         public PlanResponseDtoBuilder id(UUID id) {
             this.id = id;
@@ -182,11 +189,8 @@ public class PlanResponseDto {
             dto.createdAt = this.createdAt;
             dto.updatedAt = this.updatedAt;
             dto.maxProducts = this.maxProducts;
-            dto.maxOrders = this.maxOrders;
-            dto.maxStorage = this.maxStorage;
             dto.hasAnalytics = this.hasAnalytics;
             dto.hasCustomDomain = this.hasCustomDomain;
-            dto.hasPrioritySupport = this.hasPrioritySupport;
             dto.storageLimit = this.storageLimit;
             return dto;
         }
