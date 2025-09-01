@@ -1,6 +1,6 @@
 package com.bharatshop.storefront.entity;
 
-import com.bharatshop.shared.entity.OrderItem;
+import com.bharatshop.storefront.entity.OrderItem;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,6 +12,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "orders", indexes = {
@@ -32,7 +33,7 @@ public class Order {
     private Long id;
     
     @Column(nullable = false)
-    private Long tenantId;
+    private UUID tenantId;
     
     @Column(nullable = false)
     private Long customerId;

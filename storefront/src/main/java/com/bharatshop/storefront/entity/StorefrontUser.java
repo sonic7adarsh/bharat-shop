@@ -7,15 +7,15 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.EqualsAndHashCode;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "storefront_users")
 @Data
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
@@ -37,31 +37,24 @@ public class StorefrontUser extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    @Builder.Default
     private StorefrontRole role = StorefrontRole.CUSTOMER;
 
     @Column(nullable = false)
-    @Builder.Default
     private Boolean enabled = true;
 
     @Column(nullable = false)
-    @Builder.Default
     private Boolean accountNonExpired = true;
 
     @Column(nullable = false)
-    @Builder.Default
     private Boolean accountNonLocked = true;
 
     @Column(nullable = false)
-    @Builder.Default
     private Boolean credentialsNonExpired = true;
 
     @Column(nullable = false)
-    @Builder.Default
     private Boolean phoneVerified = false;
 
     @Column(nullable = false)
-    @Builder.Default
     private Boolean emailVerified = false;
 
     private String firstName;

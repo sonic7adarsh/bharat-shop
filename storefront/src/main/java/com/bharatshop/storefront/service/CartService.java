@@ -1,10 +1,10 @@
 package com.bharatshop.storefront.service;
 
 import com.bharatshop.storefront.repository.StorefrontProductRepository;
-import com.bharatshop.shared.entity.Cart;
-import com.bharatshop.shared.entity.CartItem;
-import com.bharatshop.shared.repository.CartItemRepository;
-import com.bharatshop.shared.repository.CartRepository;
+import com.bharatshop.storefront.entity.Cart;
+import com.bharatshop.storefront.entity.CartItem;
+import com.bharatshop.storefront.repository.StorefrontCartItemRepository;
+import com.bharatshop.storefront.repository.StorefrontCartRepository;
 import com.bharatshop.shared.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,8 +25,10 @@ import java.util.UUID;
 @Transactional
 public class CartService {
     
-    private final CartRepository cartRepository;
-    private final CartItemRepository cartItemRepository;
+    @Qualifier("storefrontCartRepository")
+    private final StorefrontCartRepository cartRepository;
+    @Qualifier("storefrontCartItemRepository")
+    private final StorefrontCartItemRepository cartItemRepository;
     @Qualifier("storefrontProductRepository")
     private final StorefrontProductRepository storefrontProductRepository;
     private final ProductRepository sharedProductRepository;
@@ -35,7 +37,7 @@ public class CartService {
      * Get or create cart for customer
      */
     @Cacheable(value = "customerCart", key = "#customerId + '_' + #tenantId")
-    public Cart getOrCreateCart(Long customerId, Long tenantId) {
+    public Cart getOrCreateCart(Long customerId, UUID tenantId) {
         return cartRepository.findByCustomerIdAndTenantIdWithItems(customerId, tenantId)
                 .orElseGet(() -> createNewCart(customerId, tenantId));
     }
@@ -44,12 +46,12 @@ public class CartService {
      * Add item to cart
      */
     @CacheEvict(value = "customerCart", key = "#customerId + '_' + #tenantId")
-    public Cart addItemToCart(Long customerId, Long tenantId, Long productId, Integer quantity) {
+    public Cart addItemToCart(Long customerId, UUID tenantId, Long productId, Integer quantity) {
         // Validate product
-        com.bharatshop.shared.entity.Product product = sharedProductRepository.findById(UUID.fromString(productId.toString()))
+        com.bharatshop.storefront.model.Product product = storefrontProductRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found: " + productId));
         
-        if (product.getStatus() != com.bharatshop.shared.entity.Product.ProductStatus.ACTIVE || product.getStock() < quantity) {
+        if (!product.isActive() || product.getStockQuantity() < quantity) {
             throw new RuntimeException("Product is not available or insufficient stock");
         }
         
@@ -65,8 +67,8 @@ public class CartService {
             int newQuantity = cartItem.getQuantity() + quantity;
             
             // Validate stock availability
-            if (product.getStock() < newQuantity) {
-                throw new RuntimeException("Insufficient stock. Available: " + product.getStock());
+            if (product.getStockQuantity() < newQuantity) {
+                throw new RuntimeException("Insufficient stock. Available: " + product.getStockQuantity());
             }
             
             cartItem.setQuantity(newQuantity);
@@ -96,7 +98,7 @@ public class CartService {
      * Update cart item quantity
      */
     @CacheEvict(value = "customerCart", key = "#customerId + '_' + #tenantId")
-    public Cart updateCartItemQuantity(Long customerId, Long tenantId, Long productId, Integer quantity) {
+    public Cart updateCartItemQuantity(Long customerId, UUID tenantId, Long productId, Integer quantity) {
         Cart cart = getOrCreateCartForUpdate(customerId, tenantId);
         
         CartItem cartItem = cartItemRepository.findByCartIdAndProductId(cart.getId(), productId)
@@ -108,9 +110,10 @@ public class CartService {
         }
         
         // Validate stock availability
-        com.bharatshop.shared.entity.Product product = cartItem.getProduct();
-        if (product.getStock() < quantity) {
-            throw new RuntimeException("Insufficient stock. Available: " + product.getStock());
+        com.bharatshop.storefront.model.Product product = storefrontProductRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found: " + productId));
+        if (product.getStockQuantity() < quantity) {
+            throw new RuntimeException("Insufficient stock. Available: " + product.getStockQuantity());
         }
         
         cartItem.setQuantity(quantity);
@@ -123,7 +126,7 @@ public class CartService {
      * Remove item from cart
      */
     @CacheEvict(value = "customerCart", key = "#customerId + '_' + #tenantId")
-    public Cart removeItemFromCart(Long customerId, Long tenantId, Long productId) {
+    public Cart removeItemFromCart(Long customerId, UUID tenantId, Long productId) {
         Cart cart = getOrCreateCartForUpdate(customerId, tenantId);
         
         CartItem cartItem = cartItemRepository.findByCartIdAndProductId(cart.getId(), productId)
@@ -143,7 +146,7 @@ public class CartService {
      * Clear entire cart
      */
     @CacheEvict(value = "customerCart", key = "#customerId + '_' + #tenantId")
-    public void clearCart(Long customerId, Long tenantId) {
+    public void clearCart(Long customerId, UUID tenantId) {
         Cart cart = cartRepository.findByCustomerIdAndTenantId(customerId, tenantId)
                 .orElse(null);
         
@@ -157,7 +160,7 @@ public class CartService {
     /**
      * Get cart total amount
      */
-    public BigDecimal getCartTotal(Long customerId, Long tenantId) {
+    public BigDecimal getCartTotal(Long customerId, UUID tenantId) {
         Cart cart = getOrCreateCart(customerId, tenantId);
         
         if (cart.getItems() == null || cart.getItems().isEmpty()) {
@@ -172,14 +175,14 @@ public class CartService {
     /**
      * Get cart item count
      */
-    public Integer getCartItemCount(Long customerId, Long tenantId) {
+    public Integer getCartItemCount(Long customerId, UUID tenantId) {
         return cartRepository.countItemsInCart(customerId, tenantId);
     }
     
     /**
      * Validate cart before checkout
      */
-    public void validateCartForCheckout(Long customerId, Long tenantId) {
+    public void validateCartForCheckout(Long customerId, UUID tenantId) {
         Cart cart = getOrCreateCart(customerId, tenantId);
         
         if (cart.isEmpty()) {
@@ -219,13 +222,13 @@ public class CartService {
     /**
      * Check if cart exists and is not empty
      */
-    public boolean hasNonEmptyCart(Long customerId, Long tenantId) {
+    public boolean hasNonEmptyCart(Long customerId, UUID tenantId) {
         return cartRepository.existsNonEmptyCartByCustomerIdAndTenantId(customerId, tenantId);
     }
     
     // Private helper methods
     
-    private Cart createNewCart(Long customerId, Long tenantId) {
+    private Cart createNewCart(Long customerId, UUID tenantId) {
         Cart cart = Cart.builder()
                 .customerId(customerId)
                 .tenantId(tenantId)
@@ -235,7 +238,7 @@ public class CartService {
         return cartRepository.save(cart);
     }
     
-    private Cart getOrCreateCartForUpdate(Long customerId, Long tenantId) {
+    private Cart getOrCreateCartForUpdate(Long customerId, UUID tenantId) {
         return cartRepository.findByCustomerIdAndTenantIdWithItems(customerId, tenantId)
                 .orElseGet(() -> createNewCart(customerId, tenantId));
     }

@@ -1,6 +1,4 @@
 package com.bharatshop.storefront.entity;
-
-import com.bharatshop.shared.entity.CartItem;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,6 +9,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "carts", indexes = {
@@ -32,7 +31,7 @@ public class Cart {
     private Long customerId;
     
     @Column(nullable = false)
-    private Long tenantId;
+    private UUID tenantId;
     
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<CartItem> items;

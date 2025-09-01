@@ -11,10 +11,10 @@ spring:
     active: dev
   
   datasource:
-    url: jdbc:postgresql://localhost:5432/bharatshop_storefront
-    username: bharatshop
-    password: bharatshop123
-    driver-class-name: org.postgresql.Driver
+    url: jdbc:h2:mem:storefront;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password: 
+    driver-class-name: org.h2.Driver
     hikari:
       maximum-pool-size: 20
       minimum-idle: 5
@@ -24,11 +24,11 @@ spring:
   
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: create-drop
     show-sql: false
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+        dialect: org.hibernate.dialect.H2Dialect
         format_sql: true
         use_sql_comments: true
         jdbc:
@@ -37,13 +37,15 @@ spring:
         order_updates: true
   
   flyway:
-    enabled: true
+    enabled: false
     locations: classpath:db/migration
     baseline-on-migrate: true
     validate-on-migrate: true
   
   data:
     redis:
+      repositories:
+        enabled: false
       host: localhost
       port: 6379
       password: 

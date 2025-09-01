@@ -2,7 +2,7 @@ package com.bharatshop.storefront.service;
 
 import com.bharatshop.shared.dto.CustomerAnalyticsDto;
 import com.bharatshop.storefront.entity.Order;
-import com.bharatshop.shared.entity.OrderItem;
+import com.bharatshop.storefront.entity.OrderItem;
 import com.bharatshop.storefront.repository.StorefrontOrderRepository;
 import com.bharatshop.storefront.repository.StorefrontOrderItemRepository;
 import lombok.RequiredArgsConstructor;

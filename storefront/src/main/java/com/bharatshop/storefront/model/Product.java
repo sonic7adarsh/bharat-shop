@@ -12,13 +12,13 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
-@Table(name = "products", indexes = {
-        @Index(name = "idx_product_category", columnList = "category"),
-        @Index(name = "idx_product_brand", columnList = "brand"),
-        @Index(name = "idx_product_sku", columnList = "sku"),
-        @Index(name = "idx_product_active", columnList = "active"),
-        @Index(name = "idx_product_featured", columnList = "featured"),
-        @Index(name = "idx_product_tenant", columnList = "tenant_id")
+@Table(name = "storefront_products", indexes = {
+        @Index(name = "idx_storefront_product_category", columnList = "category"),
+        @Index(name = "idx_storefront_product_brand", columnList = "brand"),
+        @Index(name = "idx_storefront_product_sku", columnList = "sku"),
+        @Index(name = "idx_storefront_product_active", columnList = "active"),
+        @Index(name = "idx_storefront_product_featured", columnList = "featured"),
+        @Index(name = "idx_storefront_product_tenant", columnList = "tenant_id")
 })
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -54,7 +54,7 @@ public class Product extends BaseEntity {
     private Integer stockQuantity = 0;
     
     @ElementCollection
-    @CollectionTable(name = "product_images", joinColumns = @JoinColumn(name = "product_id"))
+    @CollectionTable(name = "storefront_product_images", joinColumns = @JoinColumn(name = "product_id"))
     @Column(name = "image_url")
     private List<String> imageUrls;
     

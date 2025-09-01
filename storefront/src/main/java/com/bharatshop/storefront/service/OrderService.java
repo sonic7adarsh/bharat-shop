@@ -11,11 +11,11 @@ import com.bharatshop.shared.repository.ProductVariantRepository;
 import com.bharatshop.shared.service.FeatureFlagService;
 import com.bharatshop.shared.service.ReservationService;
 import com.bharatshop.storefront.entity.*;
-import com.bharatshop.shared.entity.Cart;
+import com.bharatshop.storefront.entity.Cart;
 import com.bharatshop.storefront.repository.StorefrontOrderItemRepository;
 import com.bharatshop.storefront.repository.StorefrontOrderRepository;
-import com.bharatshop.shared.entity.CartItem;
-import com.bharatshop.shared.entity.OrderItem;
+import com.bharatshop.storefront.entity.CartItem;
+import com.bharatshop.storefront.entity.OrderItem;
 import com.bharatshop.storefront.service.AddressService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -63,14 +63,14 @@ public class OrderService {
         featureFlagService.enforceOrderLimit(tenantUuid, currentOrderCount);
         
         // Get customer's cart
-        Cart cart = cartService.getOrCreateCart(customerId, tenantId);
+        Cart cart = cartService.getOrCreateCart(customerId, tenantUuid);
         
         if (cart.isEmpty()) {
             throw new RuntimeException("Cannot create order from empty cart");
         }
         
         // Validate cart before checkout
-        cartService.validateCartForCheckout(customerId, tenantId);
+        cartService.validateCartForCheckout(customerId, tenantUuid);
         
         // Calculate order totals
         BigDecimal subtotal = calculateSubtotal(cart);
@@ -150,47 +150,15 @@ public class OrderService {
         // Create order items from cart items
         List<OrderItem> orderItems = new ArrayList<>();
         for (CartItem cartItem : cart.getItems()) {
-            // Create OrderItem manually since fromCartItem expects shared.entity.Order
-            com.bharatshop.shared.entity.Product product = cartItem.getProduct();
-            OrderItem orderItem = OrderItem.builder()
-                    .order(null) // Will be set after converting to shared.entity.Order
-                    .product(product)
-                    .quantity(cartItem.getQuantity())
-                    .price(cartItem.getUnitPrice())
-                    .productName(product.getName())
-                    .productSku(product.getSlug())
-                    .productImageUrl(product.getImages() != null && !product.getImages().isEmpty() ? 
-                        product.getImages().get(0) : null)
-                    .variantId(cartItem.getVariantId())
-                    .build();
+            OrderItem orderItem = OrderItem.fromCartItem(cartItem, order);
             orderItems.add(orderItem);
-        }
-        
-        // Create a shared.entity.Order for OrderItem relationships
-        com.bharatshop.shared.entity.Order sharedOrder = com.bharatshop.shared.entity.Order.builder()
-                .id(order.getId())
-                .tenantId(order.getTenantId())
-                .customerId(order.getCustomerId())
-                .orderNumber(order.getOrderNumber())
-                .status(com.bharatshop.shared.entity.Order.OrderStatus.valueOf(order.getStatus().name()))
-                .totalAmount(order.getTotalAmount())
-                .discountAmount(order.getDiscountAmount())
-                .taxAmount(order.getTaxAmount())
-                .shippingAmount(order.getShippingAmount())
-                .paymentStatus(com.bharatshop.shared.entity.Order.PaymentStatus.valueOf(order.getPaymentStatus().name()))
-                .shippingAddressId(order.getShippingAddressId())
-                .build();
-        
-        // Set the shared order reference in each OrderItem
-        for (OrderItem orderItem : orderItems) {
-            orderItem.setOrder(sharedOrder);
         }
         
         orderItemRepository.saveAll(orderItems);
         order.setItems(orderItems);
         
         // Clear the cart after successful order creation
-        cartService.clearCart(customerId, tenantId);
+        cartService.clearCart(customerId, tenantUuid);
         
         log.info("Order created successfully: {} for customer: {}", order.getOrderNumber(), customerId);
         

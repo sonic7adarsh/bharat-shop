@@ -4,7 +4,7 @@ import com.bharatshop.storefront.shared.ApiResponse;
 import com.bharatshop.storefront.dto.AddToCartRequest;
 import com.bharatshop.storefront.dto.CartResponse;
 import com.bharatshop.storefront.dto.UpdateCartRequest;
-import com.bharatshop.shared.entity.Cart;
+import com.bharatshop.storefront.entity.Cart;
 import com.bharatshop.storefront.service.CartService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/store/cart")
@@ -35,7 +36,7 @@ public class StorefrontCartController {
         try {
             // Extract customer and tenant info from request headers or JWT
             Long customerId = extractCustomerId(httpRequest);
-            Long tenantId = extractTenantId(httpRequest);
+            UUID tenantId = extractTenantId(httpRequest);
             
             Cart cart = cartService.addItemToCart(
                     customerId, 
@@ -70,7 +71,7 @@ public class StorefrontCartController {
         
         try {
             Long customerId = extractCustomerId(httpRequest);
-            Long tenantId = extractTenantId(httpRequest);
+            UUID tenantId = extractTenantId(httpRequest);
             
             Cart cart = cartService.getOrCreateCart(customerId, tenantId);
             CartResponse response = CartResponse.fromEntity(cart);
@@ -98,7 +99,7 @@ public class StorefrontCartController {
         
         try {
             Long customerId = extractCustomerId(httpRequest);
-            Long tenantId = extractTenantId(httpRequest);
+            UUID tenantId = extractTenantId(httpRequest);
             
             Cart cart = cartService.updateCartItemQuantity(
                     customerId, 
@@ -135,7 +136,7 @@ public class StorefrontCartController {
         
         try {
             Long customerId = extractCustomerId(httpRequest);
-            Long tenantId = extractTenantId(httpRequest);
+            UUID tenantId = extractTenantId(httpRequest);
             
             Cart cart = cartService.removeItemFromCart(customerId, tenantId, productId);
             CartResponse response = CartResponse.fromEntity(cart);
@@ -164,7 +165,7 @@ public class StorefrontCartController {
         
         try {
             Long customerId = extractCustomerId(httpRequest);
-            Long tenantId = extractTenantId(httpRequest);
+            UUID tenantId = extractTenantId(httpRequest);
             
             cartService.clearCart(customerId, tenantId);
             
@@ -191,7 +192,7 @@ public class StorefrontCartController {
         
         try {
             Long customerId = extractCustomerId(httpRequest);
-            Long tenantId = extractTenantId(httpRequest);
+            UUID tenantId = extractTenantId(httpRequest);
             
             BigDecimal total = cartService.getCartTotal(customerId, tenantId);
             
@@ -216,7 +217,7 @@ public class StorefrontCartController {
         
         try {
             Long customerId = extractCustomerId(httpRequest);
-            Long tenantId = extractTenantId(httpRequest);
+            UUID tenantId = extractTenantId(httpRequest);
             
             Integer count = cartService.getCartItemCount(customerId, tenantId);
             
@@ -245,12 +246,12 @@ public class StorefrontCartController {
         throw new RuntimeException("Customer ID not found in request");
     }
     
-    private Long extractTenantId(HttpServletRequest request) {
+    private UUID extractTenantId(HttpServletRequest request) {
         // TODO: Extract from JWT token or session
         // For now, using header for testing
         String tenantIdHeader = request.getHeader("X-Tenant-Id");
         if (tenantIdHeader != null) {
-            return Long.parseLong(tenantIdHeader);
+            return UUID.fromString(tenantIdHeader);
         }
         throw new RuntimeException("Tenant ID not found in request");
     }

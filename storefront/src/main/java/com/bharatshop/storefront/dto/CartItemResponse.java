@@ -1,6 +1,6 @@
 package com.bharatshop.storefront.dto;
 
-import com.bharatshop.shared.entity.CartItem;
+import com.bharatshop.storefront.entity.CartItem;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -36,7 +36,7 @@ public class CartItemResponse {
                 .quantity(cartItem.getQuantity())
                 .unitPrice(cartItem.getUnitPrice())
                 .totalPrice(cartItem.getTotalPrice())
-                .availableStock(cartItem.getProduct().getStock())
+                .availableStock(cartItem.getProduct().getStockQuantity())
                 .addedAt(cartItem.getCreatedAt())
                 .build();
     }
