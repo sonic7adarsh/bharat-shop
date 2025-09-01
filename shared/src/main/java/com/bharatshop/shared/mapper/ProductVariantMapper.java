@@ -5,6 +5,7 @@ import com.bharatshop.shared.entity.ProductVariant;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -22,8 +23,7 @@ import java.util.Map;
  */
 @Mapper(
     componentModel = "spring",
-    nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
-    uses = {ProductVariantOptionValueMapper.class}
+    nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
 )
 public abstract class ProductVariantMapper {
     
@@ -33,6 +33,7 @@ public abstract class ProductVariantMapper {
     /**
      * Maps ProductVariant entity to ProductVariantDto.
      */
+    @Named("toDto")
     @Mapping(target = "attributes", source = "attributes", qualifiedByName = "jsonToMap")
     @Mapping(target = "product", ignore = true) // Mapped separately to avoid circular references
     @Mapping(target = "optionValues", ignore = true) // Mapped separately
@@ -57,8 +58,7 @@ public abstract class ProductVariantMapper {
     @Mapping(target = "deletedAt", ignore = true) // Set by soft delete
     @Mapping(target = "attributes", source = "attributes", qualifiedByName = "mapToJson")
     @Mapping(target = "product", ignore = true) // Handled separately
-    @Mapping(target = "productVariantOptionValues", ignore = true) // Handled separately
-    @Mapping(target = "productImage", ignore = true) // Handled separately
+    @Mapping(target = "optionValues", ignore = true) // Handled separately
     public abstract ProductVariant toEntity(ProductVariantDto productVariantDto);
     
     /**
@@ -72,13 +72,14 @@ public abstract class ProductVariantMapper {
     @Mapping(target = "deletedAt", ignore = true)
     @Mapping(target = "attributes", source = "attributes", qualifiedByName = "mapToJson")
     @Mapping(target = "product", ignore = true)
-    @Mapping(target = "productVariantOptionValues", ignore = true)
-    @Mapping(target = "productImage", ignore = true)
+    @Mapping(target = "optionValues", ignore = true)
     public abstract void updateEntity(ProductVariantDto productVariantDto, @MappingTarget ProductVariant productVariant);
     
     /**
      * Maps list of ProductVariant entities to list of ProductVariantDtos.
      */
+    @Named("toDtoList")
+    @IterableMapping(qualifiedByName = "toDto")
     public abstract List<ProductVariantDto> toDtoList(List<ProductVariant> productVariants);
     
     /**
@@ -89,6 +90,7 @@ public abstract class ProductVariantMapper {
     /**
      * Maps ProductVariantDto with computed fields for display.
      */
+    @Named("toDtoWithComputedFields")
     public ProductVariantDto toDtoWithComputedFields(ProductVariant productVariant) {
         ProductVariantDto dto = toDto(productVariant);
         

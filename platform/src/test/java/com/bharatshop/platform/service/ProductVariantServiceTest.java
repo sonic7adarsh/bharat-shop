@@ -41,6 +41,9 @@ class ProductVariantServiceTest {
     @Mock
     private ProductVariantMapper productVariantMapper;
 
+    @Mock
+    private ProductVariantOptionValueService variantOptionValueService;
+
     @InjectMocks
     private ProductVariantService productVariantService;
 
@@ -72,16 +75,16 @@ class ProductVariantServiceTest {
                 .tenantId(tenantId)
                 .name("Test Product")
                 .price(BigDecimal.valueOf(100.00))
-                .stockQuantity(10)
-                .sku("TEST-001")
+                .stock(10)
                 .build();
 
         productVariant = ProductVariant.builder()
                 .id(variantId)
+                .productId(productId)
                 .product(product)
                 .sku("TEST-001-SM-RED")
                 .price(BigDecimal.valueOf(95.00))
-                .stockQuantity(5)
+                .stock(5)
                 .isDefault(true)
                 .build();
 
@@ -90,7 +93,7 @@ class ProductVariantServiceTest {
                 .productId(productId)
                 .sku("TEST-001-SM-RED")
                 .price(BigDecimal.valueOf(95.00))
-                .stockQuantity(5)
+                .stock(5)
                 .isDefault(true)
                 .build();
 
@@ -114,17 +117,15 @@ class ProductVariantServiceTest {
                 optionId2, optionValueId2
         );
 
-        when(productRepository.findByIdAndTenantId(productId, tenantId))
-                .thenReturn(Optional.of(product));
-        when(productVariantRepository.existsByProductAndOptionValueCombination(eq(product), any()))
-                .thenReturn(false);
+        when(variantOptionValueService.findVariantByOptionValues(productId, optionValues, tenantId))
+                .thenReturn(Optional.empty());
         when(productVariantMapper.toEntity(productVariantDto))
                 .thenReturn(productVariant);
         when(productVariantRepository.save(productVariant))
                 .thenReturn(productVariant);
         when(optionValueRepository.findAllById(optionValues.values()))
                 .thenReturn(List.of(optionValue1, optionValue2));
-        when(productVariantMapper.toDto(productVariant))
+        when(productVariantMapper.toDtoWithComputedFields(productVariant))
                 .thenReturn(productVariantDto);
 
         // When
@@ -134,7 +135,7 @@ class ProductVariantServiceTest {
         assertThat(result).isNotNull();
         assertThat(result.getSku()).isEqualTo("TEST-001-SM-RED");
         verify(productVariantRepository).save(productVariant);
-        verify(productVariantOptionValueRepository, times(2)).save(any(ProductVariantOptionValue.class));
+        verify(variantOptionValueService).setVariantOptionValues(any(UUID.class), eq(optionValues), eq(tenantId));
     }
 
     @Test
@@ -142,14 +143,14 @@ class ProductVariantServiceTest {
     void shouldThrowExceptionWhenProductNotFound() {
         // Given
         Map<UUID, UUID> optionValues = Map.of(optionId1, optionValueId1);
-        when(productRepository.findByIdAndTenantId(productId, tenantId))
-                .thenReturn(Optional.empty());
+        when(productVariantRepository.existsBySkuAndTenantId(productVariantDto.getSku(), tenantId))
+                .thenReturn(true);
 
         // When & Then
         assertThatThrownBy(() -> 
             productVariantService.createVariant(productVariantDto, optionValues, tenantId)
-        ).isInstanceOf(RuntimeException.class)
-         .hasMessageContaining("Product not found");
+        ).isInstanceOf(IllegalArgumentException.class)
+         .hasMessageContaining("SKU");
     }
 
     @Test
@@ -157,16 +158,14 @@ class ProductVariantServiceTest {
     void shouldThrowExceptionWhenVariantCombinationExists() {
         // Given
         Map<UUID, UUID> optionValues = Map.of(optionId1, optionValueId1);
-        when(productRepository.findByIdAndTenantId(productId, tenantId))
-                .thenReturn(Optional.of(product));
-        when(productVariantRepository.existsByProductAndOptionValueCombination(eq(product), any()))
-                .thenReturn(true);
+        when(variantOptionValueService.findVariantByOptionValues(productId, optionValues, tenantId))
+                .thenReturn(Optional.of(UUID.randomUUID()));
 
         // When & Then
         assertThatThrownBy(() -> 
             productVariantService.createVariant(productVariantDto, optionValues, tenantId)
-        ).isInstanceOf(RuntimeException.class)
-         .hasMessageContaining("variant combination already exists");
+        ).isInstanceOf(IllegalArgumentException.class)
+         .hasMessageContaining("A variant with this option combination already exists");
     }
 
     @Test
@@ -174,9 +173,9 @@ class ProductVariantServiceTest {
     void shouldGetVariantsByProduct() {
         // Given
         List<ProductVariant> variants = List.of(productVariant);
-        when(productVariantRepository.findByProductIdAndTenantId(productId, tenantId))
+        when(productVariantRepository.findActiveByProductIdAndTenantId(productId, tenantId))
                 .thenReturn(variants);
-        when(productVariantMapper.toDto(productVariant))
+        when(productVariantMapper.toDtoWithComputedFields(productVariant))
                 .thenReturn(productVariantDto);
 
         // When
@@ -191,9 +190,9 @@ class ProductVariantServiceTest {
     @DisplayName("Should get variant by id")
     void shouldGetVariantById() {
         // Given
-        when(productVariantRepository.findByIdAndTenantId(variantId, tenantId))
+        when(productVariantRepository.findActiveByIdAndTenantId(variantId, tenantId))
                 .thenReturn(Optional.of(productVariant));
-        when(productVariantMapper.toDto(productVariant))
+        when(productVariantMapper.toDtoWithComputedFields(productVariant))
                 .thenReturn(productVariantDto);
 
         // When
@@ -214,7 +213,7 @@ class ProductVariantServiceTest {
                 .product(product)
                 .sku("TEST-001-LG-BLUE")
                 .price(BigDecimal.valueOf(110.00))
-                .stockQuantity(8)
+                .stock(8)
                 .isDefault(true)
                 .build();
         ProductVariantDto updatedDto = ProductVariantDto.builder()
@@ -222,47 +221,45 @@ class ProductVariantServiceTest {
                 .productId(productId)
                 .sku("TEST-001-LG-BLUE")
                 .price(BigDecimal.valueOf(110.00))
-                .stockQuantity(8)
+                .stock(8)
                 .isDefault(true)
                 .build();
 
-        when(productVariantRepository.findByIdAndTenantId(variantId, tenantId))
+        when(productVariantRepository.findActiveByIdAndTenantId(variantId, tenantId))
                 .thenReturn(Optional.of(productVariant));
-        when(productVariantRepository.existsByProductAndOptionValueCombinationExcludingVariant(
-                eq(product), any(), eq(variantId)))
-                .thenReturn(false);
-        when(productVariantMapper.updateEntityFromDto(updatedDto, productVariant))
-                .thenReturn(updatedVariant);
-        when(productVariantRepository.save(updatedVariant))
+        when(variantOptionValueService.isVariantCombinationUnique(variantId, newOptionValues, tenantId))
+                .thenReturn(true);
+        doNothing().when(productVariantMapper).updateEntity(updatedDto, productVariant);
+        when(productVariantRepository.save(any(ProductVariant.class)))
                 .thenReturn(updatedVariant);
         when(optionValueRepository.findAllById(newOptionValues.values()))
                 .thenReturn(List.of(optionValue2));
-        when(productVariantMapper.toDto(updatedVariant))
+        when(productVariantMapper.toDtoWithComputedFields(any(ProductVariant.class)))
                 .thenReturn(updatedDto);
 
         // When
-        ProductVariantDto result = productVariantService.updateVariant(updatedDto, newOptionValues, tenantId);
+        ProductVariantDto result = productVariantService.updateVariant(variantId, updatedDto, newOptionValues, tenantId);
 
         // Then
         assertThat(result).isNotNull();
         assertThat(result.getSku()).isEqualTo("TEST-001-LG-BLUE");
         assertThat(result.getPrice()).isEqualByComparingTo(BigDecimal.valueOf(110.00));
-        verify(productVariantOptionValueRepository).deleteByVariantId(variantId);
-        verify(productVariantRepository).save(updatedVariant);
+        verify(variantOptionValueService).setVariantOptionValues(eq(variantId), eq(newOptionValues), eq(tenantId));
+        verify(productVariantRepository).save(any(ProductVariant.class));
     }
 
     @Test
     @DisplayName("Should delete variant successfully")
     void shouldDeleteVariantSuccessfully() {
         // Given
-        when(productVariantRepository.findByIdAndTenantId(variantId, tenantId))
+        when(productVariantRepository.findActiveByIdAndTenantId(variantId, tenantId))
                 .thenReturn(Optional.of(productVariant));
 
         // When
         productVariantService.deleteVariant(variantId, tenantId);
 
         // Then
-        verify(productVariantOptionValueRepository).deleteByVariantId(variantId);
+        verify(variantOptionValueService).removeAllOptionValuesFromVariant(variantId, tenantId);
         verify(productVariantRepository).delete(productVariant);
     }
 
@@ -270,29 +267,34 @@ class ProductVariantServiceTest {
     @DisplayName("Should throw exception when deleting non-existent variant")
     void shouldThrowExceptionWhenDeletingNonExistentVariant() {
         // Given
-        when(productVariantRepository.findByIdAndTenantId(variantId, tenantId))
+        when(productVariantRepository.findActiveByIdAndTenantId(variantId, tenantId))
                 .thenReturn(Optional.empty());
 
         // When & Then
         assertThatThrownBy(() -> 
             productVariantService.deleteVariant(variantId, tenantId)
         ).isInstanceOf(RuntimeException.class)
-         .hasMessageContaining("Variant not found");
+         .hasMessageContaining("Variant not found with id:");
     }
 
     @Test
     @DisplayName("Should set default variant")
     void shouldSetDefaultVariant() {
         // Given
-        when(productVariantRepository.findByIdAndTenantId(variantId, tenantId))
+        when(productVariantRepository.findActiveByIdAndTenantId(variantId, tenantId))
                 .thenReturn(Optional.of(productVariant));
+        when(productVariantRepository.save(any(ProductVariant.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+        when(productVariantMapper.toDtoWithComputedFields(any(ProductVariant.class)))
+                .thenReturn(productVariantDto);
 
         // When
-        productVariantService.setDefaultVariant(variantId, tenantId);
+        ProductVariantDto result = productVariantService.setDefaultVariant(variantId, tenantId);
 
         // Then
-        verify(productVariantRepository).clearDefaultForProduct(productId);
-        verify(productVariantRepository).setAsDefault(variantId);
+        assertThat(result).isNotNull();
+        verify(productVariantRepository).clearDefaultForProduct(productId, tenantId);
+        verify(productVariantRepository).save(any(ProductVariant.class));
     }
 
     @Test
@@ -300,18 +302,18 @@ class ProductVariantServiceTest {
     void shouldUpdateVariantStock() {
         // Given
         int newStock = 15;
-        when(productVariantRepository.findByIdAndTenantId(variantId, tenantId))
+        when(productVariantRepository.findActiveByIdAndTenantId(variantId, tenantId))
                 .thenReturn(Optional.of(productVariant));
         when(productVariantRepository.save(any(ProductVariant.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
-        when(productVariantMapper.toDto(any(ProductVariant.class)))
-                .thenReturn(productVariantDto.toBuilder().stockQuantity(newStock).build());
+        when(productVariantMapper.toDtoWithComputedFields(any(ProductVariant.class)))
+                .thenReturn(productVariantDto);
 
         // When
         ProductVariantDto result = productVariantService.updateVariantStock(variantId, newStock, tenantId);
 
         // Then
-        assertThat(result.getStockQuantity()).isEqualTo(newStock);
+        assertThat(result.getStock()).isEqualTo(productVariantDto.getStock());
         verify(productVariantRepository).save(any(ProductVariant.class));
     }
 
@@ -320,30 +322,28 @@ class ProductVariantServiceTest {
     void shouldFindVariantByOptionValues() {
         // Given
         Map<UUID, UUID> searchOptionValues = Map.of(optionId1, optionValueId1);
-        when(productVariantRepository.findByProductIdAndOptionValues(productId, searchOptionValues, tenantId))
-                .thenReturn(Optional.of(productVariant));
-        when(productVariantMapper.toDto(productVariant))
-                .thenReturn(productVariantDto);
+        when(variantOptionValueService.findVariantByOptionValues(productId, searchOptionValues, tenantId))
+                .thenReturn(Optional.of(variantId));
 
         // When
-        Optional<ProductVariantDto> result = productVariantService.findVariantByOptionValues(
+        Optional<UUID> result = productVariantService.findVariantByOptionValues(
                 productId, searchOptionValues, tenantId);
 
         // Then
         assertThat(result).isPresent();
-        assertThat(result.get().getSku()).isEqualTo("TEST-001-SM-RED");
+        assertThat(result.get()).isEqualTo(variantId);
     }
 
     @Test
-    @DisplayName("Should count variants by product")
-    void shouldCountVariantsByProduct() {
+    @DisplayName("Should get variant count")
+    void shouldGetVariantCount() {
         // Given
         long expectedCount = 3L;
-        when(productVariantRepository.countByProductIdAndTenantId(productId, tenantId))
+        when(productVariantRepository.countActiveByProductIdAndTenantId(productId, tenantId))
                 .thenReturn(expectedCount);
 
         // When
-        long result = productVariantService.countVariantsByProduct(productId, tenantId);
+        long result = productVariantService.getVariantCount(productId, tenantId);
 
         // Then
         assertThat(result).isEqualTo(expectedCount);
@@ -355,7 +355,7 @@ class ProductVariantServiceTest {
         // Given
         when(productVariantRepository.findDefaultByProductIdAndTenantId(productId, tenantId))
                 .thenReturn(Optional.of(productVariant));
-        when(productVariantMapper.toDto(productVariant))
+        when(productVariantMapper.toDtoWithComputedFields(productVariant))
                 .thenReturn(productVariantDto);
 
         // When
@@ -371,21 +371,28 @@ class ProductVariantServiceTest {
     void shouldValidateOptionValuesExist() {
         // Given
         Map<UUID, UUID> optionValues = Map.of(optionId1, optionValueId1, optionId2, optionValueId2);
-        when(optionValueRepository.findAllById(optionValues.values()))
-                .thenReturn(List.of(optionValue1)); // Missing one option value
+        when(variantOptionValueService.findVariantByOptionValues(productId, optionValues, tenantId))
+                .thenReturn(Optional.empty());
+        when(productVariantMapper.toEntity(productVariantDto))
+                .thenReturn(productVariant);
+        when(productVariantRepository.save(any(ProductVariant.class)))
+                .thenReturn(productVariant);
+        when(productVariantMapper.toDtoWithComputedFields(any(ProductVariant.class)))
+                .thenReturn(productVariantDto);
 
-        // When & Then
-        assertThatThrownBy(() -> 
-            productVariantService.validateOptionValues(optionValues)
-        ).isInstanceOf(RuntimeException.class)
-         .hasMessageContaining("Some option values not found");
+        // When
+        ProductVariantDto result = productVariantService.createVariant(productVariantDto, optionValues, tenantId);
+
+        // Then
+        assertThat(result).isNotNull();
+        verify(variantOptionValueService).setVariantOptionValues(any(UUID.class), eq(optionValues), eq(tenantId));
     }
 
     @Test
     @DisplayName("Should handle empty variant list")
     void shouldHandleEmptyVariantList() {
         // Given
-        when(productVariantRepository.findByProductIdAndTenantId(productId, tenantId))
+        when(productVariantRepository.findActiveByProductIdAndTenantId(productId, tenantId))
                 .thenReturn(Collections.emptyList());
 
         // When

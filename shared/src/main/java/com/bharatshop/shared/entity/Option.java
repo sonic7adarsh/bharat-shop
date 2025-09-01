@@ -47,6 +47,9 @@ public class Option extends BaseEntity {
     @Column(name = "is_required", nullable = false)
     private Boolean isRequired = false;
 
+    @Column(name = "is_active", nullable = false)
+    private Boolean isActive = true;
+
     // One-to-many relationship with OptionValue
     @OneToMany(mappedBy = "option", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<OptionValue> optionValues;

@@ -7,6 +7,7 @@ import com.bharatshop.platform.service.OptionValueService;
 import com.bharatshop.platform.service.ProductOptionService;
 import com.bharatshop.shared.dto.*;
 import com.bharatshop.shared.entity.Product;
+import com.bharatshop.shared.entity.Option;
 import com.bharatshop.shared.repository.ProductRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -67,21 +68,16 @@ class ProductControllerIntegrationTest extends BaseIntegrationTest {
     private UUID blueColorValueId;
 
     @BeforeEach
-    void setUp() {
+    void setUpTestData() {
         tenantId = UUID.randomUUID();
         
         // Create a test product
         Product product = Product.builder()
                 .tenantId(tenantId)
                 .name("Test Product")
+                .slug("test-product")
                 .description("Test Description")
-                .price(BigDecimal.valueOf(100.00))
-                .stockQuantity(10)
-                .sku("TEST-001")
-                .category("Test Category")
-                .brand("Test Brand")
-                .active(true)
-                .featured(false)
+                .status(Product.ProductStatus.ACTIVE)
                 .build();
         product = productRepository.save(product);
         productId = product.getId();
@@ -94,16 +90,16 @@ class ProductControllerIntegrationTest extends BaseIntegrationTest {
         // Create Size option
         OptionDto sizeOption = OptionDto.builder()
                 .name("Size")
-                .type("select")
-                .required(true)
+                .type(Option.OptionType.SIZE)
+                .isRequired(true)
                 .build();
         sizeOptionId = optionService.createOption(sizeOption, tenantId).getId();
 
         // Create Color option
         OptionDto colorOption = OptionDto.builder()
                 .name("Color")
-                .type("select")
-                .required(true)
+                .type(Option.OptionType.COLOR)
+                .isRequired(true)
                 .build();
         colorOptionId = optionService.createOption(colorOption, tenantId).getId();
 
@@ -150,7 +146,7 @@ class ProductControllerIntegrationTest extends BaseIntegrationTest {
         variantRequest.put("sku", "TEST-001-SM-RED");
         variantRequest.put("price", 95.00);
         variantRequest.put("discountPrice", 85.00);
-        variantRequest.put("stockQuantity", 5);
+        variantRequest.put("stock", 5);
         variantRequest.put("isDefault", true);
         
         Map<String, String> optionValues = new HashMap<>();
@@ -169,7 +165,7 @@ class ProductControllerIntegrationTest extends BaseIntegrationTest {
                 .andExpect(jsonPath("$.sku").value("TEST-001-SM-RED"))
                 .andExpect(jsonPath("$.price").value(95.00))
                 .andExpect(jsonPath("$.discountPrice").value(85.00))
-                .andExpect(jsonPath("$.stockQuantity").value(5))
+                .andExpect(jsonPath("$.stock").value(5))
                 .andExpect(jsonPath("$.isDefault").value(true));
     }
 
@@ -197,7 +193,7 @@ class ProductControllerIntegrationTest extends BaseIntegrationTest {
         Map<String, Object> updateRequest = new HashMap<>();
         updateRequest.put("sku", "TEST-001-SM-RED-UPDATED");
         updateRequest.put("price", 110.00);
-        updateRequest.put("stockQuantity", 8);
+        updateRequest.put("stock", 8);
         updateRequest.put("isDefault", true);
         
         Map<String, String> optionValues = new HashMap<>();
@@ -213,7 +209,7 @@ class ProductControllerIntegrationTest extends BaseIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.sku").value("TEST-001-SM-RED-UPDATED"))
                 .andExpect(jsonPath("$.price").value(110.00))
-                .andExpect(jsonPath("$.stockQuantity").value(8));
+                .andExpect(jsonPath("$.stock").value(8));
     }
 
     @Test
@@ -259,7 +255,7 @@ class ProductControllerIntegrationTest extends BaseIntegrationTest {
         UUID variantId = createTestVariant("TEST-001-SM-RED", smallSizeValueId, redColorValueId, true);
 
         Map<String, Object> stockRequest = new HashMap<>();
-        stockRequest.put("stockQuantity", 15);
+        stockRequest.put("stock", 15);
 
         // When & Then
         mockMvc.perform(patch("/api/products/{productId}/variants/{variantId}/stock", productId, variantId)
@@ -267,7 +263,7 @@ class ProductControllerIntegrationTest extends BaseIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(stockRequest)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.stockQuantity").value(15));
+                .andExpect(jsonPath("$.stock").value(15));
     }
 
     @Test
@@ -276,8 +272,8 @@ class ProductControllerIntegrationTest extends BaseIntegrationTest {
         // Given
         OptionDto materialOption = OptionDto.builder()
                 .name("Material")
-                .type("select")
-                .required(false)
+                .type(Option.OptionType.MATERIAL)
+                .isRequired(false)
                 .build();
         UUID materialOptionId = optionService.createOption(materialOption, tenantId).getId();
 
@@ -330,7 +326,7 @@ class ProductControllerIntegrationTest extends BaseIntegrationTest {
         // Given - Invalid variant request (missing required fields)
         Map<String, Object> invalidRequest = new HashMap<>();
         invalidRequest.put("productId", productId.toString());
-        // Missing sku, price, stockQuantity
+        // Missing sku, price, stock
 
         // When & Then
         mockMvc.perform(post("/api/products/{productId}/variants", productId)
@@ -351,7 +347,7 @@ class ProductControllerIntegrationTest extends BaseIntegrationTest {
         duplicateRequest.put("productId", productId.toString());
         duplicateRequest.put("sku", "TEST-001-SM-RED-DUP");
         duplicateRequest.put("price", 100.00);
-        duplicateRequest.put("stockQuantity", 3);
+        duplicateRequest.put("stock", 3);
         
         Map<String, String> optionValues = new HashMap<>();
         optionValues.put(sizeOptionId.toString(), smallSizeValueId.toString());
@@ -371,7 +367,7 @@ class ProductControllerIntegrationTest extends BaseIntegrationTest {
                 .productId(productId)
                 .sku(sku)
                 .price(BigDecimal.valueOf(95.00))
-                .stockQuantity(5)
+                .stock(5)
                 .isDefault(isDefault)
                 .build();
 

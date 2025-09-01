@@ -39,6 +39,11 @@ public class OptionService {
     }
 
     @Transactional(readOnly = true)
+    public Page<OptionDto> getAllOptions(UUID tenantId, Pageable pageable) {
+        return getAllOptionsByTenant(tenantId, pageable);
+    }
+
+    @Transactional(readOnly = true)
     public Optional<OptionDto> getOptionById(UUID id, UUID tenantId) {
         return optionRepository.findActiveByIdAndTenantId(id, tenantId)
                 .map(optionMapper::toDto);

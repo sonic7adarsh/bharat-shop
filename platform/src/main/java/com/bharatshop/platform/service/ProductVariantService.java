@@ -320,6 +320,22 @@ public class ProductVariantService {
         return productVariantMapper.toDtoWithComputedFields(savedVariant);
     }
 
+    public ProductVariantDto setDefaultVariant(UUID variantId, UUID tenantId) {
+        return setAsDefault(variantId, tenantId);
+    }
+
+    public ProductVariantDto updateStock(UUID variantId, Integer stock, UUID tenantId) {
+        ProductVariant variant = productVariantRepository.findActiveByIdAndTenantId(variantId, tenantId)
+                .orElseThrow(() -> new RuntimeException("Variant not found with id: " + variantId));
+        
+        variant.setStock(stock);
+        variant.setUpdatedAt(LocalDateTime.now());
+        
+        log.info("Updated variant stock: {} to {} for tenant: {}", variant.getSku(), stock, tenantId);
+        ProductVariant savedVariant = productVariantRepository.save(variant);
+        return productVariantMapper.toDtoWithComputedFields(savedVariant);
+    }
+
     @Transactional(readOnly = true)
     public long getVariantCount(UUID productId, UUID tenantId) {
         return productVariantRepository.countActiveByProductIdAndTenantId(productId, tenantId);

@@ -2,15 +2,16 @@ package com.bharatshop.shared.dto;
 
 import com.bharatshop.shared.entity.ProductVariant;
 import com.bharatshop.shared.validation.ValidPrice;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -22,11 +23,16 @@ import java.util.UUID;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ProductVariantDto extends BaseDto {
+public class ProductVariantDto {
     
     private UUID id;
+    
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime createdAt;
+    
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime updatedAt;
     
     @NotNull(message = "Product ID is required")
     private UUID productId;

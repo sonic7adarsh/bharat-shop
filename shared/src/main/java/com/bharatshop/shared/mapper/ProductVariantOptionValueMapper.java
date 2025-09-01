@@ -5,6 +5,7 @@ import com.bharatshop.shared.entity.ProductVariantOptionValue;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.Named;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
 import java.util.List;
@@ -23,6 +24,7 @@ public interface ProductVariantOptionValueMapper {
     /**
      * Maps ProductVariantOptionValue entity to ProductVariantOptionValueDto.
      */
+    @Named("toDto")
     @Mapping(target = "variant", ignore = true) // Mapped separately to avoid circular references
     @Mapping(target = "option", ignore = true) // Mapped separately
     @Mapping(target = "optionValue", ignore = true) // Mapped separately
@@ -40,7 +42,7 @@ public interface ProductVariantOptionValueMapper {
     @Mapping(target = "createdAt", ignore = true) // Set by auditing
     @Mapping(target = "updatedAt", ignore = true) // Set by auditing
     @Mapping(target = "deletedAt", ignore = true) // Set by soft delete
-    @Mapping(target = "variant", ignore = true) // Handled separately
+    @Mapping(target = "productVariant", ignore = true) // Handled separately
     @Mapping(target = "option", ignore = true) // Handled separately
     @Mapping(target = "optionValue", ignore = true) // Handled separately
     ProductVariantOptionValue toEntity(ProductVariantOptionValueDto productVariantOptionValueDto);
@@ -56,7 +58,7 @@ public interface ProductVariantOptionValueMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "deletedAt", ignore = true)
-    @Mapping(target = "variant", ignore = true)
+    @Mapping(target = "productVariant", ignore = true)
     @Mapping(target = "option", ignore = true)
     @Mapping(target = "optionValue", ignore = true)
     void updateEntity(ProductVariantOptionValueDto productVariantOptionValueDto, @MappingTarget ProductVariantOptionValue productVariantOptionValue);
@@ -64,6 +66,7 @@ public interface ProductVariantOptionValueMapper {
     /**
      * Maps list of ProductVariantOptionValue entities to list of ProductVariantOptionValueDtos.
      */
+    @Named("toDtoList")
     List<ProductVariantOptionValueDto> toDtoList(List<ProductVariantOptionValue> productVariantOptionValues);
     
     /**
@@ -74,6 +77,7 @@ public interface ProductVariantOptionValueMapper {
     /**
      * Maps ProductVariantOptionValueDto with computed fields for display.
      */
+    @Named("toDtoWithComputedFields")
     default ProductVariantOptionValueDto toDtoWithComputedFields(ProductVariantOptionValue entity) {
         ProductVariantOptionValueDto dto = toDto(entity);
         

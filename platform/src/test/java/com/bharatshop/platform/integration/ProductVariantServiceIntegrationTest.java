@@ -5,8 +5,11 @@ import com.bharatshop.platform.service.ProductService;
 import com.bharatshop.platform.service.OptionService;
 import com.bharatshop.platform.service.OptionValueService;
 import com.bharatshop.platform.service.ProductOptionService;
-import com.bharatshop.shared.dto.*;
+import com.bharatshop.shared.dto.ProductVariantDto;
+import com.bharatshop.shared.dto.OptionDto;
+import com.bharatshop.shared.dto.OptionValueDto;
 import com.bharatshop.shared.entity.Product;
+import com.bharatshop.shared.entity.Option;
 import com.bharatshop.shared.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -55,21 +58,18 @@ class ProductVariantServiceIntegrationTest extends BaseIntegrationTest {
     private UUID blueColorValueId;
 
     @BeforeEach
-    void setUp() {
+    void setUpTestData() {
         tenantId = UUID.randomUUID();
         
         // Create a test product
         Product product = Product.builder()
-                .tenantId(tenantId)
                 .name("Test Product")
+                .slug("test-product")
                 .description("Test Description")
-                .price(BigDecimal.valueOf(100.00))
-                .stockQuantity(10)
-                .sku("TEST-001")
-                .category("Test Category")
-                .brand("Test Brand")
-                .active(true)
-                .featured(false)
+                .price(new BigDecimal("100.00"))
+                .stock(10)
+                .status(Product.ProductStatus.ACTIVE)
+                .tenantId(tenantId)
                 .build();
         product = productRepository.save(product);
         productId = product.getId();
@@ -77,15 +77,15 @@ class ProductVariantServiceIntegrationTest extends BaseIntegrationTest {
         // Create options
         OptionDto sizeOption = OptionDto.builder()
                 .name("Size")
-                .type("select")
-                .required(true)
+                .displayName("Size")
+                .type(Option.OptionType.SIZE)
                 .build();
         sizeOptionId = optionService.createOption(sizeOption, tenantId).getId();
 
         OptionDto colorOption = OptionDto.builder()
                 .name("Color")
-                .type("select")
-                .required(true)
+                .displayName("Color")
+                .type(Option.OptionType.COLOR)
                 .build();
         colorOptionId = optionService.createOption(colorOption, tenantId).getId();
 
@@ -131,8 +131,8 @@ class ProductVariantServiceIntegrationTest extends BaseIntegrationTest {
                 .productId(productId)
                 .sku("TEST-001-SM-RED")
                 .price(BigDecimal.valueOf(95.00))
-                .discountPrice(BigDecimal.valueOf(85.00))
-                .stockQuantity(5)
+                .salePrice(BigDecimal.valueOf(85.00))
+                .stock(5)
                 .isDefault(true)
                 .build();
 
@@ -149,8 +149,8 @@ class ProductVariantServiceIntegrationTest extends BaseIntegrationTest {
         assertThat(createdVariant.getProductId()).isEqualTo(productId);
         assertThat(createdVariant.getSku()).isEqualTo("TEST-001-SM-RED");
         assertThat(createdVariant.getPrice()).isEqualByComparingTo(BigDecimal.valueOf(95.00));
-        assertThat(createdVariant.getDiscountPrice()).isEqualByComparingTo(BigDecimal.valueOf(85.00));
-        assertThat(createdVariant.getStockQuantity()).isEqualTo(5);
+        assertThat(createdVariant.getSalePrice()).isEqualByComparingTo(BigDecimal.valueOf(85.00));
+        assertThat(createdVariant.getStock()).isEqualTo(5);
         assertThat(createdVariant.getIsDefault()).isTrue();
     }
 
@@ -162,7 +162,7 @@ class ProductVariantServiceIntegrationTest extends BaseIntegrationTest {
                 .productId(productId)
                 .sku("TEST-001-SM-RED")
                 .price(BigDecimal.valueOf(95.00))
-                .stockQuantity(5)
+                .stock(5)
                 .build();
 
         Map<UUID, UUID> optionValues = new HashMap<>();
@@ -176,7 +176,7 @@ class ProductVariantServiceIntegrationTest extends BaseIntegrationTest {
                 .productId(productId)
                 .sku("TEST-001-SM-RED-DUP")
                 .price(BigDecimal.valueOf(100.00))
-                .stockQuantity(3)
+                .stock(3)
                 .build();
 
         // Then
@@ -221,7 +221,7 @@ class ProductVariantServiceIntegrationTest extends BaseIntegrationTest {
                 .productId(productId)
                 .sku("TEST-001-SM-RED-UPDATED")
                 .price(BigDecimal.valueOf(110.00))
-                .stockQuantity(8)
+                .stock(8)
                 .isDefault(true)
                 .build();
 
@@ -230,12 +230,12 @@ class ProductVariantServiceIntegrationTest extends BaseIntegrationTest {
         newOptionValues.put(colorOptionId, redColorValueId);
 
         // When
-        ProductVariantDto updatedVariant = productVariantService.updateVariant(updateDto, newOptionValues, tenantId);
+        ProductVariantDto updatedVariant = productVariantService.updateVariant(variantId, updateDto, newOptionValues, tenantId);
 
         // Then
         assertThat(updatedVariant.getSku()).isEqualTo("TEST-001-SM-RED-UPDATED");
         assertThat(updatedVariant.getPrice()).isEqualByComparingTo(BigDecimal.valueOf(110.00));
-        assertThat(updatedVariant.getStockQuantity()).isEqualTo(8);
+        assertThat(updatedVariant.getStock()).isEqualTo(8);
     }
 
     @Test
@@ -284,7 +284,7 @@ class ProductVariantServiceIntegrationTest extends BaseIntegrationTest {
         // Then
         Optional<ProductVariantDto> updatedVariant = productVariantService.getVariantById(variantId, tenantId);
         assertThat(updatedVariant).isPresent();
-        assertThat(updatedVariant.get().getStockQuantity()).isEqualTo(15);
+        assertThat(updatedVariant.get().getStock()).isEqualTo(15);
     }
 
     @Test
@@ -299,12 +299,16 @@ class ProductVariantServiceIntegrationTest extends BaseIntegrationTest {
         searchOptionValues.put(colorOptionId, blueColorValueId);
 
         // When
-        Optional<ProductVariantDto> foundVariant = productVariantService.findVariantByOptionValues(
+        Optional<UUID> variantIdResult = productVariantService.findVariantByOptionValues(
                 productId, searchOptionValues, tenantId);
-
+        
         // Then
-        assertThat(foundVariant).isPresent();
-        assertThat(foundVariant.get().getSku()).isEqualTo("TEST-001-LG-BLUE");
+        assertThat(variantIdResult).isPresent();
+        
+        // Get the full variant details
+        Optional<ProductVariantDto> result = productVariantService.getVariantById(variantIdResult.get(), tenantId);
+        assertThat(result).isPresent();
+        assertThat(result.get().getSku()).isEqualTo("TEST-001-LG-BLUE");
     }
 
     @Test
@@ -316,7 +320,7 @@ class ProductVariantServiceIntegrationTest extends BaseIntegrationTest {
         createTestVariant("TEST-001-LG-RED", largeSizeValueId, redColorValueId, false);
 
         // When
-        long count = productVariantService.countVariantsByProduct(productId, tenantId);
+        long count = productVariantService.getVariantCount(productId, tenantId);
 
         // Then
         assertThat(count).isEqualTo(3);
@@ -327,7 +331,7 @@ class ProductVariantServiceIntegrationTest extends BaseIntegrationTest {
                 .productId(productId)
                 .sku(sku)
                 .price(BigDecimal.valueOf(95.00))
-                .stockQuantity(5)
+                .stock(5)
                 .isDefault(isDefault)
                 .build();
 

@@ -3,6 +3,7 @@ package com.bharatshop.platform.controller;
 import com.bharatshop.platform.service.ProductVariantService;
 import com.bharatshop.platform.service.ProductOptionService;
 import com.bharatshop.shared.dto.*;
+import com.bharatshop.shared.entity.Option;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -60,16 +61,16 @@ class ProductControllerTest {
                 .productId(productId)
                 .sku("TEST-001-SM-RED")
                 .price(BigDecimal.valueOf(95.00))
-                .discountPrice(BigDecimal.valueOf(85.00))
-                .stockQuantity(5)
+                .salePrice(BigDecimal.valueOf(85.00))
+                .stock(5)
                 .isDefault(true)
                 .build();
 
         OptionDto optionDto = OptionDto.builder()
                 .id(optionId)
                 .name("Size")
-                .type("select")
-                .required(true)
+                .type(Option.OptionType.SIZE)
+                .isRequired(true)
                 .build();
 
         productOptionDto = ProductOptionDto.builder()
@@ -77,7 +78,7 @@ class ProductControllerTest {
                 .productId(productId)
                 .optionId(optionId)
                 .option(optionDto)
-                .required(true)
+                .isRequired(true)
                 .sortOrder(1)
                 .build();
     }
@@ -98,7 +99,7 @@ class ProductControllerTest {
         optionValues.put(optionId.toString(), UUID.randomUUID().toString());
         variantRequest.put("optionValues", optionValues);
 
-        when(productVariantService.createVariant(any(ProductVariantDto.class), any(Map.class), eq(tenantId)))
+        when(productVariantService.createVariant(org.mockito.ArgumentMatchers.any(ProductVariantDto.class), org.mockito.ArgumentMatchers.any(Map.class), eq(tenantId)))
                 .thenReturn(productVariantDto);
 
         // When & Then
@@ -115,7 +116,7 @@ class ProductControllerTest {
                 .andExpect(jsonPath("$.stockQuantity").value(5))
                 .andExpect(jsonPath("$.isDefault").value(true));
 
-        verify(productVariantService).createVariant(any(ProductVariantDto.class), any(Map.class), eq(tenantId));
+        verify(productVariantService).createVariant(org.mockito.ArgumentMatchers.any(ProductVariantDto.class), org.mockito.ArgumentMatchers.any(Map.class), eq(tenantId));
     }
 
     @Test
@@ -171,9 +172,12 @@ class ProductControllerTest {
     @DisplayName("Should update product variant")
     void shouldUpdateProductVariant() throws Exception {
         // Given
-        ProductVariantDto updatedVariant = productVariantDto.toBuilder()
+        ProductVariantDto updatedVariant = ProductVariantDto.builder()
+                .id(variantId)
+                .productId(productId)
                 .sku("TEST-001-SM-RED-UPDATED")
                 .price(BigDecimal.valueOf(110.00))
+                .stock(5)
                 .build();
 
         Map<String, Object> updateRequest = new HashMap<>();
@@ -186,7 +190,7 @@ class ProductControllerTest {
         optionValues.put(optionId.toString(), UUID.randomUUID().toString());
         updateRequest.put("optionValues", optionValues);
 
-        when(productVariantService.updateVariant(any(ProductVariantDto.class), any(Map.class), eq(tenantId)))
+        when(productVariantService.updateVariant(eq(variantId), org.mockito.ArgumentMatchers.any(ProductVariantDto.class), org.mockito.ArgumentMatchers.any(Map.class), eq(tenantId)))
                 .thenReturn(updatedVariant);
 
         // When & Then
@@ -198,7 +202,7 @@ class ProductControllerTest {
                 .andExpect(jsonPath("$.sku").value("TEST-001-SM-RED-UPDATED"))
                 .andExpect(jsonPath("$.price").value(110.00));
 
-        verify(productVariantService).updateVariant(any(ProductVariantDto.class), any(Map.class), eq(tenantId));
+        verify(productVariantService).updateVariant(eq(variantId), org.mockito.ArgumentMatchers.any(ProductVariantDto.class), org.mockito.ArgumentMatchers.any(Map.class), eq(tenantId));
     }
 
     @Test
@@ -233,12 +237,16 @@ class ProductControllerTest {
     @DisplayName("Should update variant stock")
     void shouldUpdateVariantStock() throws Exception {
         // Given
-        ProductVariantDto updatedVariant = productVariantDto.toBuilder()
-                .stockQuantity(15)
+        ProductVariantDto updatedVariant = ProductVariantDto.builder()
+                .id(variantId)
+                .productId(productId)
+                .sku("TEST-001-SM-RED")
+                .price(new BigDecimal("100.00"))
+                .stock(15)
                 .build();
 
         Map<String, Object> stockRequest = new HashMap<>();
-        stockRequest.put("stockQuantity", 15);
+        stockRequest.put("stock", 15);
 
         when(productVariantService.updateVariantStock(variantId, 15, tenantId))
                 .thenReturn(updatedVariant);
@@ -372,7 +380,7 @@ class ProductControllerTest {
         optionValues.put(optionId.toString(), UUID.randomUUID().toString());
         variantRequest.put("optionValues", optionValues);
 
-        when(productVariantService.createVariant(any(ProductVariantDto.class), any(Map.class), eq(tenantId)))
+        when(productVariantService.createVariant(org.mockito.ArgumentMatchers.any(ProductVariantDto.class), org.mockito.ArgumentMatchers.any(Map.class), eq(tenantId)))
                 .thenThrow(new RuntimeException("variant combination already exists"));
 
         // When & Then
@@ -391,7 +399,7 @@ class ProductControllerTest {
                 optionId.toString(), UUID.randomUUID().toString()
         );
         
-        when(productVariantService.findVariantByOptionValues(eq(productId), any(Map.class), eq(tenantId)))
+        when(productVariantService.findVariantByOptionValues(eq(productId), org.mockito.ArgumentMatchers.any(Map.class), eq(tenantId)))
                 .thenReturn(Optional.of(productVariantDto));
 
         // When & Then
@@ -411,7 +419,7 @@ class ProductControllerTest {
                 optionId.toString(), UUID.randomUUID().toString()
         );
         
-        when(productVariantService.findVariantByOptionValues(eq(productId), any(Map.class), eq(tenantId)))
+        when(productVariantService.findVariantByOptionValues(eq(productId), org.mockito.ArgumentMatchers.any(Map.class), eq(tenantId)))
                 .thenReturn(Optional.empty());
 
         // When & Then

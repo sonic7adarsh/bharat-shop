@@ -2,8 +2,11 @@ C:\Users\Adarsh\Downloads\bharatshop\platform\src\main\java\com\bharatshop\platf
 C:\Users\Adarsh\Downloads\bharatshop\platform\src\main\java\com\bharatshop\platform\dto\auth\RegisterVendorRequest.java
 C:\Users\Adarsh\Downloads\bharatshop\platform\src\main\java\com\bharatshop\platform\service\CategoryService.java
 C:\Users\Adarsh\Downloads\bharatshop\platform\src\main\java\com\bharatshop\platform\tenant\TenantContext.java
+C:\Users\Adarsh\Downloads\bharatshop\platform\src\main\java\com\bharatshop\platform\service\ProductOptionService.java
 C:\Users\Adarsh\Downloads\bharatshop\platform\src\main\java\com\bharatshop\platform\dto\TenantResponseDto.java
+C:\Users\Adarsh\Downloads\bharatshop\platform\src\main\java\com\bharatshop\platform\service\ProductVariantService.java
 C:\Users\Adarsh\Downloads\bharatshop\platform\src\main\java\com\bharatshop\platform\config\CacheConfig.java
+C:\Users\Adarsh\Downloads\bharatshop\platform\src\main\java\com\bharatshop\platform\service\ProductVariantOptionValueService.java
 C:\Users\Adarsh\Downloads\bharatshop\platform\src\main\java\com\bharatshop\platform\service\VendorAnalyticsService.java
 C:\Users\Adarsh\Downloads\bharatshop\platform\src\main\java\com\bharatshop\platform\entity\PlatformUser.java
 C:\Users\Adarsh\Downloads\bharatshop\platform\src\main\java\com\bharatshop\platform\model\Tenant.java
@@ -16,7 +19,9 @@ C:\Users\Adarsh\Downloads\bharatshop\platform\src\main\java\com\bharatshop\platf
 C:\Users\Adarsh\Downloads\bharatshop\platform\src\main\java\com\bharatshop\platform\service\ProductImportExportService.java
 C:\Users\Adarsh\Downloads\bharatshop\platform\src\main\java\com\bharatshop\platform\PlatformApplication.java
 C:\Users\Adarsh\Downloads\bharatshop\platform\src\main\java\com\bharatshop\platform\dto\auth\RefreshTokenRequest.java
+C:\Users\Adarsh\Downloads\bharatshop\platform\src\main\java\com\bharatshop\platform\service\OptionService.java
 C:\Users\Adarsh\Downloads\bharatshop\platform\src\main\java\com\bharatshop\platform\controller\VendorController.java
+C:\Users\Adarsh\Downloads\bharatshop\platform\src\main\java\com\bharatshop\platform\service\OptionValueService.java
 C:\Users\Adarsh\Downloads\bharatshop\platform\src\main\java\com\bharatshop\platform\controller\PageController.java
 C:\Users\Adarsh\Downloads\bharatshop\platform\src\main\java\com\bharatshop\platform\controller\VendorAnalyticsController.java
 C:\Users\Adarsh\Downloads\bharatshop\platform\src\main\java\com\bharatshop\platform\controller\PlatformAuthController.java

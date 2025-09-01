@@ -1,3 +1,5 @@
+com\bharatshop\platform\service\OptionService.class
+com\bharatshop\platform\service\ProductOptionService.class
 com\bharatshop\platform\dto\auth\LoginRequest.class
 com\bharatshop\platform\dto\auth\RegisterVendorRequest.class
 com\bharatshop\platform\config\CacheConfig.class
@@ -7,11 +9,13 @@ com\bharatshop\platform\tenant\TenantContext.class
 com\bharatshop\platform\controller\VendorController.class
 com\bharatshop\platform\config\DatabaseConfig.class
 com\bharatshop\platform\entity\PlatformUser$PlatformUserBuilder.class
+com\bharatshop\platform\service\ProductVariantOptionValueService.class
 com\bharatshop\platform\repository\TenantRepository.class
 com\bharatshop\platform\service\ProductImportExportService.class
 com\bharatshop\platform\model\Tenant.class
 com\bharatshop\platform\controller\PlatformAuthController.class
 com\bharatshop\platform\dto\auth\AuthResponse$UserInfo$UserInfoBuilder.class
+com\bharatshop\platform\service\ProductVariantService.class
 com\bharatshop\platform\service\TenantService.class
 com\bharatshop\platform\controller\ProductImportExportController.class
 com\bharatshop\platform\controller\ProductController.class
@@ -25,6 +29,7 @@ com\bharatshop\platform\dto\TenantCreateDto.class
 com\bharatshop\platform\service\ProductImportExportService$ImportResult.class
 com\bharatshop\platform\dto\TenantResponseDto$TenantResponseDtoBuilder.class
 com\bharatshop\platform\dto\auth\AuthResponse$UserInfo.class
+com\bharatshop\platform\service\OptionValueService.class
 com\bharatshop\platform\controller\TemplateController.class
 com\bharatshop\platform\security\PlatformSecurityConfig.class
 com\bharatshop\platform\controller\CategoryController.class

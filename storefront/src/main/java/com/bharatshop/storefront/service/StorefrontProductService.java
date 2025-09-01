@@ -229,9 +229,9 @@ public class StorefrontProductService {
         // Use variant data if available, otherwise fallback to product data
         if (defaultVariant != null) {
             builder.price(defaultVariant.getPrice())
-                   .discountPrice(defaultVariant.getDiscountPrice())
+                   .discountPrice(defaultVariant.getDiscountAmount())
                    .sku(defaultVariant.getSku())
-                   .stockQuantity(defaultVariant.getStockQuantity());
+                   .stockQuantity(defaultVariant.getStock());
         } else {
             builder.price(product.getPrice())
                    .discountPrice(product.getDiscountPrice())

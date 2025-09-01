@@ -194,7 +194,7 @@ public class ProductVariantOptionValueService {
             return Optional.empty();
         }
         
-        return variantOptionValueRepository.findVariantByOptionValues(productId, optionValueMap, optionValueMap.size(), tenantId);
+        return variantOptionValueRepository.findVariantByOptionValues(productId, optionValueMap.values(), optionValueMap.size(), tenantId);
     }
 
     @Transactional(readOnly = true)
@@ -203,7 +203,7 @@ public class ProductVariantOptionValueService {
             return true;
         }
         
-        Optional<UUID> existingVariantId = variantOptionValueRepository.findVariantByOptionValues(null, optionValueMap, optionValueMap.size(), tenantId);
+        Optional<UUID> existingVariantId = variantOptionValueRepository.findVariantByOptionValues(null, optionValueMap.values(), optionValueMap.size(), tenantId);
         return existingVariantId.isEmpty() || existingVariantId.get().equals(variantId);
     }
 }

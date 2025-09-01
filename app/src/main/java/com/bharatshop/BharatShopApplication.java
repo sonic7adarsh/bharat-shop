@@ -18,19 +18,22 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  */
 @SpringBootApplication(scanBasePackages = {
     "com.bharatshop",
-    "com.bharatshop.shared"
+    "com.bharatshop.shared",
+    "com.bharatshop.platform"
 })
 @EnableAspectJAutoProxy
 @EnableTransactionManagement
 @EnableJpaRepositories(basePackages = {
     "com.bharatshop.modules.auth.repository",
     "com.bharatshop.modules.users.repository",
-    "com.bharatshop.shared.repository"
+    "com.bharatshop.shared.repository",
+    "com.bharatshop.platform.repository"
 })
 @EntityScan(basePackages = {
     "com.bharatshop.modules.auth.entity",
     "com.bharatshop.modules.users.entity",
-    "com.bharatshop.shared.entity"
+    "com.bharatshop.shared.entity",
+    "com.bharatshop.platform.entity"
 })
 public class BharatShopApplication {
 

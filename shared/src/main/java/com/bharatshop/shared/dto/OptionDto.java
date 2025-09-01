@@ -1,14 +1,15 @@
 package com.bharatshop.shared.dto;
 
 import com.bharatshop.shared.entity.Option;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import jakarta.validation.constraints.*;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,11 +20,16 @@ import java.util.UUID;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class OptionDto extends BaseDto {
+public class OptionDto {
     
     private UUID id;
+    
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime createdAt;
+    
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime updatedAt;
     
     @NotBlank(message = "Option name is required")
     @Size(min = 2, max = 100, message = "Option name must be between 2 and 100 characters")
