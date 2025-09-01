@@ -44,6 +44,7 @@ com\bharatshop\shared\service\MediaService$PresignedUploadResponse.class
 com\bharatshop\shared\repository\PaymentGatewayRepository.class
 com\bharatshop\shared\mapper\OptionMapper.class
 com\bharatshop\shared\dto\CustomerAnalyticsDto$FavoriteProductData.class
+com\bharatshop\shared\entity\Reservation$ReservationBuilder.class
 com\bharatshop\shared\entity\Vendor.class
 com\bharatshop\shared\config\RazorpayConfig.class
 com\bharatshop\shared\entity\Category$CategoryBuilderImpl.class
@@ -132,6 +133,7 @@ com\bharatshop\shared\repository\OptionRepository.class
 com\bharatshop\shared\entity\Plan$PlanBuilder.class
 com\bharatshop\shared\entity\ProductVariantOptionValue$ProductVariantOptionValueBuilderImpl.class
 com\bharatshop\shared\dto\VendorAnalyticsDto$TopProductData.class
+com\bharatshop\shared\repository\ReservationRepository.class
 com\bharatshop\shared\dto\ProductVariantOptionValueDto$ProductVariantOptionValueDtoBuilder.class
 com\bharatshop\shared\repository\TenantAwareRepository.class
 com\bharatshop\shared\entity\Option$OptionBuilder.class
@@ -148,6 +150,7 @@ com\bharatshop\shared\dto\PlanResponseDto.class
 com\bharatshop\shared\entity\ProductVariant$VariantStatus.class
 com\bharatshop\shared\controller\MediaController$ErrorResponse.class
 com\bharatshop\shared\service\NotificationService$1.class
+com\bharatshop\shared\entity\Reservation$ReservationStatus.class
 com\bharatshop\shared\entity\BaseEntity$BaseEntityBuilder.class
 com\bharatshop\shared\dto\media\MediaFileResponse.class
 com\bharatshop\shared\entity\Wishlist.class
@@ -174,9 +177,11 @@ com\bharatshop\shared\entity\Subscription.class
 com\bharatshop\shared\dto\media\StorageUsageResponse.class
 com\bharatshop\shared\entity\Category.class
 com\bharatshop\shared\entity\MediaFile$MediaStatus.class
+com\bharatshop\shared\scheduler\ReservationCleanupScheduler.class
 com\bharatshop\shared\entity\Subscription$SubscriptionBuilderImpl.class
 com\bharatshop\shared\dto\CustomerDto$Gender.class
 com\bharatshop\shared\config\PasswordConfig.class
+com\bharatshop\shared\entity\Reservation.class
 com\bharatshop\shared\dto\SubscriptionRequestDto$SubscriptionRequestDtoBuilder.class
 com\bharatshop\shared\dto\OptionValueDto.class
 com\bharatshop\shared\entity\Product$ProductBuilderImpl.class
@@ -215,6 +220,7 @@ com\bharatshop\shared\dto\RazorpayOrderResponseDto$RazorpayOrderResponseDtoBuild
 com\bharatshop\shared\dto\ProductVariantOptionValueDto$ProductVariantOptionValueDtoBuilderImpl.class
 com\bharatshop\shared\entity\Subscription$SubscriptionBuilder.class
 com\bharatshop\shared\dto\SubscriptionResponseDto.class
+com\bharatshop\shared\service\ReservationService.class
 com\bharatshop\shared\entity\ProductVariantOptionValue.class
 com\bharatshop\shared\dto\VendorAnalyticsDto$MonthlyRevenueData$MonthlyRevenueDataBuilder.class
 com\bharatshop\shared\dto\BaseDto.class

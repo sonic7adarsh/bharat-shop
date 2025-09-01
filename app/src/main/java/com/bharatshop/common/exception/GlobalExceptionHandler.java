@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
  * Global exception handler for consistent error responses.
  * Handles all exceptions and converts them to standard ApiResponse format.
  */
+@Component("appGlobalExceptionHandler")
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     

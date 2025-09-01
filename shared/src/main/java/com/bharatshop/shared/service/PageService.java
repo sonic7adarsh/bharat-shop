@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
  * Service for managing pages in the platform.
  * Provides CRUD operations and business logic for page management.
  */
-@Service
+@Service("sharedPageService")
 @RequiredArgsConstructor
 @Slf4j
 @Transactional

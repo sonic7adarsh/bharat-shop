@@ -1,13 +1,14 @@
 package com.bharatshop.storefront.controller;
 
 import com.bharatshop.storefront.dto.PageResponseDto;
-import com.bharatshop.storefront.service.PageService;
+import com.bharatshop.storefront.service.StorefrontPageService;
 import com.bharatshop.storefront.shared.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,12 +21,15 @@ import java.util.UUID;
  */
 @RestController
 @RequestMapping("/store")
-@RequiredArgsConstructor
 @Slf4j
 @Tag(name = "Storefront Pages", description = "Public APIs for CMS page content")
 public class StorefrontPageController {
     
-    private final PageService pageService;
+    private final StorefrontPageService pageService;
+    
+    public StorefrontPageController(@Qualifier("storefrontPageService") StorefrontPageService pageService) {
+        this.pageService = pageService;
+    }
     
     /**
      * Get page by slug
@@ -123,7 +127,7 @@ public class StorefrontPageController {
      */
     @GetMapping("/pages/{slug}/render")
     @Operation(summary = "Get page render data", description = "Retrieve page with template and layout configuration for storefront rendering")
-    public ResponseEntity<ApiResponse<PageService.PageRenderData>> getPageRenderData(
+    public ResponseEntity<ApiResponse<StorefrontPageService.PageRenderData>> getPageRenderData(
             @Parameter(description = "Page slug")
             @PathVariable String slug,
             

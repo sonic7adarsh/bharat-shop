@@ -4,6 +4,8 @@ spring:
     name: bharatshop
   profiles:
     active: dev
+  main:
+    allow-bean-definition-overriding: true
   
   # Database Configuration
   datasource:
@@ -15,7 +17,7 @@ spring:
   # JPA Configuration
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: create-drop
     show-sql: false
     properties:
       hibernate:
@@ -63,13 +65,13 @@ app:
   rate-limit:
     api:
       requests: 100
-      window: PT1M  # 1 minute
+      window: 1  # 1 minute
     auth:
       requests: 10
-      window: PT1M  # 1 minute
+      window: 1  # 1 minute
     admin:
       requests: 200
-      window: PT1M  # 1 minute
+      window: 1  # 1 minute
 
   # Monitoring Configuration
 management:

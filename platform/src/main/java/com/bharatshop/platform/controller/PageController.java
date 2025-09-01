@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -28,13 +29,17 @@ import java.util.UUID;
  */
 @RestController
 @RequestMapping("/api/platform/pages")
-@RequiredArgsConstructor
 @Slf4j
 @Tag(name = "Page Management", description = "APIs for page customization and management")
 public class PageController {
     
     private final PageService pageService;
     private final FeatureFlagService featureFlagService;
+    
+    public PageController(@Qualifier("sharedPageService") PageService pageService, FeatureFlagService featureFlagService) {
+        this.pageService = pageService;
+        this.featureFlagService = featureFlagService;
+    }
     
     /**
      * Get all pages with pagination

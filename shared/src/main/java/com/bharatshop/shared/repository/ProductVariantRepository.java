@@ -3,11 +3,13 @@ package com.bharatshop.shared.repository;
 import com.bharatshop.shared.entity.ProductVariant;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import jakarta.persistence.LockModeType;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
@@ -258,4 +260,11 @@ public interface ProductVariantRepository extends TenantAwareRepository<ProductV
     @Modifying
     @Query("UPDATE ProductVariant pv SET pv.deletedAt = CURRENT_TIMESTAMP WHERE pv.productId = :productId AND pv.tenantId = :tenantId")
     void softDeleteByProductIdAndTenantId(@Param("productId") UUID productId, @Param("tenantId") UUID tenantId);
+    
+    /**
+     * Find variant by ID with pessimistic lock for atomic operations
+     */
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT pv FROM ProductVariant pv WHERE pv.id = :id AND pv.deletedAt IS NULL")
+    Optional<ProductVariant> findByIdWithLock(@Param("id") UUID id);
 }

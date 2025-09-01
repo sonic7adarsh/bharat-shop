@@ -2,13 +2,14 @@ package com.bharatshop.storefront.service;
 
 import com.bharatshop.storefront.dto.ProductResponseDto;
 import com.bharatshop.storefront.model.Product;
-import com.bharatshop.storefront.repository.ProductRepository;
+import com.bharatshop.storefront.repository.StorefrontProductRepository;
 import com.bharatshop.shared.dto.ProductVariantDto;
 import com.bharatshop.shared.dto.ProductOptionDto;
 import com.bharatshop.platform.service.ProductVariantService;
 import com.bharatshop.platform.service.ProductOptionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,7 +29,8 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public class StorefrontProductService {
     
-    private final ProductRepository productRepository;
+    @Qualifier("storefrontProductRepository")
+    private final StorefrontProductRepository productRepository;
     private final ProductVariantService productVariantService;
     private final ProductOptionService productOptionService;
     

@@ -3,10 +3,11 @@ package com.bharatshop.storefront.service;
 import com.bharatshop.shared.dto.CustomerAnalyticsDto;
 import com.bharatshop.storefront.entity.Order;
 import com.bharatshop.shared.entity.OrderItem;
-import com.bharatshop.storefront.repository.OrderRepository;
-import com.bharatshop.storefront.repository.OrderItemRepository;
+import com.bharatshop.storefront.repository.StorefrontOrderRepository;
+import com.bharatshop.storefront.repository.StorefrontOrderItemRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
@@ -27,8 +28,10 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CustomerAnalyticsService {
     
-    private final OrderRepository orderRepository;
-    private final OrderItemRepository orderItemRepository;
+    @Qualifier("storefrontOrderRepository")
+    private final StorefrontOrderRepository orderRepository;
+    @Qualifier("storefrontOrderItemRepository")
+    private final StorefrontOrderItemRepository orderItemRepository;
     
     /**
      * Get comprehensive customer analytics for dashboard

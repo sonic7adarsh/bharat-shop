@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
  * Configuration properties for rate limiting
  */
 @Data
-@Component
 @ConfigurationProperties(prefix = "app.rate-limit")
 public class RateLimitProperties {
 

@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
@@ -17,23 +18,26 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * - Immutable DTOs using records
  */
 @SpringBootApplication(scanBasePackages = {
-    "com.bharatshop",
+    "com.bharatshop.app",
+    "com.bharatshop.config",
+    "com.bharatshop.modules",
     "com.bharatshop.shared",
-    "com.bharatshop.platform"
+    "com.bharatshop.storefront"
 })
 @EnableAspectJAutoProxy
 @EnableTransactionManagement
+@EnableScheduling
 @EnableJpaRepositories(basePackages = {
     "com.bharatshop.modules.auth.repository",
     "com.bharatshop.modules.users.repository",
     "com.bharatshop.shared.repository",
-    "com.bharatshop.platform.repository"
+    "com.bharatshop.storefront.repository"
 })
 @EntityScan(basePackages = {
     "com.bharatshop.modules.auth.entity",
     "com.bharatshop.modules.users.entity",
     "com.bharatshop.shared.entity",
-    "com.bharatshop.platform.entity"
+    "com.bharatshop.storefront.entity"
 })
 public class BharatShopApplication {
 

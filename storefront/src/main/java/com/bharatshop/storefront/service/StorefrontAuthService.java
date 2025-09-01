@@ -34,6 +34,9 @@ public class StorefrontAuthService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     private final OtpService otpService;
     private final AuthenticationManager authenticationManager;
+    
+    // Import the DTOs from app module
+    // Note: These methods bridge the app module controller with storefront service
 
     public CustomerProfileResponse registerCustomer(RegisterCustomerRequest request) {
         log.info("Registering new customer with email: {}", request.getEmail());

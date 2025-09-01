@@ -10,12 +10,14 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "cart_items", indexes = {
     @Index(name = "idx_cart_item_cart", columnList = "cartId"),
     @Index(name = "idx_cart_item_product", columnList = "productId"),
-    @Index(name = "idx_cart_item_cart_product", columnList = "cartId, productId", unique = true)
+    @Index(name = "idx_cart_item_variant", columnList = "variantId"),
+    @Index(name = "idx_cart_item_cart_variant", columnList = "cartId, variantId", unique = true)
 })
 @Data
 @Builder
@@ -34,6 +36,9 @@ public class CartItem {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "productId", nullable = false)
     private Product product;
+    
+    @Column(name = "variantId")
+    private UUID variantId;
     
     @Column(nullable = false)
     private Integer quantity;

@@ -1,13 +1,14 @@
 package com.bharatshop.storefront.service;
 
-import com.bharatshop.shared.entity.Product;
-import com.bharatshop.shared.repository.ProductRepository;
+import com.bharatshop.storefront.repository.StorefrontProductRepository;
 import com.bharatshop.shared.entity.Cart;
 import com.bharatshop.shared.entity.CartItem;
 import com.bharatshop.shared.repository.CartItemRepository;
 import com.bharatshop.shared.repository.CartRepository;
+import com.bharatshop.shared.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -26,7 +27,9 @@ public class CartService {
     
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
-    private final ProductRepository productRepository;
+    @Qualifier("storefrontProductRepository")
+    private final StorefrontProductRepository storefrontProductRepository;
+    private final ProductRepository sharedProductRepository;
     
     /**
      * Get or create cart for customer
@@ -43,10 +46,10 @@ public class CartService {
     @CacheEvict(value = "customerCart", key = "#customerId + '_' + #tenantId")
     public Cart addItemToCart(Long customerId, Long tenantId, Long productId, Integer quantity) {
         // Validate product
-        Product product = productRepository.findById(UUID.fromString(productId.toString()))
+        com.bharatshop.shared.entity.Product product = sharedProductRepository.findById(UUID.fromString(productId.toString()))
                 .orElseThrow(() -> new RuntimeException("Product not found: " + productId));
         
-        if (product.getStatus() != Product.ProductStatus.ACTIVE || product.getStock() < quantity) {
+        if (product.getStatus() != com.bharatshop.shared.entity.Product.ProductStatus.ACTIVE || product.getStock() < quantity) {
             throw new RuntimeException("Product is not available or insufficient stock");
         }
         
@@ -105,7 +108,7 @@ public class CartService {
         }
         
         // Validate stock availability
-        Product product = cartItem.getProduct();
+        com.bharatshop.shared.entity.Product product = cartItem.getProduct();
         if (product.getStock() < quantity) {
             throw new RuntimeException("Insufficient stock. Available: " + product.getStock());
         }
@@ -185,9 +188,9 @@ public class CartService {
         
         // Validate each item
         for (CartItem item : cart.getItems()) {
-            Product product = item.getProduct();
+            com.bharatshop.shared.entity.Product product = item.getProduct();
             
-            if (product.getStatus() != Product.ProductStatus.ACTIVE) {
+            if (product.getStatus() != com.bharatshop.shared.entity.Product.ProductStatus.ACTIVE) {
                 throw new RuntimeException("Product '" + product.getName() + "' is no longer available");
             }
             

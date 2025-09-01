@@ -15,9 +15,8 @@ C:\Users\Adarsh\Downloads\bharatshop\storefront\src\main\java\com\bharatshop\sto
 C:\Users\Adarsh\Downloads\bharatshop\storefront\src\main\java\com\bharatshop\storefront\service\ProductService.java
 C:\Users\Adarsh\Downloads\bharatshop\storefront\src\main\java\com\bharatshop\storefront\dto\UpdateCartRequest.java
 C:\Users\Adarsh\Downloads\bharatshop\storefront\src\main\java\com\bharatshop\storefront\dto\AddressResponse.java
-C:\Users\Adarsh\Downloads\bharatshop\storefront\src\main\java\com\bharatshop\storefront\repository\OrderRepository.java
+C:\Users\Adarsh\Downloads\bharatshop\storefront\src\main\java\com\bharatshop\storefront\service\StorefrontPageService.java
 C:\Users\Adarsh\Downloads\bharatshop\storefront\src\main\java\com\bharatshop\storefront\controller\StorefrontPageController.java
-C:\Users\Adarsh\Downloads\bharatshop\storefront\src\main\java\com\bharatshop\storefront\controller\ProductController.java
 C:\Users\Adarsh\Downloads\bharatshop\storefront\src\main\java\com\bharatshop\storefront\controller\StorefrontCartController.java
 C:\Users\Adarsh\Downloads\bharatshop\storefront\src\main\java\com\bharatshop\storefront\service\AddressService.java
 C:\Users\Adarsh\Downloads\bharatshop\storefront\src\main\java\com\bharatshop\storefront\controller\StorefrontAuthController.java
@@ -34,16 +33,15 @@ C:\Users\Adarsh\Downloads\bharatshop\storefront\src\main\java\com\bharatshop\sto
 C:\Users\Adarsh\Downloads\bharatshop\storefront\src\main\java\com\bharatshop\storefront\dto\auth\EmailLoginRequest.java
 C:\Users\Adarsh\Downloads\bharatshop\storefront\src\main\java\com\bharatshop\storefront\service\PaymentService.java
 C:\Users\Adarsh\Downloads\bharatshop\storefront\src\main\java\com\bharatshop\storefront\repository\PageRepository.java
+C:\Users\Adarsh\Downloads\bharatshop\storefront\src\main\java\com\bharatshop\storefront\repository\StorefrontOrderRepository.java
+C:\Users\Adarsh\Downloads\bharatshop\storefront\src\main\java\com\bharatshop\storefront\repository\StorefrontOrderItemRepository.java
 C:\Users\Adarsh\Downloads\bharatshop\storefront\src\main\java\com\bharatshop\storefront\service\CustomerAnalyticsService.java
-C:\Users\Adarsh\Downloads\bharatshop\storefront\src\main\java\com\bharatshop\storefront\repository\ProductRepository.java
-C:\Users\Adarsh\Downloads\bharatshop\storefront\src\main\java\com\bharatshop\storefront\service\PageService.java
 C:\Users\Adarsh\Downloads\bharatshop\storefront\src\main\java\com\bharatshop\storefront\entity\StorefrontUser.java
 C:\Users\Adarsh\Downloads\bharatshop\storefront\src\main\java\com\bharatshop\storefront\controller\StorefrontOrderController.java
 C:\Users\Adarsh\Downloads\bharatshop\storefront\src\main\java\com\bharatshop\storefront\dto\OrderItemResponse.java
 C:\Users\Adarsh\Downloads\bharatshop\storefront\src\main\java\com\bharatshop\storefront\dto\auth\PhoneLoginRequest.java
 C:\Users\Adarsh\Downloads\bharatshop\storefront\src\main\java\com\bharatshop\storefront\service\VendorService.java
 C:\Users\Adarsh\Downloads\bharatshop\storefront\src\main\java\com\bharatshop\storefront\dto\AddToCartRequest.java
-C:\Users\Adarsh\Downloads\bharatshop\storefront\src\main\java\com\bharatshop\storefront\repository\OrderItemRepository.java
 C:\Users\Adarsh\Downloads\bharatshop\storefront\src\main\java\com\bharatshop\storefront\model\Product.java
 C:\Users\Adarsh\Downloads\bharatshop\storefront\src\main\java\com\bharatshop\storefront\controller\StorefrontVendorController.java
 C:\Users\Adarsh\Downloads\bharatshop\storefront\src\main\java\com\bharatshop\storefront\service\CartService.java
@@ -51,4 +49,5 @@ C:\Users\Adarsh\Downloads\bharatshop\storefront\src\main\java\com\bharatshop\sto
 C:\Users\Adarsh\Downloads\bharatshop\storefront\src\main\java\com\bharatshop\storefront\dto\WebhookRequest.java
 C:\Users\Adarsh\Downloads\bharatshop\storefront\src\main\java\com\bharatshop\storefront\entity\Cart.java
 C:\Users\Adarsh\Downloads\bharatshop\storefront\src\main\java\com\bharatshop\storefront\service\StorefrontProductService.java
+C:\Users\Adarsh\Downloads\bharatshop\storefront\src\main\java\com\bharatshop\storefront\repository\StorefrontProductRepository.java
 C:\Users\Adarsh\Downloads\bharatshop\storefront\src\main\java\com\bharatshop\storefront\dto\auth\CustomerProfileResponse.java

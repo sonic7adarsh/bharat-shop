@@ -2,14 +2,18 @@ package com.bharatshop.storefront.service;
 
 import com.bharatshop.shared.entity.CustomerAddress;
 import com.bharatshop.shared.entity.Payment;
-import com.bharatshop.shared.entity.Product;
+import com.bharatshop.storefront.model.Product;
+import com.bharatshop.shared.entity.ProductVariant;
+import com.bharatshop.shared.entity.Reservation;
 import com.bharatshop.shared.repository.CustomerAddressRepository;
-import com.bharatshop.shared.repository.ProductRepository;
+import com.bharatshop.storefront.repository.StorefrontProductRepository;
+import com.bharatshop.shared.repository.ProductVariantRepository;
 import com.bharatshop.shared.service.FeatureFlagService;
+import com.bharatshop.shared.service.ReservationService;
 import com.bharatshop.storefront.entity.*;
 import com.bharatshop.shared.entity.Cart;
-import com.bharatshop.storefront.repository.OrderItemRepository;
-import com.bharatshop.storefront.repository.OrderRepository;
+import com.bharatshop.storefront.repository.StorefrontOrderItemRepository;
+import com.bharatshop.storefront.repository.StorefrontOrderRepository;
 import com.bharatshop.shared.entity.CartItem;
 import com.bharatshop.shared.entity.OrderItem;
 import com.bharatshop.storefront.service.AddressService;
@@ -18,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,14 +39,19 @@ import java.util.UUID;
 @Transactional
 public class OrderService {
     
-    private final OrderRepository orderRepository;
-    private final OrderItemRepository orderItemRepository;
-    private final ProductRepository productRepository;
+    @Qualifier("storefrontOrderRepository")
+    private final StorefrontOrderRepository orderRepository;
+    @Qualifier("storefrontOrderItemRepository")
+    private final StorefrontOrderItemRepository orderItemRepository;
+    @Qualifier("storefrontProductRepository")
+    private final StorefrontProductRepository productRepository;
+    private final ProductVariantRepository productVariantRepository;
     private final CartService cartService;
     private final PaymentService paymentService;
     private final AddressService addressService;
     private final CustomerAddressRepository customerAddressRepository;
     private final FeatureFlagService featureFlagService;
+    private final ReservationService reservationService;
     
     /**
      * Create order from cart (checkout)
@@ -106,11 +116,42 @@ public class OrderService {
         
         order = orderRepository.save(order);
         
+        // Create reservations for cart items (atomic stock reservation)
+        List<Reservation> reservations = new ArrayList<>();
+        
+        try {
+            for (CartItem cartItem : cart.getItems()) {
+                // Reserve stock for each cart item
+                if (cartItem.getVariantId() != null) {
+                    // Use variant-based reservation
+                    Reservation reservation = reservationService.reserveStock(
+                        tenantUuid,
+                        cartItem.getVariantId(), 
+                        cartItem.getQuantity()
+                    );
+                    reservations.add(reservation);
+                } else {
+                    // Fallback for legacy products without variants
+                    throw new RuntimeException("Product variants are required for checkout: " + cartItem.getProduct().getName());
+                }
+            }
+        } catch (Exception e) {
+            // Release any reservations that were created before the failure
+            for (Reservation reservation : reservations) {
+                try {
+                    reservationService.releaseReservation(reservation.getId(), tenantUuid);
+                } catch (Exception releaseException) {
+                    log.error("Failed to release reservation {} during rollback", reservation.getId(), releaseException);
+                }
+            }
+            throw e;
+        }
+        
         // Create order items from cart items
         List<OrderItem> orderItems = new ArrayList<>();
         for (CartItem cartItem : cart.getItems()) {
             // Create OrderItem manually since fromCartItem expects shared.entity.Order
-            Product product = cartItem.getProduct();
+            com.bharatshop.shared.entity.Product product = cartItem.getProduct();
             OrderItem orderItem = OrderItem.builder()
                     .order(null) // Will be set after converting to shared.entity.Order
                     .product(product)
@@ -120,16 +161,9 @@ public class OrderService {
                     .productSku(product.getSlug())
                     .productImageUrl(product.getImages() != null && !product.getImages().isEmpty() ? 
                         product.getImages().get(0) : null)
+                    .variantId(cartItem.getVariantId())
                     .build();
             orderItems.add(orderItem);
-            
-            // Update product stock
-            int newStock = product.getStock() - cartItem.getQuantity();
-            if (newStock < 0) {
-                throw new RuntimeException("Insufficient stock for product: " + product.getName());
-            }
-            product.setStock(newStock);
-            productRepository.save(product);
         }
         
         // Create a shared.entity.Order for OrderItem relationships
@@ -220,6 +254,17 @@ public class OrderService {
             order.setPaymentStatus(Order.PaymentStatus.COMPLETED);
             order.setStatus(Order.OrderStatus.CONFIRMED);
             
+            // Commit reservations - convert to actual stock decrements
+            UUID tenantUuid = UUID.fromString(order.getTenantId().toString());
+            try {
+                reservationService.commitReservations(tenantUuid, order.getId());
+                log.info("Reservations committed for order: {}", order.getOrderNumber());
+            } catch (Exception e) {
+                log.error("Failed to commit reservations for order: {}", order.getOrderNumber(), e);
+                // Note: Payment was successful but reservation commit failed
+                // This should be handled by admin intervention or retry mechanism
+            }
+            
             log.info("Payment processed successfully for order: {} with payment ID: {}", order.getOrderNumber(), payment.getId());
             
             return orderRepository.save(order);
@@ -228,6 +273,16 @@ public class OrderService {
             log.error("Payment verification failed for order: {}", orderId, e);
             order.setPaymentStatus(Order.PaymentStatus.FAILED);
             orderRepository.save(order);
+            
+            // Release reservations since payment failed
+            UUID tenantUuid = UUID.fromString(order.getTenantId().toString());
+            try {
+                reservationService.releaseOrderReservations(tenantUuid, order.getId());
+                log.info("Reservations released for failed payment on order: {}", order.getOrderNumber());
+            } catch (Exception releaseException) {
+                log.error("Failed to release reservations for failed payment on order: {}", order.getOrderNumber(), releaseException);
+            }
+            
             throw new RuntimeException("Payment verification failed: " + e.getMessage());
         }
     }
@@ -295,11 +350,14 @@ public class OrderService {
             throw new RuntimeException("Order cannot be cancelled in current status: " + order.getStatus());
         }
         
-        // Restore product stock
-        for (OrderItem item : order.getItems()) {
-            Product product = item.getProduct();
-            product.setStock(product.getStock() + item.getQuantity());
-            productRepository.save(product);
+        // Release reservations for cancelled order
+        UUID tenantUuid = UUID.fromString(tenantId.toString());
+        try {
+            reservationService.releaseOrderReservations(tenantUuid, order.getId());
+            log.info("Reservations released for cancelled order: {}", order.getOrderNumber());
+        } catch (Exception e) {
+            log.error("Failed to release reservations for cancelled order: {}", order.getOrderNumber(), e);
+            // Continue with cancellation even if reservation release fails
         }
         
         order.markAsCancelled();
