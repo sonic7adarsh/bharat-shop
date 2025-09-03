@@ -21,8 +21,8 @@ public interface ProductVariantRepository extends TenantAwareRepository<ProductV
     /**
      * Find all active variants by product ID for current tenant
      */
-    @Query("SELECT pv FROM ProductVariant pv WHERE pv.productId = :productId AND pv.status = 'ACTIVE' AND pv.tenantId = :#{T(com.bharatshop.shared.tenant.TenantContext).getCurrentTenant()} AND pv.deletedAt IS NULL ORDER BY pv.sortOrder ASC")
-    List<ProductVariant> findActiveByProductId(@Param("productId") UUID productId);
+    @Query("SELECT pv FROM ProductVariant pv WHERE pv.productId = :productId AND pv.status = 'ACTIVE' AND pv.tenantId = :tenantId AND pv.deletedAt IS NULL ORDER BY pv.sortOrder ASC")
+    List<ProductVariant> findActiveByProductId(@Param("productId") UUID productId, @Param("tenantId") UUID tenantId);
     
     /**
      * Find all active variants by product ID and tenant ID with pagination
@@ -45,38 +45,38 @@ public interface ProductVariantRepository extends TenantAwareRepository<ProductV
     /**
      * Find all variants by product ID for current tenant
      */
-    @Query("SELECT pv FROM ProductVariant pv WHERE pv.productId = :productId AND pv.tenantId = :#{T(com.bharatshop.shared.tenant.TenantContext).getCurrentTenant()} AND pv.deletedAt IS NULL ORDER BY pv.sortOrder ASC")
-    List<ProductVariant> findByProductId(@Param("productId") UUID productId);
+    @Query("SELECT pv FROM ProductVariant pv WHERE pv.productId = :productId AND pv.tenantId = :tenantId AND pv.deletedAt IS NULL ORDER BY pv.sortOrder ASC")
+    List<ProductVariant> findByProductId(@Param("productId") UUID productId, @Param("tenantId") UUID tenantId);
     
     /**
      * Find default variant by product ID for current tenant
      */
-    @Query("SELECT pv FROM ProductVariant pv WHERE pv.productId = :productId AND pv.isDefault = true AND pv.tenantId = :#{T(com.bharatshop.shared.tenant.TenantContext).getCurrentTenant()} AND pv.deletedAt IS NULL")
-    Optional<ProductVariant> findDefaultByProductId(@Param("productId") UUID productId);
+    @Query("SELECT pv FROM ProductVariant pv WHERE pv.productId = :productId AND pv.isDefault = true AND pv.tenantId = :tenantId AND pv.deletedAt IS NULL")
+    Optional<ProductVariant> findDefaultByProductId(@Param("productId") UUID productId, @Param("tenantId") UUID tenantId);
     
     /**
      * Find variant by SKU for current tenant
      */
-    @Query("SELECT pv FROM ProductVariant pv WHERE pv.sku = :sku AND pv.tenantId = :#{T(com.bharatshop.shared.tenant.TenantContext).getCurrentTenant()} AND pv.deletedAt IS NULL")
-    Optional<ProductVariant> findBySku(@Param("sku") String sku);
+    @Query("SELECT pv FROM ProductVariant pv WHERE pv.sku = :sku AND pv.tenantId = :tenantId AND pv.deletedAt IS NULL")
+    Optional<ProductVariant> findBySku(@Param("sku") String sku, @Param("tenantId") UUID tenantId);
     
     /**
      * Find variant by barcode for current tenant
      */
-    @Query("SELECT pv FROM ProductVariant pv WHERE pv.barcode = :barcode AND pv.tenantId = :#{T(com.bharatshop.shared.tenant.TenantContext).getCurrentTenant()} AND pv.deletedAt IS NULL")
-    Optional<ProductVariant> findByBarcode(@Param("barcode") String barcode);
+    @Query("SELECT pv FROM ProductVariant pv WHERE pv.barcode = :barcode AND pv.tenantId = :tenantId AND pv.deletedAt IS NULL")
+    Optional<ProductVariant> findByBarcode(@Param("barcode") String barcode, @Param("tenantId") UUID tenantId);
     
     /**
      * Find variants by product IDs for current tenant
      */
-    @Query("SELECT pv FROM ProductVariant pv WHERE pv.productId IN :productIds AND pv.status = 'ACTIVE' AND pv.tenantId = :#{T(com.bharatshop.shared.tenant.TenantContext).getCurrentTenant()} AND pv.deletedAt IS NULL ORDER BY pv.productId ASC, pv.sortOrder ASC")
-    List<ProductVariant> findActiveByProductIds(@Param("productIds") List<UUID> productIds);
+    @Query("SELECT pv FROM ProductVariant pv WHERE pv.productId IN :productIds AND pv.status = 'ACTIVE' AND pv.tenantId = :tenantId AND pv.deletedAt IS NULL ORDER BY pv.productId ASC, pv.sortOrder ASC")
+    List<ProductVariant> findActiveByProductIds(@Param("productIds") List<UUID> productIds, @Param("tenantId") UUID tenantId);
     
     /**
      * Find variants by price range for current tenant
      */
-    @Query("SELECT pv FROM ProductVariant pv WHERE pv.price BETWEEN :minPrice AND :maxPrice AND pv.status = 'ACTIVE' AND pv.tenantId = :#{T(com.bharatshop.shared.tenant.TenantContext).getCurrentTenant()} AND pv.deletedAt IS NULL ORDER BY pv.price ASC")
-    List<ProductVariant> findActiveByPriceRange(@Param("minPrice") BigDecimal minPrice, @Param("maxPrice") BigDecimal maxPrice);
+    @Query("SELECT pv FROM ProductVariant pv WHERE pv.price BETWEEN :minPrice AND :maxPrice AND pv.status = 'ACTIVE' AND pv.tenantId = :tenantId AND pv.deletedAt IS NULL ORDER BY pv.price ASC")
+    List<ProductVariant> findActiveByPriceRange(@Param("minPrice") BigDecimal minPrice, @Param("maxPrice") BigDecimal maxPrice, @Param("tenantId") UUID tenantId);
     
     /**
      * Find variants by price range and tenant ID
@@ -87,8 +87,8 @@ public interface ProductVariantRepository extends TenantAwareRepository<ProductV
     /**
      * Find variants with low stock for current tenant
      */
-    @Query("SELECT pv FROM ProductVariant pv WHERE pv.stock <= :threshold AND pv.status = 'ACTIVE' AND pv.tenantId = :#{T(com.bharatshop.shared.tenant.TenantContext).getCurrentTenant()} AND pv.deletedAt IS NULL ORDER BY pv.stock ASC")
-    List<ProductVariant> findActiveWithLowStock(@Param("threshold") Integer threshold);
+    @Query("SELECT pv FROM ProductVariant pv WHERE pv.stock <= :threshold AND pv.status = 'ACTIVE' AND pv.tenantId = :tenantId AND pv.deletedAt IS NULL ORDER BY pv.stock ASC")
+    List<ProductVariant> findActiveWithLowStock(@Param("threshold") Integer threshold, @Param("tenantId") UUID tenantId);
     
     /**
      * Find variants with low stock by tenant ID
@@ -99,8 +99,8 @@ public interface ProductVariantRepository extends TenantAwareRepository<ProductV
     /**
      * Find out of stock variants for current tenant
      */
-    @Query("SELECT pv FROM ProductVariant pv WHERE pv.stock = 0 AND pv.status = 'ACTIVE' AND pv.tenantId = :#{T(com.bharatshop.shared.tenant.TenantContext).getCurrentTenant()} AND pv.deletedAt IS NULL ORDER BY pv.updatedAt DESC")
-    List<ProductVariant> findActiveOutOfStock();
+    @Query("SELECT pv FROM ProductVariant pv WHERE pv.stock = 0 AND pv.status = 'ACTIVE' AND pv.tenantId = :tenantId AND pv.deletedAt IS NULL ORDER BY pv.updatedAt DESC")
+    List<ProductVariant> findActiveOutOfStock(@Param("tenantId") UUID tenantId);
     
     /**
      * Find out of stock variants by tenant ID
@@ -111,14 +111,14 @@ public interface ProductVariantRepository extends TenantAwareRepository<ProductV
     /**
      * Search variants by SKU or barcode for current tenant
      */
-    @Query("SELECT pv FROM ProductVariant pv WHERE pv.status = 'ACTIVE' AND pv.tenantId = :#{T(com.bharatshop.shared.tenant.TenantContext).getCurrentTenant()} AND pv.deletedAt IS NULL AND (LOWER(pv.sku) LIKE LOWER(CONCAT('%', :search, '%')) OR LOWER(pv.barcode) LIKE LOWER(CONCAT('%', :search, '%'))) ORDER BY pv.sku ASC")
-    List<ProductVariant> searchActiveBySku(@Param("search") String search);
+    @Query("SELECT pv FROM ProductVariant pv WHERE pv.status = 'ACTIVE' AND pv.tenantId = :tenantId AND pv.deletedAt IS NULL AND (LOWER(pv.sku) LIKE LOWER(CONCAT('%', :search, '%')) OR LOWER(pv.barcode) LIKE LOWER(CONCAT('%', :search, '%'))) ORDER BY pv.sku ASC")
+    List<ProductVariant> searchActiveBySku(@Param("search") String search, @Param("tenantId") UUID tenantId);
     
     /**
      * Check if SKU exists for current tenant (excluding current variant)
      */
-    @Query("SELECT COUNT(pv) > 0 FROM ProductVariant pv WHERE pv.sku = :sku AND pv.tenantId = :#{T(com.bharatshop.shared.tenant.TenantContext).getCurrentTenant()} AND pv.id != :excludeId AND pv.deletedAt IS NULL")
-    boolean existsBySkuAndTenantIdAndIdNot(@Param("sku") String sku, @Param("excludeId") UUID excludeId);
+    @Query("SELECT COUNT(pv) > 0 FROM ProductVariant pv WHERE pv.sku = :sku AND pv.tenantId = :tenantId AND pv.id != :excludeId AND pv.deletedAt IS NULL")
+    boolean existsBySkuAndTenantIdAndIdNot(@Param("sku") String sku, @Param("excludeId") UUID excludeId, @Param("tenantId") UUID tenantId);
     
     /**
      * Check if SKU exists for tenant
@@ -129,8 +129,8 @@ public interface ProductVariantRepository extends TenantAwareRepository<ProductV
     /**
      * Check if barcode exists for current tenant (excluding current variant)
      */
-    @Query("SELECT COUNT(pv) > 0 FROM ProductVariant pv WHERE pv.barcode = :barcode AND pv.tenantId = :#{T(com.bharatshop.shared.tenant.TenantContext).getCurrentTenant()} AND pv.id != :excludeId AND pv.deletedAt IS NULL")
-    boolean existsByBarcodeAndTenantIdAndIdNot(@Param("barcode") String barcode, @Param("excludeId") UUID excludeId);
+    @Query("SELECT COUNT(pv) > 0 FROM ProductVariant pv WHERE pv.barcode = :barcode AND pv.tenantId = :tenantId AND pv.id != :excludeId AND pv.deletedAt IS NULL")
+    boolean existsByBarcodeAndTenantIdAndIdNot(@Param("barcode") String barcode, @Param("excludeId") UUID excludeId, @Param("tenantId") UUID tenantId);
     
     /**
      * Check if barcode exists for tenant
@@ -141,50 +141,50 @@ public interface ProductVariantRepository extends TenantAwareRepository<ProductV
     /**
      * Count variants by product ID
      */
-    @Query("SELECT COUNT(pv) FROM ProductVariant pv WHERE pv.productId = :productId AND pv.tenantId = :#{T(com.bharatshop.shared.tenant.TenantContext).getCurrentTenant()} AND pv.deletedAt IS NULL")
-    long countByProductId(@Param("productId") UUID productId);
+    @Query("SELECT COUNT(pv) FROM ProductVariant pv WHERE pv.productId = :productId AND pv.tenantId = :tenantId AND pv.deletedAt IS NULL")
+    long countByProductId(@Param("productId") UUID productId, @Param("tenantId") UUID tenantId);
     
     /**
      * Count active variants by product ID
      */
-    @Query("SELECT COUNT(pv) FROM ProductVariant pv WHERE pv.productId = :productId AND pv.status = 'ACTIVE' AND pv.tenantId = :#{T(com.bharatshop.shared.tenant.TenantContext).getCurrentTenant()} AND pv.deletedAt IS NULL")
-    long countActiveByProductId(@Param("productId") UUID productId);
+    @Query("SELECT COUNT(pv) FROM ProductVariant pv WHERE pv.productId = :productId AND pv.status = 'ACTIVE' AND pv.tenantId = :tenantId AND pv.deletedAt IS NULL")
+    long countActiveByProductId(@Param("productId") UUID productId, @Param("tenantId") UUID tenantId);
     
     /**
      * Get total stock by product ID
      */
-    @Query("SELECT COALESCE(SUM(pv.stock), 0) FROM ProductVariant pv WHERE pv.productId = :productId AND pv.status = 'ACTIVE' AND pv.tenantId = :#{T(com.bharatshop.shared.tenant.TenantContext).getCurrentTenant()} AND pv.deletedAt IS NULL")
-    Integer getTotalStockByProductId(@Param("productId") UUID productId);
+    @Query("SELECT COALESCE(SUM(pv.stock), 0) FROM ProductVariant pv WHERE pv.productId = :productId AND pv.status = 'ACTIVE' AND pv.tenantId = :tenantId AND pv.deletedAt IS NULL")
+    Integer getTotalStockByProductId(@Param("productId") UUID productId, @Param("tenantId") UUID tenantId);
     
     /**
      * Get minimum price by product ID
      */
-    @Query("SELECT MIN(pv.price) FROM ProductVariant pv WHERE pv.productId = :productId AND pv.status = 'ACTIVE' AND pv.tenantId = :#{T(com.bharatshop.shared.tenant.TenantContext).getCurrentTenant()} AND pv.deletedAt IS NULL")
-    BigDecimal getMinPriceByProductId(@Param("productId") UUID productId);
+    @Query("SELECT MIN(pv.price) FROM ProductVariant pv WHERE pv.productId = :productId AND pv.status = 'ACTIVE' AND pv.tenantId = :tenantId AND pv.deletedAt IS NULL")
+    BigDecimal getMinPriceByProductId(@Param("productId") UUID productId, @Param("tenantId") UUID tenantId);
     
     /**
      * Get maximum price by product ID
      */
-    @Query("SELECT MAX(pv.price) FROM ProductVariant pv WHERE pv.productId = :productId AND pv.status = 'ACTIVE' AND pv.tenantId = :#{T(com.bharatshop.shared.tenant.TenantContext).getCurrentTenant()} AND pv.deletedAt IS NULL")
-    BigDecimal getMaxPriceByProductId(@Param("productId") UUID productId);
+    @Query("SELECT MAX(pv.price) FROM ProductVariant pv WHERE pv.productId = :productId AND pv.status = 'ACTIVE' AND pv.tenantId = :tenantId AND pv.deletedAt IS NULL")
+    BigDecimal getMaxPriceByProductId(@Param("productId") UUID productId, @Param("tenantId") UUID tenantId);
     
     /**
      * Delete all variants by product ID (soft delete)
      */
-    @Query("UPDATE ProductVariant pv SET pv.deletedAt = CURRENT_TIMESTAMP WHERE pv.productId = :productId AND pv.tenantId = :#{T(com.bharatshop.shared.tenant.TenantContext).getCurrentTenant()}")
-    void deleteByProductId(@Param("productId") UUID productId);
+    @Query("UPDATE ProductVariant pv SET pv.deletedAt = CURRENT_TIMESTAMP WHERE pv.productId = :productId AND pv.tenantId = :tenantId")
+    void deleteByProductId(@Param("productId") UUID productId, @Param("tenantId") UUID tenantId);
     
     /**
      * Find variants with pagination
      */
-    @Query("SELECT pv FROM ProductVariant pv WHERE pv.status = 'ACTIVE' AND pv.tenantId = :#{T(com.bharatshop.shared.tenant.TenantContext).getCurrentTenant()} AND pv.deletedAt IS NULL")
-    Page<ProductVariant> findAllActive(Pageable pageable);
+    @Query("SELECT pv FROM ProductVariant pv WHERE pv.status = 'ACTIVE' AND pv.tenantId = :tenantId AND pv.deletedAt IS NULL")
+    Page<ProductVariant> findAllActive(Pageable pageable, @Param("tenantId") UUID tenantId);
     
     /**
      * Update stock for variant
      */
-    @Query("UPDATE ProductVariant pv SET pv.stock = :stock, pv.updatedAt = CURRENT_TIMESTAMP WHERE pv.id = :id AND pv.tenantId = :#{T(com.bharatshop.shared.tenant.TenantContext).getCurrentTenant()}")
-    void updateStock(@Param("id") UUID id, @Param("stock") Integer stock);
+    @Query("UPDATE ProductVariant pv SET pv.stock = :stock, pv.updatedAt = CURRENT_TIMESTAMP WHERE pv.id = :id AND pv.tenantId = :tenantId")
+    void updateStock(@Param("id") UUID id, @Param("stock") Integer stock, @Param("tenantId") UUID tenantId);
     
     /**
      * Increment stock quantity

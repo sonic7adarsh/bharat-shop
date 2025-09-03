@@ -10,7 +10,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.PageRequest;
@@ -108,7 +107,8 @@ public class PageController {
             @PathVariable com.bharatshop.shared.enums.PageType pageType) {
         
         try {
-            List<PageResponseDto> pages = pageService.getPagesByType(pageType);
+            UUID tenantId = UUID.fromString(TenantContext.getCurrentTenant());
+            List<PageResponseDto> pages = pageService.getPagesByType(pageType, tenantId.toString());
             return ResponseEntity.ok(ApiResponse.success(pages));
             
         } catch (Exception e) {
@@ -134,7 +134,7 @@ public class PageController {
             // Enforce advanced features access for page creation
             featureFlagService.enforceFeatureAccess(tenantId, "advancedFeatures");
             
-            PageResponseDto createdPage = pageService.createPage(pageRequest);
+            PageResponseDto createdPage = pageService.createPage(pageRequest, tenantId.toString());
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(ApiResponse.success(createdPage));
                     
@@ -169,7 +169,7 @@ public class PageController {
             // Enforce advanced features access for page updates
             featureFlagService.enforceFeatureAccess(tenantId, "advancedFeatures");
             
-            PageResponseDto updatedPage = pageService.updatePage(id, pageRequest);
+            PageResponseDto updatedPage = pageService.updatePage(id, pageRequest, tenantId.toString());
             return ResponseEntity.ok(ApiResponse.success(updatedPage));
             
         } catch (IllegalArgumentException e) {

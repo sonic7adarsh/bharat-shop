@@ -8,13 +8,14 @@ import com.bharatshop.storefront.entity.Order;
 
 import com.bharatshop.storefront.service.OrderService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -25,8 +26,9 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/store")
 @RequiredArgsConstructor
-@Slf4j
 public class StorefrontOrderController {
+    
+    private static final Logger log = LoggerFactory.getLogger(StorefrontOrderController.class);
     
     private final OrderService orderService;
     

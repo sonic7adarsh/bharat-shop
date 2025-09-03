@@ -12,7 +12,7 @@ import lombok.experimental.SuperBuilder;
  * Platform user entity for vendors, admins, and staff.
  * Uses JWT-based authentication with email/password login.
  */
-@Entity
+@Entity(name = "AppPlatformUser")
 @Table(name = "platform_users")
 @Getter
 @Setter

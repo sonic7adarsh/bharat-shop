@@ -60,21 +60,21 @@ public class PageService {
      * Get pages by type
      */
     @Transactional(readOnly = true)
-    public List<PageResponseDto> getPagesByType(PageType pageType) {
+    public List<PageResponseDto> getPagesByType(PageType pageType, String tenantId) {
         log.debug("Fetching pages of type: {}", pageType);
         
-        List<Page> pages = pageRepository.findActiveByPageType(pageType);
+        List<Page> pages = pageRepository.findActiveByPageType(pageType, tenantId);
         return pages.stream().map(this::mapToResponseDto).collect(Collectors.toList());
     }
     
     /**
      * Create new page
      */
-    public PageResponseDto createPage(PageRequestDto pageRequest) {
+    public PageResponseDto createPage(PageRequestDto pageRequest, String tenantId) {
         log.debug("Creating new page with title: {}", pageRequest.getTitle());
         
         // Check if slug already exists
-        if (pageRepository.existsBySlug(pageRequest.getSlug())) {
+        if (pageRepository.existsBySlug(pageRequest.getSlug(), tenantId)) {
             throw new IllegalArgumentException("Page with slug '" + pageRequest.getSlug() + "' already exists");
         }
         
@@ -86,7 +86,7 @@ public class PageService {
     /**
      * Update existing page
      */
-    public PageResponseDto updatePage(UUID id, PageRequestDto pageRequest) {
+    public PageResponseDto updatePage(UUID id, PageRequestDto pageRequest, String tenantId) {
         log.debug("Updating page with ID: {}", id);
         
         Page existingPage = pageRepository.findById(id)
@@ -95,7 +95,7 @@ public class PageService {
         
         // Check if slug already exists (excluding current page)
         if (!existingPage.getSlug().equals(pageRequest.getSlug()) && 
-            pageRepository.existsBySlugExcludingId(pageRequest.getSlug(), id)) {
+            pageRepository.existsBySlugExcludingId(pageRequest.getSlug(), id, tenantId)) {
             throw new IllegalArgumentException("Page with slug '" + pageRequest.getSlug() + "' already exists");
         }
         
@@ -204,28 +204,28 @@ public class PageService {
      * Map PageRequestDto to Page entity
      */
     private Page mapToEntity(PageRequestDto request) {
-        return Page.builder()
-                .title(request.getTitle())
-                .slug(request.getSlug())
-                .content(request.getContent())
-                .excerpt(request.getExcerpt())
-                .metaTitle(request.getMetaTitle())
-                .metaDescription(request.getMetaDescription())
-                .metaKeywords(request.getMetaKeywords())
-                .layout(request.getLayout())
-                .seo(request.getSeo())
-                .active(true)
-                .published(request.getPublished() != null ? request.getPublished() : false)
-                .sortOrder(request.getSortOrder() != null ? request.getSortOrder() : 0)
-                .pageType(request.getPageType() != null ? request.getPageType() : PageType.STATIC)
-                .template(request.getTemplate())
-                .templateId(request.getTemplateId())
-                .customCss(request.getCustomCss())
-                .customJs(request.getCustomJs())
-                .featuredImage(request.getFeaturedImage())
-                .author(request.getAuthor())
-                .status(request.getStatus() != null ? request.getStatus() : "draft")
-                .build();
+        Page page = new Page();
+        page.setTitle(request.getTitle());
+        page.setSlug(request.getSlug());
+        page.setContent(request.getContent());
+        page.setExcerpt(request.getExcerpt());
+        page.setMetaTitle(request.getMetaTitle());
+        page.setMetaDescription(request.getMetaDescription());
+        page.setMetaKeywords(request.getMetaKeywords());
+        page.setLayout(request.getLayout());
+        page.setSeo(request.getSeo());
+        page.setActive(true);
+        page.setPublished(request.getPublished() != null ? request.getPublished() : false);
+        page.setSortOrder(request.getSortOrder() != null ? request.getSortOrder() : 0);
+        page.setPageType(request.getPageType() != null ? request.getPageType() : PageType.STATIC);
+        page.setTemplate(request.getTemplate());
+        page.setTemplateId(request.getTemplateId());
+        page.setCustomCss(request.getCustomCss());
+        page.setCustomJs(request.getCustomJs());
+        page.setFeaturedImage(request.getFeaturedImage());
+        page.setAuthor(request.getAuthor());
+        page.setStatus(request.getStatus() != null ? request.getStatus() : "draft");
+        return page;
     }
     
     /**

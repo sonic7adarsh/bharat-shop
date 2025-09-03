@@ -40,6 +40,15 @@ public class BusinessException extends RuntimeException {
         this.httpStatus = httpStatus;
     }
     
+    // Manual getters to fix Lombok issue
+    public String getErrorCode() {
+        return errorCode;
+    }
+    
+    public HttpStatus getHttpStatus() {
+        return httpStatus;
+    }
+    
     // Static factory methods for common business exceptions
     public static BusinessException notFound(String entity, Object id) {
         return new BusinessException(

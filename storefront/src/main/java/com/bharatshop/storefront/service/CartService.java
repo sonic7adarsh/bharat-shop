@@ -7,7 +7,8 @@ import com.bharatshop.storefront.repository.StorefrontCartItemRepository;
 import com.bharatshop.storefront.repository.StorefrontCartRepository;
 import com.bharatshop.shared.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -21,9 +22,10 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 @Transactional
 public class CartService {
+    
+    private static final Logger log = LoggerFactory.getLogger(CartService.class);
     
     @Qualifier("storefrontCartRepository")
     private final StorefrontCartRepository cartRepository;
@@ -48,10 +50,12 @@ public class CartService {
     @CacheEvict(value = "customerCart", key = "#customerId + '_' + #tenantId")
     public Cart addItemToCart(Long customerId, UUID tenantId, Long productId, Integer quantity) {
         // Validate product
-        com.bharatshop.storefront.model.Product product = storefrontProductRepository.findById(productId)
+        // Convert Long productId to UUID for storefront product lookup
+        UUID productUuid = new UUID(0L, productId);
+        com.bharatshop.storefront.model.Product product = storefrontProductRepository.findById(productUuid)
                 .orElseThrow(() -> new RuntimeException("Product not found: " + productId));
         
-        if (!product.isActive() || product.getStockQuantity() < quantity) {
+        if (!product.getActive() || product.getStockQuantity() < quantity) {
             throw new RuntimeException("Product is not available or insufficient stock");
         }
         
@@ -110,7 +114,9 @@ public class CartService {
         }
         
         // Validate stock availability
-        com.bharatshop.storefront.model.Product product = storefrontProductRepository.findById(productId)
+        // Convert Long productId to UUID for storefront product lookup
+        UUID productUuid = new UUID(0L, productId);
+        com.bharatshop.storefront.model.Product product = storefrontProductRepository.findById(productUuid)
                 .orElseThrow(() -> new RuntimeException("Product not found: " + productId));
         if (product.getStockQuantity() < quantity) {
             throw new RuntimeException("Insufficient stock. Available: " + product.getStockQuantity());
@@ -191,15 +197,15 @@ public class CartService {
         
         // Validate each item
         for (CartItem item : cart.getItems()) {
-            com.bharatshop.shared.entity.Product product = item.getProduct();
+            com.bharatshop.storefront.model.Product product = item.getProduct();
             
-            if (product.getStatus() != com.bharatshop.shared.entity.Product.ProductStatus.ACTIVE) {
+            if (!product.getActive()) {
                 throw new RuntimeException("Product '" + product.getName() + "' is no longer available");
             }
             
-            if (product.getStock() < item.getQuantity()) {
+            if (product.getStockQuantity() < item.getQuantity()) {
                 throw new RuntimeException("Insufficient stock for '" + product.getName() + 
-                        "'. Available: " + product.getStock() + ", Requested: " + item.getQuantity());
+                        "'. Available: " + product.getStockQuantity() + ", Requested: " + item.getQuantity());
             }
             
             // Check if price has changed significantly (more than 10%)

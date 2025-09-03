@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
-@Entity
+@Entity(name = "SharedProduct")
 @Table(name = "products", indexes = {
         @Index(name = "idx_product_tenant_id", columnList = "tenant_id"),
         @Index(name = "idx_product_slug", columnList = "slug"),
@@ -47,6 +47,21 @@ public class Product extends BaseEntity {
     @CollectionTable(name = "product_images", joinColumns = @JoinColumn(name = "product_id"))
     @Column(name = "image_url")
     private List<String> images;
+    
+    // Manual getter for images to fix Lombok issue
+    public List<String> getImages() {
+        return images;
+    }
+    
+    // Manual getter for slug to fix Lombok issue
+    public String getSlug() {
+        return slug;
+    }
+    
+    // Manual getter for name to fix Lombok issue
+    public String getName() {
+        return name;
+    }
 
     @ElementCollection
     @CollectionTable(name = "product_categories", joinColumns = @JoinColumn(name = "product_id"))

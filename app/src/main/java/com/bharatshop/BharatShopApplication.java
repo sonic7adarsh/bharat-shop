@@ -37,7 +37,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     "com.bharatshop.modules.auth.entity",
     "com.bharatshop.modules.users.entity",
     "com.bharatshop.shared.entity",
-    "com.bharatshop.storefront.entity"
+    "com.bharatshop.storefront.entity",
+    "com.bharatshop.storefront.model"
 })
 public class BharatShopApplication {
 

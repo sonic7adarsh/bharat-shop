@@ -7,15 +7,38 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema(description = "Customer registration request")
 public class RegisterCustomerRequest {
+    
+    // Manual getter methods
+    public String getEmail() {
+        return email;
+    }
+    
+    public String getPhone() {
+        return phone;
+    }
+    
+    public String getPassword() {
+        return password;
+    }
+    
+    public String getConfirmPassword() {
+        return confirmPassword;
+    }
+    
+    public String getFirstName() {
+        return firstName;
+    }
+    
+    public String getLastName() {
+        return lastName;
+    }
 
     @Schema(description = "Email address", example = "customer@example.com")
     @Email(message = "Email should be valid")

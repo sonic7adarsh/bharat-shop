@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Entity
+@Entity(name = "SharedCartItem")
 @Table(name = "cart_items", indexes = {
     @Index(name = "idx_cart_item_cart", columnList = "cartId"),
     @Index(name = "idx_cart_item_product", columnList = "productId"),
@@ -54,6 +54,23 @@ public class CartItem {
     @UpdateTimestamp
     @Column(nullable = false)
     private LocalDateTime updatedAt;
+    
+    // Getter methods
+    public Integer getQuantity() {
+        return quantity;
+    }
+    
+    public BigDecimal getUnitPrice() {
+        return unitPrice;
+    }
+    
+    public UUID getVariantId() {
+        return variantId;
+    }
+    
+    public Product getProduct() {
+        return product;
+    }
     
     // Helper methods
     public BigDecimal getTotalPrice() {

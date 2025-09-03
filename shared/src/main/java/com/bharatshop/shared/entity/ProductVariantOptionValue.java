@@ -55,4 +55,13 @@ public class ProductVariantOptionValue extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "option_value_id", insertable = false, updatable = false)
     private OptionValue optionValue;
+    
+    // Manual getters to fix Lombok issue
+    public Option getOption() {
+        return option;
+    }
+    
+    public OptionValue getOptionValue() {
+        return optionValue;
+    }
 }

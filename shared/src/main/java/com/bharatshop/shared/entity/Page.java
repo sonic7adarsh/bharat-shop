@@ -10,7 +10,7 @@ import lombok.experimental.SuperBuilder;
  * Page entity for content management system.
  * Represents pages that can be customized and rendered in the storefront.
  */
-@Entity
+@Entity(name = "SharedPage")
 @Table(name = "pages", indexes = {
     @Index(name = "idx_page_slug", columnList = "slug"),
     @Index(name = "idx_page_tenant_slug", columnList = "tenant_id, slug"),

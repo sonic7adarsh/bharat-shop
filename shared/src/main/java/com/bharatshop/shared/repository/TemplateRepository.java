@@ -15,44 +15,44 @@ public interface TemplateRepository extends TenantAwareRepository<Template> {
     /**
      * Find all active templates
      */
-    @Query("SELECT t FROM Template t WHERE t.isActive = true AND t.tenantId = :#{T(com.bharatshop.shared.tenant.TenantContext).getCurrentTenant()} AND t.deletedAt IS NULL ORDER BY t.sortOrder ASC")
-    List<Template> findAllActiveTemplates();
+    @Query("SELECT t FROM Template t WHERE t.isActive = true AND t.tenantId = :tenantId AND t.deletedAt IS NULL ORDER BY t.sortOrder ASC")
+    List<Template> findAllActiveTemplates(@Param("tenantId") UUID tenantId);
     
     /**
      * Find active template by name
      */
-    @Query("SELECT t FROM Template t WHERE t.name = :name AND t.isActive = true AND t.tenantId = :#{T(com.bharatshop.shared.tenant.TenantContext).getCurrentTenant()} AND t.deletedAt IS NULL")
-    Optional<Template> findActiveByName(@Param("name") String name);
+    @Query("SELECT t FROM Template t WHERE t.name = :name AND t.isActive = true AND t.tenantId = :tenantId AND t.deletedAt IS NULL")
+    Optional<Template> findActiveByName(@Param("name") String name, @Param("tenantId") UUID tenantId);
     
     /**
      * Find templates by category
      */
-    @Query("SELECT t FROM Template t WHERE t.category = :category AND t.isActive = true AND t.tenantId = :#{T(com.bharatshop.shared.tenant.TenantContext).getCurrentTenant()} AND t.deletedAt IS NULL ORDER BY t.sortOrder ASC")
-    List<Template> findActiveByCategory(@Param("category") String category);
+    @Query("SELECT t FROM Template t WHERE t.category = :category AND t.isActive = true AND t.tenantId = :tenantId AND t.deletedAt IS NULL ORDER BY t.sortOrder ASC")
+    List<Template> findActiveByCategory(@Param("category") String category, @Param("tenantId") UUID tenantId);
     
     /**
      * Find all template categories
      */
-    @Query("SELECT DISTINCT t.category FROM Template t WHERE t.isActive = true AND t.tenantId = :#{T(com.bharatshop.shared.tenant.TenantContext).getCurrentTenant()} AND t.deletedAt IS NULL AND t.category IS NOT NULL ORDER BY t.category")
-    List<String> findAllCategories();
+    @Query("SELECT DISTINCT t.category FROM Template t WHERE t.isActive = true AND t.tenantId = :tenantId AND t.deletedAt IS NULL AND t.category IS NOT NULL ORDER BY t.category")
+    List<String> findAllCategories(@Param("tenantId") UUID tenantId);
     
     /**
      * Check if template name exists for tenant (excluding current template)
      */
-    @Query("SELECT COUNT(t) > 0 FROM Template t WHERE t.name = :name AND t.tenantId = :#{T(com.bharatshop.shared.tenant.TenantContext).getCurrentTenant()} AND t.id != :excludeId AND t.deletedAt IS NULL")
-    boolean existsByNameAndTenantIdAndIdNot(@Param("name") String name, @Param("excludeId") UUID excludeId);
+    @Query("SELECT COUNT(t) > 0 FROM Template t WHERE t.name = :name AND t.tenantId = :tenantId AND t.id != :excludeId AND t.deletedAt IS NULL")
+    boolean existsByNameAndTenantIdAndIdNot(@Param("name") String name, @Param("excludeId") UUID excludeId, @Param("tenantId") UUID tenantId);
     
     /**
      * Check if template name exists for tenant
      */
-    @Query("SELECT COUNT(t) > 0 FROM Template t WHERE t.name = :name AND t.tenantId = :#{T(com.bharatshop.shared.tenant.TenantContext).getCurrentTenant()} AND t.deletedAt IS NULL")
-    boolean existsByNameAndTenantId(@Param("name") String name);
+    @Query("SELECT COUNT(t) > 0 FROM Template t WHERE t.name = :name AND t.tenantId = :tenantId AND t.deletedAt IS NULL")
+    boolean existsByNameAndTenantId(@Param("name") String name, @Param("tenantId") UUID tenantId);
     
     /**
      * Search templates by name or description
      */
-    @Query("SELECT t FROM Template t WHERE t.isActive = true AND t.tenantId = :#{T(com.bharatshop.shared.tenant.TenantContext).getCurrentTenant()} AND t.deletedAt IS NULL AND (LOWER(t.name) LIKE LOWER(CONCAT('%', :search, '%')) OR LOWER(t.description) LIKE LOWER(CONCAT('%', :search, '%'))) ORDER BY t.sortOrder ASC")
-    List<Template> searchActiveTemplates(@Param("search") String search);
+    @Query("SELECT t FROM Template t WHERE t.isActive = true AND t.tenantId = :tenantId AND t.deletedAt IS NULL AND (LOWER(t.name) LIKE LOWER(CONCAT('%', :search, '%')) OR LOWER(t.description) LIKE LOWER(CONCAT('%', :search, '%'))) ORDER BY t.sortOrder ASC")
+    List<Template> searchActiveTemplates(@Param("search") String search, @Param("tenantId") UUID tenantId);
     
     /**
      * Find active template by ID

@@ -19,11 +19,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class PaymentService {
+    
+    private static final Logger log = LoggerFactory.getLogger(PaymentService.class);
     
     private final PaymentRepository paymentRepository;
     private final PaymentGatewayRepository paymentGatewayRepository;

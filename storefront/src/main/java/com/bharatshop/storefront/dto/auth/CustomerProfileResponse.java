@@ -11,12 +11,76 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema(description = "Customer profile response")
 public class CustomerProfileResponse {
+    
+    // Manual getter methods
+    public UUID getId() {
+        return id;
+    }
+    
+    public String getEmail() {
+        return email;
+    }
+    
+    public String getPhone() {
+        return phone;
+    }
+    
+    public StorefrontUser.StorefrontRole getRole() {
+        return role;
+    }
+    
+    public Boolean getEnabled() {
+        return enabled;
+    }
+    
+    public Boolean getPhoneVerified() {
+        return phoneVerified;
+    }
+    
+    public Boolean getEmailVerified() {
+        return emailVerified;
+    }
+    
+    public String getFirstName() {
+        return firstName;
+    }
+    
+    public String getLastName() {
+        return lastName;
+    }
+    
+    public String getAddress() {
+        return address;
+    }
+    
+    public String getCity() {
+        return city;
+    }
+    
+    public String getState() {
+        return state;
+    }
+    
+    public String getZipCode() {
+        return zipCode;
+    }
+    
+    public String getCountry() {
+        return country;
+    }
+    
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+    
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
 
     @Schema(description = "User ID", example = "550e8400-e29b-41d4-a716-446655440000")
     private UUID id;

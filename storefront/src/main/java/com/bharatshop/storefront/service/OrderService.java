@@ -32,12 +32,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 @Transactional
 public class OrderService {
+    
+    private static final Logger log = LoggerFactory.getLogger(OrderService.class);
     
     @Qualifier("storefrontOrderRepository")
     private final StorefrontOrderRepository orderRepository;
@@ -87,7 +90,7 @@ public class OrderService {
         
         // Create order
         Order order = Order.builder()
-                .tenantId(tenantId)
+                .tenantId(tenantUuid)
                 .customerId(customerId)
                 .status(Order.OrderStatus.PENDING)
                 .totalAmount(totalAmount)

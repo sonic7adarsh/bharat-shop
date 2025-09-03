@@ -52,4 +52,21 @@ public class ProductVariantOptionValueDto {
     private String optionValueName; // e.g., "Red"
     private String optionValueDisplayValue; // e.g., "Bright Red"
     private String colorCode; // e.g., "#FF0000" for color options
+    
+    // Manual setters to fix Lombok issue
+    public void setOptionName(String optionName) {
+        this.optionName = optionName;
+    }
+    
+    public void setOptionValueName(String optionValueName) {
+        this.optionValueName = optionValueName;
+    }
+    
+    public void setOptionValueDisplayValue(String optionValueDisplayValue) {
+        this.optionValueDisplayValue = optionValueDisplayValue;
+    }
+    
+    public void setColorCode(String colorCode) {
+        this.colorCode = colorCode;
+    }
 }

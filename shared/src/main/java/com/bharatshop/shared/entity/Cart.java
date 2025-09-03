@@ -11,7 +11,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Entity
+@Entity(name = "SharedCart")
 @Table(name = "carts", indexes = {
     @Index(name = "idx_cart_customer_tenant", columnList = "customerId, tenantId"),
     @Index(name = "idx_cart_tenant", columnList = "tenantId"),

@@ -2,7 +2,7 @@
 
 -- Tenants table
 CREATE TABLE tenants (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id UUID PRIMARY KEY,
     tenant_id VARCHAR(100) NOT NULL UNIQUE,
     name VARCHAR(255) NOT NULL,
     domain VARCHAR(255),
@@ -18,7 +18,7 @@ CREATE TABLE tenants (
 
 -- Users table
 CREATE TABLE users (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id UUID PRIMARY KEY,
     tenant_id VARCHAR(100) NOT NULL,
     email VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
@@ -38,11 +38,11 @@ CREATE TABLE users (
 
 -- Categories table
 CREATE TABLE categories (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id UUID PRIMARY KEY,
     tenant_id VARCHAR(100) NOT NULL,
     name VARCHAR(255) NOT NULL,
     description TEXT,
-    parent_id BIGINT,
+    parent_id UUID,
     image_url VARCHAR(500),
     sort_order INT DEFAULT 0,
     is_active BOOLEAN DEFAULT TRUE,
@@ -56,7 +56,7 @@ CREATE TABLE categories (
 
 -- Products table
 CREATE TABLE products (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id UUID PRIMARY KEY,
     tenant_id VARCHAR(100) NOT NULL,
     name VARCHAR(255) NOT NULL,
     description TEXT,
@@ -85,8 +85,8 @@ CREATE TABLE products (
 
 -- Product Categories junction table
 CREATE TABLE product_categories (
-    product_id BIGINT NOT NULL,
-    category_id BIGINT NOT NULL,
+    product_id UUID NOT NULL,
+    category_id UUID NOT NULL,
     PRIMARY KEY (product_id, category_id),
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
     FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE
@@ -94,8 +94,8 @@ CREATE TABLE product_categories (
 
 -- Product Images table
 CREATE TABLE product_images (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    product_id BIGINT NOT NULL,
+    id UUID PRIMARY KEY,
+    product_id UUID NOT NULL,
     image_url VARCHAR(500) NOT NULL,
     alt_text VARCHAR(255),
     sort_order INT DEFAULT 0,
@@ -108,7 +108,7 @@ CREATE TABLE product_images (
 
 -- Customers table
 CREATE TABLE customers (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id UUID PRIMARY KEY,
     tenant_id VARCHAR(100) NOT NULL,
     email VARCHAR(255) NOT NULL,
     password VARCHAR(255),
@@ -133,8 +133,8 @@ CREATE TABLE customers (
 
 -- Customer Addresses table
 CREATE TABLE customer_addresses (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    customer_id BIGINT NOT NULL,
+    id UUID PRIMARY KEY,
+    customer_id UUID NOT NULL,
     type ENUM('BILLING', 'SHIPPING', 'BOTH') DEFAULT 'BOTH',
     first_name VARCHAR(100),
     last_name VARCHAR(100),
@@ -156,9 +156,9 @@ CREATE TABLE customer_addresses (
 
 -- Carts table
 CREATE TABLE carts (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id UUID PRIMARY KEY,
     tenant_id VARCHAR(100) NOT NULL,
-    customer_id BIGINT,
+    customer_id UUID,
     session_id VARCHAR(255),
     total_amount DECIMAL(10,2) DEFAULT 0.00,
     item_count INT DEFAULT 0,
@@ -172,9 +172,9 @@ CREATE TABLE carts (
 
 -- Cart Items table
 CREATE TABLE cart_items (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    cart_id BIGINT NOT NULL,
-    product_id BIGINT NOT NULL,
+    id UUID PRIMARY KEY,
+    cart_id UUID NOT NULL,
+    product_id UUID NOT NULL,
     quantity INT NOT NULL DEFAULT 1,
     unit_price DECIMAL(10,2) NOT NULL,
     total_price DECIMAL(10,2) NOT NULL,
@@ -188,10 +188,10 @@ CREATE TABLE cart_items (
 
 -- Orders table
 CREATE TABLE orders (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id UUID PRIMARY KEY,
     tenant_id VARCHAR(100) NOT NULL,
     order_number VARCHAR(50) NOT NULL,
-    customer_id BIGINT NOT NULL,
+    customer_id UUID NOT NULL,
     status ENUM('PENDING', 'CONFIRMED', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED', 'REFUNDED') DEFAULT 'PENDING',
     payment_status ENUM('PENDING', 'PAID', 'FAILED', 'REFUNDED', 'PARTIALLY_REFUNDED') DEFAULT 'PENDING',
     fulfillment_status ENUM('UNFULFILLED', 'PARTIAL', 'FULFILLED') DEFAULT 'UNFULFILLED',
@@ -217,9 +217,9 @@ CREATE TABLE orders (
 
 -- Order Items table
 CREATE TABLE order_items (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    order_id BIGINT NOT NULL,
-    product_id BIGINT NOT NULL,
+    id UUID PRIMARY KEY,
+    order_id UUID NOT NULL,
+    product_id UUID NOT NULL,
     product_name VARCHAR(255) NOT NULL,
     product_sku VARCHAR(100),
     quantity INT NOT NULL,
@@ -234,10 +234,10 @@ CREATE TABLE order_items (
 
 -- Wishlists table
 CREATE TABLE wishlists (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id UUID PRIMARY KEY,
     tenant_id VARCHAR(100) NOT NULL,
-    customer_id BIGINT NOT NULL,
-    product_id BIGINT NOT NULL,
+    customer_id UUID NOT NULL,
+    product_id UUID NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE KEY uk_customer_product (customer_id, product_id),
     INDEX idx_tenant_id (tenant_id),

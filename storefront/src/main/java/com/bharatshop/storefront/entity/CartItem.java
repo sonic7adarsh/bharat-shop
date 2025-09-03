@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Entity
+@Entity(name = "StorefrontCartItem")
 @Table(name = "cart_items", indexes = {
     @Index(name = "idx_cart_item_cart", columnList = "cartId"),
     @Index(name = "idx_cart_item_product", columnList = "productId"),
@@ -61,16 +61,90 @@ public class CartItem {
         return unitPrice.multiply(BigDecimal.valueOf(quantity));
     }
     
+    // Manual getter methods to bypass Lombok issues
+    public UUID getVariantId() {
+        return variantId;
+    }
+    
+    public Integer getQuantity() {
+        return quantity;
+    }
+    
+    public Product getProduct() {
+        return product;
+    }
+    
+    public BigDecimal getUnitPrice() {
+        return unitPrice;
+    }
+    
+    public Long getId() {
+        return id;
+    }
+    
+    public Cart getCart() {
+        return cart;
+    }
+    
+    public void setUnitPrice(BigDecimal unitPrice) {
+        this.unitPrice = unitPrice;
+    }
+    
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
+    
+    public static CartItemBuilder builder() {
+        return new CartItemBuilder();
+    }
+    
+    public static class CartItemBuilder {
+        private Long id;
+        private Cart cart;
+        private Product product;
+        private UUID variantId;
+        private Integer quantity;
+        private BigDecimal unitPrice;
+        private LocalDateTime createdAt;
+        private LocalDateTime updatedAt;
+        
+        public CartItemBuilder id(Long id) { this.id = id; return this; }
+        public CartItemBuilder cart(Cart cart) { this.cart = cart; return this; }
+        public CartItemBuilder product(Product product) { this.product = product; return this; }
+        public CartItemBuilder variantId(UUID variantId) { this.variantId = variantId; return this; }
+        public CartItemBuilder quantity(Integer quantity) { this.quantity = quantity; return this; }
+        public CartItemBuilder unitPrice(BigDecimal unitPrice) { this.unitPrice = unitPrice; return this; }
+        public CartItemBuilder createdAt(LocalDateTime createdAt) { this.createdAt = createdAt; return this; }
+        public CartItemBuilder updatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; return this; }
+        
+        public CartItem build() {
+            CartItem cartItem = new CartItem();
+            cartItem.id = this.id;
+            cartItem.cart = this.cart;
+            cartItem.product = this.product;
+            cartItem.variantId = this.variantId;
+            cartItem.quantity = this.quantity;
+            cartItem.unitPrice = this.unitPrice;
+            cartItem.createdAt = this.createdAt;
+            cartItem.updatedAt = this.updatedAt;
+            return cartItem;
+        }
+    }
+    
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+    
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+    
     public String getProductName() {
         return product != null ? product.getName() : null;
     }
     
-    public String getProductSku() {
-        return product != null ? product.getSku() : null;
-    }
-    
-    public String getProductImageUrl() {
-        return product != null && product.getImageUrls() != null && !product.getImageUrls().isEmpty() 
-            ? product.getImageUrls().get(0) : null;
+    public String getVariantName() {
+        // This would need to be fetched from ProductVariant service
+        return "Default Variant"; // Placeholder
     }
 }

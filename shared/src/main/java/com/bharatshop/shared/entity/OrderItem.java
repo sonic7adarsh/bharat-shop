@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Entity
+@Entity(name = "SharedOrderItem")
 @Table(name = "order_items", indexes = {
     @Index(name = "idx_order_item_order", columnList = "orderId"),
     @Index(name = "idx_order_item_product", columnList = "productId"),
@@ -22,10 +22,84 @@ import java.util.UUID;
     @Index(name = "idx_order_item_order_product", columnList = "orderId, productId")
 })
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderItem {
+    
+    public static OrderItemBuilder builder() {
+        return new OrderItemBuilder();
+    }
+    
+    public static class OrderItemBuilder {
+        private Order order;
+        private Product product;
+        private UUID variantId;
+        private Integer quantity;
+        private BigDecimal price;
+        private BigDecimal discountAmount;
+        private String productName;
+        private String productSku;
+        private String productImageUrl;
+        
+        public OrderItemBuilder order(Order order) {
+            this.order = order;
+            return this;
+        }
+        
+        public OrderItemBuilder product(Product product) {
+            this.product = product;
+            return this;
+        }
+        
+        public OrderItemBuilder variantId(UUID variantId) {
+            this.variantId = variantId;
+            return this;
+        }
+        
+        public OrderItemBuilder quantity(Integer quantity) {
+            this.quantity = quantity;
+            return this;
+        }
+        
+        public OrderItemBuilder price(BigDecimal price) {
+            this.price = price;
+            return this;
+        }
+        
+        public OrderItemBuilder discountAmount(BigDecimal discountAmount) {
+            this.discountAmount = discountAmount;
+            return this;
+        }
+        
+        public OrderItemBuilder productName(String productName) {
+            this.productName = productName;
+            return this;
+        }
+        
+        public OrderItemBuilder productSku(String productSku) {
+            this.productSku = productSku;
+            return this;
+        }
+        
+        public OrderItemBuilder productImageUrl(String productImageUrl) {
+            this.productImageUrl = productImageUrl;
+            return this;
+        }
+        
+        public OrderItem build() {
+            OrderItem orderItem = new OrderItem();
+            orderItem.order = this.order;
+            orderItem.product = this.product;
+            orderItem.variantId = this.variantId;
+            orderItem.quantity = this.quantity;
+            orderItem.price = this.price;
+            orderItem.discountAmount = this.discountAmount;
+            orderItem.productName = this.productName;
+            orderItem.productSku = this.productSku;
+            orderItem.productImageUrl = this.productImageUrl;
+            return orderItem;
+        }
+    }
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -70,6 +144,11 @@ public class OrderItem {
     @UpdateTimestamp
     @Column(nullable = false)
     private LocalDateTime updatedAt;
+    
+    // Getter methods
+    public Integer getQuantity() {
+        return quantity;
+    }
     
     // Helper methods
     public BigDecimal getTotalPrice() {

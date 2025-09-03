@@ -61,4 +61,9 @@ public class Option extends BaseEntity {
         MATERIAL,  // Material types
         CUSTOM     // Custom option type
     }
+    
+    // Manual getter to fix Lombok issue
+    public String getName() {
+        return name;
+    }
 }

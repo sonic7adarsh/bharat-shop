@@ -1,17 +1,8 @@
 package com.bharatshop.storefront.dto;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class UpdateCartRequest {
     
     @NotNull(message = "Product ID is required")
@@ -20,4 +11,27 @@ public class UpdateCartRequest {
     @NotNull(message = "Quantity is required")
     @Min(value = 0, message = "Quantity must be at least 0")
     private Integer quantity;
+    
+    public UpdateCartRequest() {}
+    
+    public UpdateCartRequest(Long productId, Integer quantity) {
+        this.productId = productId;
+        this.quantity = quantity;
+    }
+    
+    public Long getProductId() {
+        return productId;
+    }
+    
+    public void setProductId(Long productId) {
+        this.productId = productId;
+    }
+    
+    public Integer getQuantity() {
+        return quantity;
+    }
+    
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
 }

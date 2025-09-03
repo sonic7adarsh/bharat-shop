@@ -20,6 +20,9 @@ import java.util.UUID;
 @Transactional(readOnly = true)
 public class VendorService {
     
+    // Manual log field to bypass Lombok issues
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(VendorService.class);
+    
     private final VendorRepository vendorRepository;
     
     /**

@@ -6,10 +6,8 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -26,4 +24,13 @@ public class OtpVerificationRequest {
     @Size(min = 6, max = 6, message = "OTP must be 6 digits")
     @Pattern(regexp = "^\\d{6}$", message = "OTP must contain only digits")
     private String otp;
+    
+    // Manual getter methods
+    public String getPhone() {
+        return phone;
+    }
+    
+    public String getOtp() {
+        return otp;
+    }
 }

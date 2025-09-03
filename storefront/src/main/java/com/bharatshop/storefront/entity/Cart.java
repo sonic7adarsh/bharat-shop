@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-@Entity
+@Entity(name = "StorefrontCart")
 @Table(name = "carts", indexes = {
     @Index(name = "idx_cart_customer_tenant", columnList = "customerId, tenantId"),
     @Index(name = "idx_cart_tenant", columnList = "tenantId"),
@@ -53,9 +53,65 @@ public class Cart {
         return items == null || items.isEmpty();
     }
     
+    // Manual getter methods to bypass Lombok issues
+    public Long getId() {
+        return id;
+    }
+    
+    public Long getCustomerId() {
+        return customerId;
+    }
+    
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+    
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+    
+    public List<CartItem> getItems() {
+        return items;
+    }
+    
+    public void setItems(List<CartItem> items) {
+        this.items = items;
+    }
+    
     public void clearItems() {
         if (items != null) {
             items.clear();
+        }
+    }
+    
+    public static CartBuilder builder() {
+        return new CartBuilder();
+    }
+    
+    public static class CartBuilder {
+        private Long id;
+        private Long customerId;
+        private UUID tenantId;
+        private List<CartItem> items;
+        private LocalDateTime createdAt;
+        private LocalDateTime updatedAt;
+        
+        public CartBuilder id(Long id) { this.id = id; return this; }
+        public CartBuilder customerId(Long customerId) { this.customerId = customerId; return this; }
+        public CartBuilder tenantId(UUID tenantId) { this.tenantId = tenantId; return this; }
+        public CartBuilder items(List<CartItem> items) { this.items = items; return this; }
+        public CartBuilder createdAt(LocalDateTime createdAt) { this.createdAt = createdAt; return this; }
+        public CartBuilder updatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; return this; }
+        
+        public Cart build() {
+            Cart cart = new Cart();
+            cart.id = this.id;
+            cart.customerId = this.customerId;
+            cart.tenantId = this.tenantId;
+            cart.items = this.items;
+            cart.createdAt = this.createdAt;
+            cart.updatedAt = this.updatedAt;
+            return cart;
         }
     }
 }

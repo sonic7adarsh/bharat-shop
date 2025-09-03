@@ -20,15 +20,69 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResponse<T> {
     
+    // Manual builder method to fix Lombok issue
+    public static <T> ApiResponseBuilder<T> builder() {
+        return new ApiResponseBuilder<T>();
+    }
+    
+    // Manual builder class to fix Lombok issue
+    public static class ApiResponseBuilder<T> {
+        private boolean success;
+        private String message;
+        private T data;
+        private List<String> errors;
+        private String errorCode;
+        private String timestamp;
+        
+        public ApiResponseBuilder<T> success(boolean success) {
+            this.success = success;
+            return this;
+        }
+        
+        public ApiResponseBuilder<T> message(String message) {
+            this.message = message;
+            return this;
+        }
+        
+        public ApiResponseBuilder<T> data(T data) {
+            this.data = data;
+            return this;
+        }
+        
+        public ApiResponseBuilder<T> errorCode(String errorCode) {
+            this.errorCode = errorCode;
+            return this;
+        }
+        
+        public ApiResponseBuilder<T> errors(List<String> errors) {
+            this.errors = errors;
+            return this;
+        }
+        
+        public ApiResponseBuilder<T> timestamp(String timestamp) {
+            this.timestamp = timestamp;
+            return this;
+        }
+        
+        public ApiResponse<T> build() {
+            ApiResponse<T> response = new ApiResponse<>();
+            response.success = this.success;
+            response.message = this.message;
+            response.data = this.data;
+            response.errors = this.errors;
+            response.errorCode = this.errorCode;
+            response.timestamp = this.timestamp;
+            return response;
+        }
+    }
+    
     private boolean success;
     private String message;
     private T data;
     private List<String> errors;
     private String errorCode;
     
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    @Builder.Default
-    private LocalDateTime timestamp = LocalDateTime.now();
+    private String timestamp;
     
     private String traceId;
     private String path;

@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-@Entity
+@Entity(name = "StorefrontOrder")
 @Table(name = "orders", indexes = {
     @Index(name = "idx_order_customer_tenant", columnList = "customerId, tenantId"),
     @Index(name = "idx_order_tenant", columnList = "tenantId"),
@@ -239,5 +239,313 @@ public class Order {
     public String getShortShippingAddress() {
         if (shippingCity == null) return null;
         return shippingCity + ", " + shippingState + " - " + shippingPincode;
+    }
+    
+    // Manual builder method to bypass Lombok issues
+    public static OrderBuilder builder() {
+        return new OrderBuilder();
+    }
+    
+    // Manual setter methods to bypass Lombok issues
+    public void setShippingAddressId(Long shippingAddressId) {
+        this.shippingAddressId = shippingAddressId;
+    }
+    
+    public void setShippingName(String shippingName) {
+        this.shippingName = shippingName;
+    }
+    
+    public void setShippingPhone(String shippingPhone) {
+        this.shippingPhone = shippingPhone;
+    }
+    
+    public void setShippingLine1(String shippingLine1) {
+        this.shippingLine1 = shippingLine1;
+    }
+    
+    public void setShippingLine2(String shippingLine2) {
+        this.shippingLine2 = shippingLine2;
+    }
+    
+    public void setShippingCity(String shippingCity) {
+        this.shippingCity = shippingCity;
+    }
+    
+    public void setShippingState(String shippingState) {
+        this.shippingState = shippingState;
+    }
+    
+    public void setShippingPincode(String shippingPincode) {
+        this.shippingPincode = shippingPincode;
+    }
+    
+    public void setShippingCountry(String shippingCountry) {
+        this.shippingCountry = shippingCountry;
+    }
+    
+    public void setPaymentStatus(PaymentStatus paymentStatus) {
+        this.paymentStatus = paymentStatus;
+    }
+    
+    public void setStatus(OrderStatus status) {
+        this.status = status;
+    }
+    
+    public UUID getTenantId() {
+        return tenantId;
+    }
+    
+    public void setPaymentGatewaySignature(String paymentGatewaySignature) {
+        this.paymentGatewaySignature = paymentGatewaySignature;
+    }
+    
+    public void setPaymentGatewayOrderId(String paymentGatewayOrderId) {
+        this.paymentGatewayOrderId = paymentGatewayOrderId;
+    }
+    
+    public void setPaymentGatewayPaymentId(String paymentGatewayPaymentId) {
+        this.paymentGatewayPaymentId = paymentGatewayPaymentId;
+    }
+    
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+    
+    public void setPackedAt(LocalDateTime packedAt) {
+        this.packedAt = packedAt;
+    }
+    
+    public void setItems(List<OrderItem> items) {
+        this.items = items;
+    }
+    
+    public Long getId() {
+        return id;
+    }
+    
+    public String getOrderNumber() {
+        return orderNumber;
+    }
+    
+    public void setShippedAt(LocalDateTime shippedAt) {
+        this.shippedAt = shippedAt;
+    }
+    
+    public void setDeliveredAt(LocalDateTime deliveredAt) {
+        this.deliveredAt = deliveredAt;
+    }
+    
+    public void setCancelledAt(LocalDateTime cancelledAt) {
+        this.cancelledAt = cancelledAt;
+    }
+    
+    // Manual OrderBuilder class
+    public static class OrderBuilder {
+        private UUID tenantId;
+        private Long customerId;
+        private OrderStatus status;
+        private BigDecimal totalAmount;
+        private BigDecimal discountAmount;
+        private BigDecimal taxAmount;
+        private BigDecimal shippingAmount;
+        private PaymentStatus paymentStatus;
+        private Long shippingAddressId;
+        private String orderNumber;
+        private String notes;
+        private java.util.List<OrderItem> items;
+        
+        public OrderBuilder tenantId(UUID tenantId) {
+            this.tenantId = tenantId;
+            return this;
+        }
+        
+        public OrderBuilder customerId(Long customerId) {
+            this.customerId = customerId;
+            return this;
+        }
+        
+        public OrderBuilder status(OrderStatus status) {
+            this.status = status;
+            return this;
+        }
+        
+        public OrderBuilder totalAmount(BigDecimal totalAmount) {
+            this.totalAmount = totalAmount;
+            return this;
+        }
+        
+        public OrderBuilder discountAmount(BigDecimal discountAmount) {
+            this.discountAmount = discountAmount;
+            return this;
+        }
+        
+        public OrderBuilder taxAmount(BigDecimal taxAmount) {
+            this.taxAmount = taxAmount;
+            return this;
+        }
+        
+        public OrderBuilder shippingAmount(BigDecimal shippingAmount) {
+            this.shippingAmount = shippingAmount;
+            return this;
+        }
+        
+        public OrderBuilder paymentStatus(PaymentStatus paymentStatus) {
+            this.paymentStatus = paymentStatus;
+            return this;
+        }
+        
+        public OrderBuilder shippingAddressId(Long shippingAddressId) {
+            this.shippingAddressId = shippingAddressId;
+            return this;
+        }
+        
+        public OrderBuilder orderNumber(String orderNumber) {
+            this.orderNumber = orderNumber;
+            return this;
+        }
+        
+        public OrderBuilder notes(String notes) {
+            this.notes = notes;
+            return this;
+        }
+        
+        public OrderBuilder items(java.util.List<OrderItem> items) {
+            this.items = items;
+            return this;
+        }
+        
+        public Order build() {
+            Order order = new Order();
+            order.tenantId = this.tenantId;
+            order.customerId = this.customerId;
+            order.status = this.status;
+            order.totalAmount = this.totalAmount;
+            order.discountAmount = this.discountAmount;
+            order.taxAmount = this.taxAmount;
+            order.shippingAmount = this.shippingAmount;
+            order.paymentStatus = this.paymentStatus;
+            order.shippingAddressId = this.shippingAddressId;
+            order.orderNumber = this.orderNumber;
+            order.notes = this.notes;
+            order.items = this.items;
+            return order;
+        }
+    }
+    
+    // Manual getter methods to bypass Lombok issues
+    public Long getCustomerId() {
+        return customerId;
+    }
+    
+    public OrderStatus getStatus() {
+        return status;
+    }
+    
+    public PaymentStatus getPaymentStatus() {
+        return paymentStatus;
+    }
+    
+    public BigDecimal getTotalAmount() {
+        return totalAmount;
+    }
+    
+    public BigDecimal getDiscountAmount() {
+        return discountAmount;
+    }
+    
+    public BigDecimal getTaxAmount() {
+        return taxAmount;
+    }
+    
+    public BigDecimal getShippingAmount() {
+        return shippingAmount;
+    }
+    
+    public Long getShippingAddressId() {
+        return shippingAddressId;
+    }
+    
+    public String getShippingName() {
+        return shippingName;
+    }
+    
+    public String getShippingPhone() {
+        return shippingPhone;
+    }
+    
+    public String getShippingLine1() {
+        return shippingLine1;
+    }
+    
+    public String getShippingLine2() {
+        return shippingLine2;
+    }
+    
+    public String getShippingCity() {
+        return shippingCity;
+    }
+    
+    public String getShippingState() {
+        return shippingState;
+    }
+    
+    public String getShippingPincode() {
+        return shippingPincode;
+    }
+    
+    public String getShippingCountry() {
+        return shippingCountry;
+    }
+    
+    public String getNotes() {
+        return notes;
+    }
+    
+    public String getPaymentGatewayId() {
+        return paymentGatewayId;
+    }
+    
+    public String getPaymentGatewayOrderId() {
+        return paymentGatewayOrderId;
+    }
+    
+    public String getPaymentGatewayPaymentId() {
+        return paymentGatewayPaymentId;
+    }
+    
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+    
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+    
+    public LocalDateTime getDeliveredAt() {
+        return deliveredAt;
+    }
+    
+    public LocalDateTime getCancelledAt() {
+        return cancelledAt;
+    }
+    
+    public LocalDateTime getPackedAt() {
+        return packedAt;
+    }
+    
+    public LocalDateTime getShippedAt() {
+        return shippedAt;
+    }
+    
+    public String getTrackingNumber() {
+        return trackingNumber;
+    }
+    
+    public String getCourierPartner() {
+        return courierPartner;
+    }
+    
+    public List<OrderItem> getItems() {
+        return items;
     }
 }

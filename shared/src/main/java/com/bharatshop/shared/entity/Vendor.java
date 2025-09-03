@@ -11,7 +11,7 @@ import lombok.experimental.SuperBuilder;
  * Vendor entity representing a store/vendor in the platform.
  * Contains store configuration, branding, and business information.
  */
-@Entity
+@Entity(name = "SharedVendor")
 @Table(name = "vendors", indexes = {
     @Index(name = "idx_vendor_domain", columnList = "domain", unique = true),
     @Index(name = "idx_vendor_name", columnList = "name"),

@@ -3,9 +3,10 @@ package com.bharatshop.storefront.controller;
 import com.bharatshop.storefront.service.VendorService;
 import com.bharatshop.shared.entity.Vendor;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,8 +20,9 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/storefront/vendor")
 @RequiredArgsConstructor
-@Slf4j
 public class StorefrontVendorController {
+    
+    private static final Logger log = LoggerFactory.getLogger(StorefrontVendorController.class);
     
     private final VendorService vendorService;
     

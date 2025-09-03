@@ -7,14 +7,18 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 @Configuration
 @EnableWebSecurity
@@ -24,10 +28,25 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final SessionAuthenticationFilter sessionAuthenticationFilter;
+    private final PasswordEncoder passwordEncoder;
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
+    public AuthenticationManager authenticationManager(
+            @Qualifier("storefrontAuthService") UserDetailsService storefrontUserDetailsService,
+            @Qualifier("platformAuthService") UserDetailsService platformUserDetailsService) {
+        
+        // Create DaoAuthenticationProvider for storefront users
+        DaoAuthenticationProvider storefrontProvider = new DaoAuthenticationProvider();
+        storefrontProvider.setUserDetailsService(storefrontUserDetailsService);
+        storefrontProvider.setPasswordEncoder(passwordEncoder);
+        
+        // Create DaoAuthenticationProvider for platform users
+        DaoAuthenticationProvider platformProvider = new DaoAuthenticationProvider();
+        platformProvider.setUserDetailsService(platformUserDetailsService);
+        platformProvider.setPasswordEncoder(passwordEncoder);
+        
+        // Return ProviderManager with both providers
+        return new ProviderManager(storefrontProvider, platformProvider);
     }
 
     /**

@@ -194,10 +194,11 @@ class ReservationServiceConcurrencyTest {
                         // Odd operations: Release previous reservations
                         Thread.sleep(100); // Small delay to allow some reservations to be made
                         try {
-                            reservationService.releaseOrderReservations((long) (operationId - 1), tenantId);
+                            Long orderId = (long) (operationId - 1);
+                            reservationService.releaseOrderReservations(tenantId, orderId);
                             // Simulate releasing reserved stock
                             synchronized (activeReservations) {
-                                activeReservations.removeIf(r -> Long.valueOf(operationId - 1).equals(r.getOrderId()));
+                                activeReservations.removeIf(r -> orderId.equals(r.getOrderId()));
                                 totalReserved.decrementAndGet();
                             }
                         } catch (Exception e) {

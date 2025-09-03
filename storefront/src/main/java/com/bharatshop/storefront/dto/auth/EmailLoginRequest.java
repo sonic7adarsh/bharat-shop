@@ -5,10 +5,8 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,4 +21,13 @@ public class EmailLoginRequest {
     @Schema(description = "Password", example = "password123")
     @NotBlank(message = "Password is required")
     private String password;
+    
+    // Manual getter methods
+    public String getEmail() {
+        return email;
+    }
+    
+    public String getPassword() {
+        return password;
+    }
 }

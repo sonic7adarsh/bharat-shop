@@ -25,11 +25,6 @@ import java.util.UUID;
 @EqualsAndHashCode(callSuper = true)
 public class Plan extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "id", updatable = false, nullable = false)
-    private UUID id;
-
     @Column(name = "name", nullable = false, length = 100)
     private String name;
 

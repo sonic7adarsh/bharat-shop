@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Entity
+@Entity(name = "SharedOrder")
 @Table(name = "orders", indexes = {
     @Index(name = "idx_order_customer_tenant", columnList = "customerId, tenantId"),
     @Index(name = "idx_order_tenant", columnList = "tenantId"),

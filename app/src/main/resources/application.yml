@@ -6,6 +6,7 @@ spring:
     active: dev
   main:
     allow-bean-definition-overriding: true
+    allow-circular-references: true
   
   # Database Configuration
   datasource:
@@ -72,6 +73,16 @@ app:
     admin:
       requests: 200
       window: 1  # 1 minute
+
+# AWS S3 Configuration
+aws:
+  s3:
+    access-key: ${AWS_S3_ACCESS_KEY:dummy-access-key}
+    secret-key: ${AWS_S3_SECRET_KEY:dummy-secret-key}
+    region: ${AWS_S3_REGION:us-east-1}
+    endpoint: ${AWS_S3_ENDPOINT:}
+    bucket-name: ${AWS_S3_BUCKET_NAME:bharatshop-dev}
+    path-style-access: ${AWS_S3_PATH_STYLE_ACCESS:false}
 
   # Monitoring Configuration
 management:

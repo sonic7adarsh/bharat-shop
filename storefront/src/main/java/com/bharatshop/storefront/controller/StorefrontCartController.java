@@ -7,7 +7,8 @@ import com.bharatshop.storefront.dto.UpdateCartRequest;
 import com.bharatshop.storefront.entity.Cart;
 import com.bharatshop.storefront.service.CartService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,8 +20,9 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/store/cart")
 @RequiredArgsConstructor
-@Slf4j
 public class StorefrontCartController {
+    
+    private static final Logger log = LoggerFactory.getLogger(StorefrontCartController.class);
     
     private final CartService cartService;
     

@@ -79,4 +79,85 @@ public class Reservation {
         COMMITTED,  // Reservation has been converted to order item
         RELEASED    // Reservation has been released (expired or cancelled)
     }
+    
+    // Manual getter and setter methods to bypass Lombok issues
+    public ReservationStatus getStatus() {
+        return status;
+    }
+    
+    public Long getId() {
+        return id;
+    }
+    
+    public UUID getTenantId() {
+        return tenantId;
+    }
+    
+    public void setOrderId(Long orderId) {
+        this.orderId = orderId;
+    }
+    
+    public UUID getProductVariantId() {
+        return productVariantId;
+    }
+    
+    public Integer getQuantity() {
+        return quantity;
+    }
+    
+    // Manual builder method to bypass Lombok issues
+    public static ReservationBuilder builder() {
+        return new ReservationBuilder();
+    }
+    
+    // Manual ReservationBuilder class
+    public static class ReservationBuilder {
+        private UUID tenantId;
+        private UUID productVariantId;
+        private Integer quantity;
+        private Long orderId;
+        private LocalDateTime expiresAt;
+        private ReservationStatus status = ReservationStatus.ACTIVE;
+        
+        public ReservationBuilder tenantId(UUID tenantId) {
+            this.tenantId = tenantId;
+            return this;
+        }
+        
+        public ReservationBuilder productVariantId(UUID productVariantId) {
+            this.productVariantId = productVariantId;
+            return this;
+        }
+        
+        public ReservationBuilder quantity(Integer quantity) {
+            this.quantity = quantity;
+            return this;
+        }
+        
+        public ReservationBuilder orderId(Long orderId) {
+            this.orderId = orderId;
+            return this;
+        }
+        
+        public ReservationBuilder expiresAt(LocalDateTime expiresAt) {
+            this.expiresAt = expiresAt;
+            return this;
+        }
+        
+        public ReservationBuilder status(ReservationStatus status) {
+            this.status = status;
+            return this;
+        }
+        
+        public Reservation build() {
+            Reservation reservation = new Reservation();
+            reservation.tenantId = this.tenantId;
+            reservation.productVariantId = this.productVariantId;
+            reservation.quantity = this.quantity;
+            reservation.orderId = this.orderId;
+            reservation.expiresAt = this.expiresAt;
+            reservation.status = this.status;
+            return reservation;
+        }
+    }
 }

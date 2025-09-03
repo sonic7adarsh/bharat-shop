@@ -14,6 +14,9 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Slf4j
 public class ReservationCleanupScheduler {
+    
+    // Manual log field to bypass Lombok issues
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(ReservationCleanupScheduler.class);
 
     private final ReservationService reservationService;
 

@@ -17,11 +17,11 @@ import java.util.UUID;
 @Table(name = "option_values", indexes = {
         @Index(name = "idx_option_value_tenant_id", columnList = "tenant_id"),
         @Index(name = "idx_option_value_option_id", columnList = "option_id"),
-        @Index(name = "idx_option_value_value", columnList = "value"),
+        @Index(name = "idx_option_value_value", columnList = "`value`"),
         @Index(name = "idx_option_value_tenant_option", columnList = "tenant_id, option_id")
 }, uniqueConstraints = {
         @UniqueConstraint(name = "uk_option_value_tenant_option_value", 
-                         columnNames = {"tenant_id", "option_id", "value"})
+                         columnNames = {"tenant_id", "option_id", "`value`"})
 })
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -33,7 +33,7 @@ public class OptionValue extends BaseEntity {
     @Column(name = "option_id", nullable = false)
     private UUID optionId;
 
-    @Column(name = "value", nullable = false, length = 100)
+    @Column(name = "`value`", nullable = false, length = 100)
     private String value;
 
     @Column(name = "display_value", nullable = false, length = 100)
@@ -52,4 +52,17 @@ public class OptionValue extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "option_id", insertable = false, updatable = false)
     private Option option;
+    
+    // Manual getters to fix Lombok issue
+    public String getValue() {
+        return value;
+    }
+    
+    public String getDisplayValue() {
+        return displayValue;
+    }
+    
+    public String getColorCode() {
+        return colorCode;
+    }
 }

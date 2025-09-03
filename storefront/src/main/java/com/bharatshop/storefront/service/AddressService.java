@@ -17,11 +17,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class AddressService {
+    
+    private static final Logger log = LoggerFactory.getLogger(AddressService.class);
     
     private final CustomerAddressRepository addressRepository;
     private final StorefrontUserRepository userRepository;

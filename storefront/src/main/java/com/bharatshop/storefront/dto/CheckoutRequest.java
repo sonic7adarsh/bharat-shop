@@ -8,7 +8,6 @@ import lombok.Builder;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -21,4 +20,17 @@ public class CheckoutRequest {
     private String notes;
     
     private String couponCode;
+    
+    // Manual getter methods
+    public Long getAddressId() {
+        return addressId;
+    }
+    
+    public String getNotes() {
+        return notes;
+    }
+    
+    public String getCouponCode() {
+        return couponCode;
+    }
 }

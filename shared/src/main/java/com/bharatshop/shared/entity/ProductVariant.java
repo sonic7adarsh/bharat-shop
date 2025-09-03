@@ -121,4 +121,29 @@ public class ProductVariant extends BaseEntity {
     public BigDecimal getEffectivePrice() {
         return salePrice != null && salePrice.compareTo(BigDecimal.ZERO) > 0 ? salePrice : price;
     }
+    
+    // Manual getter and setter methods to bypass Lombok issues
+    public UUID getTenantId() {
+        return tenantId;
+    }
+    
+    public int getStock() {
+        return stock;
+    }
+    
+    public void setStock(int stock) {
+        this.stock = stock;
+    }
+    
+    public UUID getId() {
+        return id;
+    }
+    
+    public VariantStatus getStatus() {
+        return status;
+    }
+    
+    public Boolean getIsDefault() {
+        return isDefault;
+    }
 }

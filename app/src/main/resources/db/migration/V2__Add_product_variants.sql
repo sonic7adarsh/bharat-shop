@@ -3,7 +3,7 @@
 
 -- Options table (e.g., Size, Color)
 CREATE TABLE options (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id UUID PRIMARY KEY,
     tenant_id VARCHAR(100) NOT NULL,
     name VARCHAR(100) NOT NULL,
     display_name VARCHAR(255) NOT NULL,
@@ -24,9 +24,9 @@ CREATE TABLE options (
 
 -- Option Values table (e.g., L, XL, Red, Blue)
 CREATE TABLE option_values (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id UUID PRIMARY KEY,
     tenant_id VARCHAR(100) NOT NULL,
-    option_id BIGINT NOT NULL,
+    option_id UUID NOT NULL,
     value VARCHAR(255) NOT NULL,
     display_value VARCHAR(255) NOT NULL,
     color_code VARCHAR(7), -- For color options (hex code)
@@ -45,10 +45,10 @@ CREATE TABLE option_values (
 
 -- Product Options junction table (which options are available for a product)
 CREATE TABLE product_options (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id UUID PRIMARY KEY,
     tenant_id VARCHAR(100) NOT NULL,
-    product_id BIGINT NOT NULL,
-    option_id BIGINT NOT NULL,
+    product_id UUID NOT NULL,
+    option_id UUID NOT NULL,
     is_required BOOLEAN DEFAULT FALSE,
     sort_order INT DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -64,9 +64,9 @@ CREATE TABLE product_options (
 
 -- Product Variants table (specific combinations of options with their own SKU, price, stock)
 CREATE TABLE product_variants (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id UUID PRIMARY KEY,
     tenant_id VARCHAR(100) NOT NULL,
-    product_id BIGINT NOT NULL,
+    product_id UUID NOT NULL,
     sku VARCHAR(100) NOT NULL,
     barcode VARCHAR(100),
     price DECIMAL(10,2) NOT NULL,
@@ -98,11 +98,11 @@ CREATE TABLE product_variants (
 
 -- Product Variant Option Values junction table (which option values make up each variant)
 CREATE TABLE product_variant_option_values (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id UUID PRIMARY KEY,
     tenant_id VARCHAR(100) NOT NULL,
-    variant_id BIGINT NOT NULL,
-    option_id BIGINT NOT NULL,
-    option_value_id BIGINT NOT NULL,
+    variant_id UUID NOT NULL,
+    option_id UUID NOT NULL,
+    option_value_id UUID NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP NULL,

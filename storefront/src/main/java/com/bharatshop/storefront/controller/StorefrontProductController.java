@@ -7,16 +7,16 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
 /**
  * Public storefront API controller for customer-facing product operations.
@@ -25,9 +25,10 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/store")
 @RequiredArgsConstructor
-@Slf4j
 @Tag(name = "Storefront Products", description = "Public APIs for customer product browsing")
 public class StorefrontProductController {
+    
+    private static final Logger log = LoggerFactory.getLogger(StorefrontProductController.class);
     
     private final StorefrontProductService storefrontProductService;
     

@@ -8,7 +8,6 @@ import lombok.Builder;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -25,4 +24,21 @@ public class PaymentRequest {
     
     @NotBlank(message = "Razorpay signature is required")
     private String razorpaySignature;
+    
+    // Manual getter methods
+    public Long getOrderId() {
+        return orderId;
+    }
+    
+    public String getRazorpayOrderId() {
+        return razorpayOrderId;
+    }
+    
+    public String getRazorpayPaymentId() {
+        return razorpayPaymentId;
+    }
+    
+    public String getRazorpaySignature() {
+        return razorpaySignature;
+    }
 }

@@ -16,11 +16,14 @@ import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class ReservationService {
     
+    // Manual log field to bypass Lombok issues
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(ReservationService.class);
+
     private final ReservationRepository reservationRepository;
     private final ProductVariantRepository productVariantRepository;
     
@@ -312,8 +315,7 @@ public class ReservationService {
             throw new IllegalStateException("Reservation is not active");
         }
         
-        reservation.setStatus(Reservation.ReservationStatus.RELEASED);
-        reservation.setUpdatedAt(LocalDateTime.now());
+        reservation.markAsReleased();
         reservationRepository.save(reservation);
         
         log.info("Manually released reservation {} for tenant {}", reservationId, tenantId);

@@ -15,7 +15,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.NoHandlerFoundException;
@@ -25,22 +24,23 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
  * Global exception handler for the application
  */
-@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    
+    // Manual logger to fix Lombok issue
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     /**
      * Handle validation errors from @Valid annotation
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiResponse<Void>> handleValidationErrors(
+    public ResponseEntity<ApiResponse<Object>> handleValidationErrors(
             MethodArgumentNotValidException ex, HttpServletRequest request) {
         
         List<String> errors = ex.getBindingResult()
@@ -49,15 +49,14 @@ public class GlobalExceptionHandler {
                 .map(FieldError::getDefaultMessage)
                 .collect(Collectors.toList());
         
-        log.warn("Validation error at {}: {}", request.getRequestURI(), errors);
+        // Log validation errors
         
-        ApiResponse<Void> response = ApiResponse.<Void>builder()
+        ApiResponse<Object> response = ApiResponse.builder()
                 .success(false)
                 .message("Validation failed")
                 .errors(errors)
                 .errorCode("VALIDATION_ERROR")
-                .timestamp(LocalDateTime.now())
-                .path(request.getRequestURI())
+                .timestamp(LocalDateTime.now().toString())
                 .build();
         
         return ResponseEntity.badRequest().body(response);
@@ -82,8 +81,7 @@ public class GlobalExceptionHandler {
                 .message("Validation failed")
                 .errors(errors)
                 .errorCode("CONSTRAINT_VIOLATION")
-                .timestamp(LocalDateTime.now())
-                .path(request.getRequestURI())
+                .timestamp(LocalDateTime.now().toString())
                 .build();
         
         return ResponseEntity.badRequest().body(response);
@@ -102,8 +100,7 @@ public class GlobalExceptionHandler {
                 .success(false)
                 .message(ex.getMessage())
                 .errorCode(ex.getErrorCode())
-                .timestamp(LocalDateTime.now())
-                .path(request.getRequestURI())
+                .timestamp(LocalDateTime.now().toString())
                 .build();
         
         return ResponseEntity.status(ex.getHttpStatus()).body(response);
@@ -122,8 +119,7 @@ public class GlobalExceptionHandler {
                 .success(false)
                 .message(ex.getMessage())
                 .errorCode("ENTITY_NOT_FOUND")
-                .timestamp(LocalDateTime.now())
-                .path(request.getRequestURI())
+                .timestamp(LocalDateTime.now().toString())
                 .build();
         
         return ResponseEntity.notFound().build();
@@ -142,8 +138,7 @@ public class GlobalExceptionHandler {
                 .success(false)
                 .message("Authentication failed")
                 .errorCode("AUTHENTICATION_ERROR")
-                .timestamp(LocalDateTime.now())
-                .path(request.getRequestURI())
+                .timestamp(LocalDateTime.now().toString())
                 .build();
         
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
@@ -162,8 +157,7 @@ public class GlobalExceptionHandler {
                 .success(false)
                 .message("Access denied")
                 .errorCode("ACCESS_DENIED")
-                .timestamp(LocalDateTime.now())
-                .path(request.getRequestURI())
+                .timestamp(LocalDateTime.now().toString())
                 .build();
         
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
@@ -182,8 +176,7 @@ public class GlobalExceptionHandler {
                 .success(false)
                 .message("Method not allowed")
                 .errorCode("METHOD_NOT_ALLOWED")
-                .timestamp(LocalDateTime.now())
-                .path(request.getRequestURI())
+                .timestamp(LocalDateTime.now().toString())
                 .build();
         
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(response);
@@ -202,8 +195,7 @@ public class GlobalExceptionHandler {
                 .success(false)
                 .message("Unsupported media type")
                 .errorCode("UNSUPPORTED_MEDIA_TYPE")
-                .timestamp(LocalDateTime.now())
-                .path(request.getRequestURI())
+                .timestamp(LocalDateTime.now().toString())
                 .build();
         
         return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body(response);
@@ -222,8 +214,7 @@ public class GlobalExceptionHandler {
                 .success(false)
                 .message("Missing required parameter: " + ex.getParameterName())
                 .errorCode("MISSING_PARAMETER")
-                .timestamp(LocalDateTime.now())
-                .path(request.getRequestURI())
+                .timestamp(LocalDateTime.now().toString())
                 .build();
         
         return ResponseEntity.badRequest().body(response);
@@ -242,8 +233,7 @@ public class GlobalExceptionHandler {
                 .success(false)
                 .message("Invalid parameter type for: " + ex.getName())
                 .errorCode("TYPE_MISMATCH")
-                .timestamp(LocalDateTime.now())
-                .path(request.getRequestURI())
+                .timestamp(LocalDateTime.now().toString())
                 .build();
         
         return ResponseEntity.badRequest().body(response);
@@ -262,8 +252,7 @@ public class GlobalExceptionHandler {
                 .success(false)
                 .message("Malformed JSON request")
                 .errorCode("MALFORMED_JSON")
-                .timestamp(LocalDateTime.now())
-                .path(request.getRequestURI())
+                .timestamp(LocalDateTime.now().toString())
                 .build();
         
         return ResponseEntity.badRequest().body(response);
@@ -282,8 +271,7 @@ public class GlobalExceptionHandler {
                 .success(false)
                 .message("File size exceeds maximum allowed limit")
                 .errorCode("FILE_SIZE_EXCEEDED")
-                .timestamp(LocalDateTime.now())
-                .path(request.getRequestURI())
+                .timestamp(LocalDateTime.now().toString())
                 .build();
         
         return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body(response);
@@ -302,8 +290,7 @@ public class GlobalExceptionHandler {
                 .success(false)
                 .message("Endpoint not found")
                 .errorCode("ENDPOINT_NOT_FOUND")
-                .timestamp(LocalDateTime.now())
-                .path(request.getRequestURI())
+                .timestamp(LocalDateTime.now().toString())
                 .build();
         
         return ResponseEntity.notFound().build();
@@ -322,8 +309,7 @@ public class GlobalExceptionHandler {
                 .success(false)
                 .message("An unexpected error occurred")
                 .errorCode("INTERNAL_SERVER_ERROR")
-                .timestamp(LocalDateTime.now())
-                .path(request.getRequestURI())
+                .timestamp(LocalDateTime.now().toString())
                 .build();
         
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);

@@ -17,56 +17,56 @@ public interface OptionRepository extends TenantAwareRepository<Option> {
     /**
      * Find all active options for current tenant
      */
-    @Query("SELECT o FROM Option o WHERE o.isActive = true AND o.tenantId = :#{T(com.bharatshop.shared.tenant.TenantContext).getCurrentTenant()} AND o.deletedAt IS NULL ORDER BY o.sortOrder ASC")
-    List<Option> findAllActive();
+    @Query("SELECT o FROM Option o WHERE o.isActive = true AND o.tenantId = :tenantId AND o.deletedAt IS NULL ORDER BY o.sortOrder ASC")
+    List<Option> findAllActive(@Param("tenantId") String tenantId);
     
     /**
      * Find active option by name for current tenant
      */
-    @Query("SELECT o FROM Option o WHERE o.name = :name AND o.isActive = true AND o.tenantId = :#{T(com.bharatshop.shared.tenant.TenantContext).getCurrentTenant()} AND o.deletedAt IS NULL")
-    Optional<Option> findActiveByName(@Param("name") String name);
+    @Query("SELECT o FROM Option o WHERE o.name = :name AND o.isActive = true AND o.tenantId = :tenantId AND o.deletedAt IS NULL")
+    Optional<Option> findActiveByName(@Param("name") String name, @Param("tenantId") String tenantId);
     
     /**
      * Find options by type for current tenant
      */
-    @Query("SELECT o FROM Option o WHERE o.type = :type AND o.isActive = true AND o.tenantId = :#{T(com.bharatshop.shared.tenant.TenantContext).getCurrentTenant()} AND o.deletedAt IS NULL ORDER BY o.sortOrder ASC")
-    List<Option> findActiveByType(@Param("type") Option.OptionType type);
+    @Query("SELECT o FROM Option o WHERE o.type = :type AND o.isActive = true AND o.tenantId = :tenantId AND o.deletedAt IS NULL ORDER BY o.sortOrder ASC")
+    List<Option> findActiveByType(@Param("type") Option.OptionType type, @Param("tenantId") String tenantId);
     
     /**
      * Find required options for current tenant
      */
-    @Query("SELECT o FROM Option o WHERE o.isRequired = true AND o.isActive = true AND o.tenantId = :#{T(com.bharatshop.shared.tenant.TenantContext).getCurrentTenant()} AND o.deletedAt IS NULL ORDER BY o.sortOrder ASC")
-    List<Option> findRequiredOptions();
+    @Query("SELECT o FROM Option o WHERE o.isRequired = true AND o.isActive = true AND o.tenantId = :tenantId AND o.deletedAt IS NULL ORDER BY o.sortOrder ASC")
+    List<Option> findRequiredOptions(@Param("tenantId") String tenantId);
     
     /**
      * Check if option name exists for current tenant (excluding current option)
      */
-    @Query("SELECT COUNT(o) > 0 FROM Option o WHERE o.name = :name AND o.tenantId = :#{T(com.bharatshop.shared.tenant.TenantContext).getCurrentTenant()} AND o.id != :excludeId AND o.deletedAt IS NULL")
-    boolean existsByNameAndTenantIdAndIdNot(@Param("name") String name, @Param("excludeId") UUID excludeId);
+    @Query("SELECT COUNT(o) > 0 FROM Option o WHERE o.name = :name AND o.tenantId = :tenantId AND o.id != :excludeId AND o.deletedAt IS NULL")
+    boolean existsByNameAndTenantIdAndIdNot(@Param("name") String name, @Param("excludeId") UUID excludeId, @Param("tenantId") String tenantId);
     
     /**
      * Check if option name exists for current tenant
      */
-    @Query("SELECT COUNT(o) > 0 FROM Option o WHERE o.name = :name AND o.tenantId = :#{T(com.bharatshop.shared.tenant.TenantContext).getCurrentTenant()} AND o.deletedAt IS NULL")
-    boolean existsByNameAndTenantId(@Param("name") String name);
+    @Query("SELECT COUNT(o) > 0 FROM Option o WHERE o.name = :name AND o.tenantId = :tenantId AND o.deletedAt IS NULL")
+    boolean existsByNameAndTenantId(@Param("name") String name, @Param("tenantId") String tenantId);
     
     /**
      * Search options by name or display name for current tenant
      */
-    @Query("SELECT o FROM Option o WHERE o.isActive = true AND o.tenantId = :#{T(com.bharatshop.shared.tenant.TenantContext).getCurrentTenant()} AND o.deletedAt IS NULL AND (LOWER(o.name) LIKE LOWER(CONCAT('%', :search, '%')) OR LOWER(o.displayName) LIKE LOWER(CONCAT('%', :search, '%'))) ORDER BY o.sortOrder ASC")
-    List<Option> searchActiveOptions(@Param("search") String search);
+    @Query("SELECT o FROM Option o WHERE o.isActive = true AND o.tenantId = :tenantId AND o.deletedAt IS NULL AND (LOWER(o.name) LIKE LOWER(CONCAT('%', :search, '%')) OR LOWER(o.displayName) LIKE LOWER(CONCAT('%', :search, '%'))) ORDER BY o.sortOrder ASC")
+    List<Option> searchActiveOptions(@Param("search") String search, @Param("tenantId") String tenantId);
     
     /**
      * Find active option by ID for current tenant
      */
-    @Query("SELECT o FROM Option o WHERE o.id = :id AND o.isActive = true AND o.tenantId = :#{T(com.bharatshop.shared.tenant.TenantContext).getCurrentTenant()} AND o.deletedAt IS NULL")
-    Optional<Option> findActiveById(@Param("id") UUID id);
+    @Query("SELECT o FROM Option o WHERE o.id = :id AND o.isActive = true AND o.tenantId = :tenantId AND o.deletedAt IS NULL")
+    Optional<Option> findActiveById(@Param("id") UUID id, @Param("tenantId") String tenantId);
     
     /**
      * Find options by IDs for current tenant
      */
-    @Query("SELECT o FROM Option o WHERE o.id IN :ids AND o.isActive = true AND o.tenantId = :#{T(com.bharatshop.shared.tenant.TenantContext).getCurrentTenant()} AND o.deletedAt IS NULL ORDER BY o.sortOrder ASC")
-    List<Option> findActiveByIds(@Param("ids") List<UUID> ids);
+    @Query("SELECT o FROM Option o WHERE o.id IN :ids AND o.isActive = true AND o.tenantId = :tenantId AND o.deletedAt IS NULL ORDER BY o.sortOrder ASC")
+    List<Option> findActiveByIds(@Param("ids") List<UUID> ids, @Param("tenantId") String tenantId);
     
     /**
      * Find all active options by tenant ID

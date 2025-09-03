@@ -2,6 +2,7 @@ package com.bharatshop.shared.service;
 
 import com.bharatshop.shared.entity.Template;
 import com.bharatshop.shared.repository.TemplateRepository;
+import com.bharatshop.shared.tenant.TenantContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -33,7 +34,8 @@ public class TemplateService {
      */
     @Transactional(readOnly = true)
     public List<Template> getAllActiveTemplates() {
-        return templateRepository.findAllActiveTemplates();
+        String tenantId = TenantContext.requireCurrentTenant();
+        return templateRepository.findAllActiveTemplates(UUID.fromString(tenantId));
     }
     
     /**
@@ -49,6 +51,7 @@ public class TemplateService {
      */
     @Transactional(readOnly = true)
     public Optional<Template> getTemplateById(UUID id) {
+        String tenantId = TenantContext.requireCurrentTenant();
         return templateRepository.findActiveById(id);
     }
     
@@ -57,7 +60,8 @@ public class TemplateService {
      */
     @Transactional(readOnly = true)
     public Optional<Template> getTemplateByName(String name) {
-        return templateRepository.findActiveByName(name);
+        String tenantId = TenantContext.requireCurrentTenant();
+        return templateRepository.findActiveByName(name, UUID.fromString(tenantId));
     }
     
     /**
@@ -65,7 +69,8 @@ public class TemplateService {
      */
     @Transactional(readOnly = true)
     public List<Template> getTemplatesByCategory(String category) {
-        return templateRepository.findActiveByCategory(category);
+        String tenantId = TenantContext.requireCurrentTenant();
+        return templateRepository.findActiveByCategory(category, UUID.fromString(tenantId));
     }
     
     /**
@@ -73,7 +78,8 @@ public class TemplateService {
      */
     @Transactional(readOnly = true)
     public List<String> getAllCategories() {
-        return templateRepository.findAllCategories();
+        String tenantId = TenantContext.requireCurrentTenant();
+        return templateRepository.findAllCategories(UUID.fromString(tenantId));
     }
     
     /**
@@ -81,7 +87,8 @@ public class TemplateService {
      */
     @Transactional(readOnly = true)
     public List<Template> searchTemplates(String search) {
-        return templateRepository.searchActiveTemplates(search);
+        String tenantId = TenantContext.requireCurrentTenant();
+        return templateRepository.searchActiveTemplates(search, UUID.fromString(tenantId));
     }
     
     /**
@@ -90,7 +97,8 @@ public class TemplateService {
     public Template createTemplate(Template template) {
         validateTemplate(template);
         
-        if (templateRepository.existsByNameAndTenantId(template.getName())) {
+        String tenantId = TenantContext.requireCurrentTenant();
+        if (templateRepository.existsByNameAndTenantId(template.getName(), UUID.fromString(tenantId))) {
             throw new IllegalArgumentException("Template with name '" + template.getName() + "' already exists");
         }
         
@@ -102,6 +110,7 @@ public class TemplateService {
      * Update existing template
      */
     public Template updateTemplate(UUID id, Template templateUpdate) {
+        String tenantId = TenantContext.requireCurrentTenant();
         Template existingTemplate = templateRepository.findActiveById(id)
             .orElseThrow(() -> new IllegalArgumentException("Template not found with ID: " + id));
         
@@ -109,7 +118,7 @@ public class TemplateService {
         
         // Check if name is being changed and if new name already exists
         if (!existingTemplate.getName().equals(templateUpdate.getName()) &&
-            templateRepository.existsByNameAndTenantIdAndIdNot(templateUpdate.getName(), id)) {
+            templateRepository.existsByNameAndTenantIdAndIdNot(templateUpdate.getName(), id, UUID.fromString(tenantId))) {
             throw new IllegalArgumentException("Template with name '" + templateUpdate.getName() + "' already exists");
         }
         
@@ -130,6 +139,7 @@ public class TemplateService {
      * Delete template (soft delete)
      */
     public void deleteTemplate(UUID id) {
+        String tenantId = TenantContext.requireCurrentTenant();
         Template template = templateRepository.findActiveById(id)
             .orElseThrow(() -> new IllegalArgumentException("Template not found with ID: " + id));
         
@@ -143,6 +153,7 @@ public class TemplateService {
      * Activate/Deactivate template
      */
     public Template toggleTemplateStatus(UUID id) {
+        String tenantId = TenantContext.requireCurrentTenant();
         Template template = templateRepository.findActiveById(id)
             .orElseThrow(() -> new IllegalArgumentException("Template not found with ID: " + id));
         

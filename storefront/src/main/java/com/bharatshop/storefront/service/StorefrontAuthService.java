@@ -6,9 +6,7 @@ import com.bharatshop.storefront.repository.StorefrontUserRepository;
 import com.bharatshop.shared.service.OtpService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
+
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -33,7 +31,6 @@ public class StorefrontAuthService implements UserDetailsService {
     private final StorefrontUserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final OtpService otpService;
-    private final AuthenticationManager authenticationManager;
     
     // Import the DTOs from app module
     // Note: These methods bridge the app module controller with storefront service
@@ -80,17 +77,18 @@ public class StorefrontAuthService implements UserDetailsService {
     public CustomerProfileResponse loginWithEmail(EmailLoginRequest request) {
         log.info("Email login attempt for: {}", request.getEmail());
         
-        // Authenticate user
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
-                        request.getPassword()
-                )
-        );
-        
         // Get user details
         StorefrontUser user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        
+        // Authenticate user manually
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new UsernameNotFoundException("Invalid credentials");
+        }
+        
+        if (!user.getEnabled()) {
+            throw new UsernameNotFoundException("Account is disabled");
+        }
         
         log.info("User logged in successfully: {}", user.getEmail());
         return mapToProfileResponse(user);

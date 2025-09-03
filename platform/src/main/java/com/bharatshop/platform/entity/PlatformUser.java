@@ -13,7 +13,7 @@ import lombok.EqualsAndHashCode;
 
 import java.util.Set;
 
-@Entity
+@Entity(name = "PlatformPlatformUser")
 @Table(name = "platform_users")
 @Data
 @Builder

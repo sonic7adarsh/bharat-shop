@@ -17,7 +17,7 @@ import java.util.UUID;
 /**
  * Product entity representing items sold on the platform.
  */
-@Entity
+@Entity(name = "AppProduct")
 @Table(name = "products")
 @EntityListeners(AuditingEntityListener.class)
 @Getter

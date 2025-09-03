@@ -16,7 +16,7 @@ import java.util.UUID;
 /**
  * Vendor entity representing business vendors on the platform.
  */
-@Entity
+@Entity(name = "AppVendor")
 @Table(name = "vendors")
 @EntityListeners(AuditingEntityListener.class)
 @Getter

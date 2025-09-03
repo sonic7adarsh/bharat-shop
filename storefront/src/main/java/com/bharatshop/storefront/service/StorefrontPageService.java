@@ -2,16 +2,16 @@ package com.bharatshop.storefront.service;
 
 import com.bharatshop.storefront.dto.PageResponseDto;
 import com.bharatshop.storefront.model.Page;
-import com.bharatshop.storefront.repository.PageRepository;
+import com.bharatshop.storefront.repository.StorefrontPageRepository;
 import com.bharatshop.shared.entity.Template;
 import com.bharatshop.shared.service.TemplateService;
 import com.bharatshop.shared.tenant.TenantContext;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,11 +24,12 @@ import java.util.stream.Collectors;
  */
 @Service("storefrontPageService")
 @RequiredArgsConstructor
-@Slf4j
 @Transactional
 public class StorefrontPageService {
     
-    private final PageRepository pageRepository;
+    private static final Logger log = LoggerFactory.getLogger(StorefrontPageService.class);
+    
+    private final StorefrontPageRepository pageRepository;
     private final TemplateService templateService;
     
     /**

@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.util.List;
 
-@Entity
+@Entity(name = "StorefrontProduct")
 @Table(name = "storefront_products", indexes = {
         @Index(name = "idx_storefront_product_category", columnList = "category"),
         @Index(name = "idx_storefront_product_brand", columnList = "brand"),

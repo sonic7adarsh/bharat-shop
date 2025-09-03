@@ -93,4 +93,41 @@ public class ProductVariantDto {
     // For variant combination display
     private String variantTitle; // e.g., "Red / Large"
     private List<String> optionValueNames; // e.g., ["Red", "Large"]
+    
+    // Manual getters and setters to fix Lombok issue
+    public BigDecimal getPrice() {
+        return price;
+    }
+    
+    public BigDecimal getSalePrice() {
+        return salePrice;
+    }
+    
+    public Integer getStock() {
+        return stock;
+    }
+    
+    public void setEffectivePrice(BigDecimal effectivePrice) {
+        this.effectivePrice = effectivePrice;
+    }
+    
+    public void setIsOnSale(Boolean isOnSale) {
+        this.isOnSale = isOnSale;
+    }
+    
+    public void setDiscountAmount(BigDecimal discountAmount) {
+        this.discountAmount = discountAmount;
+    }
+    
+    public void setDiscountPercentage(Double discountPercentage) {
+        this.discountPercentage = discountPercentage;
+    }
+    
+    public void setIsInStock(Boolean isInStock) {
+        this.isInStock = isInStock;
+    }
+    
+    public void setIsLowStock(boolean isLowStock) {
+        this.isLowStock = isLowStock;
+    }
 }

@@ -48,4 +48,41 @@ public class AddressRequest {
     
     @Builder.Default
     private Boolean isDefault = false;
+    
+    // Manual getter methods to bypass Lombok issues
+    public String getName() {
+        return name;
+    }
+    
+    public String getPhone() {
+        return phone;
+    }
+    
+    public String getLine1() {
+        return line1;
+    }
+    
+    public String getLine2() {
+        return line2;
+    }
+    
+    public String getCity() {
+        return city;
+    }
+    
+    public String getState() {
+        return state;
+    }
+    
+    public String getPincode() {
+        return pincode;
+    }
+    
+    public String getCountry() {
+        return country;
+    }
+    
+    public Boolean getIsDefault() {
+        return isDefault;
+    }
 }

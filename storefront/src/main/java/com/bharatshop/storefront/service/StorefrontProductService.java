@@ -17,7 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Customer-focused product service for storefront operations
@@ -25,9 +26,10 @@ import java.util.Optional;
  */
 @Service
 @RequiredArgsConstructor
-@Slf4j
 @Transactional(readOnly = true)
 public class StorefrontProductService {
+    
+    private static final Logger log = LoggerFactory.getLogger(StorefrontProductService.class);
     
     @Qualifier("storefrontProductRepository")
     private final StorefrontProductRepository productRepository;

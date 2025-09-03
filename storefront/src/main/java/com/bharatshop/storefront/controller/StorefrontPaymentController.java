@@ -9,17 +9,19 @@ import com.bharatshop.storefront.service.OrderService;
 import com.bharatshop.storefront.service.PaymentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
 @RestController
 @RequestMapping("/store/payments")
 @RequiredArgsConstructor
-@Slf4j
 public class StorefrontPaymentController {
+    
+    private static final Logger log = LoggerFactory.getLogger(StorefrontPaymentController.class);
     
     private final PaymentService paymentService;
     private final OrderService orderService;

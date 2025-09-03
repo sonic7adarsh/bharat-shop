@@ -12,7 +12,7 @@ import lombok.experimental.SuperBuilder;
  * Storefront user entity for customers.
  * Uses session-based authentication with email or phone+OTP login.
  */
-@Entity
+@Entity(name = "AppStorefrontUser")
 @Table(name = "storefront_users")
 @Getter
 @Setter

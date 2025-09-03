@@ -17,62 +17,62 @@ public interface OptionValueRepository extends TenantAwareRepository<OptionValue
     /**
      * Find all active option values by option ID for current tenant
      */
-    @Query("SELECT ov FROM OptionValue ov WHERE ov.optionId = :optionId AND ov.isActive = true AND ov.tenantId = :#{T(com.bharatshop.shared.tenant.TenantContext).getCurrentTenant()} AND ov.deletedAt IS NULL ORDER BY ov.sortOrder ASC")
-    List<OptionValue> findActiveByOptionId(@Param("optionId") UUID optionId);
+    @Query("SELECT ov FROM OptionValue ov WHERE ov.optionId = :optionId AND ov.isActive = true AND ov.tenantId = :tenantId AND ov.deletedAt IS NULL ORDER BY ov.sortOrder ASC")
+    List<OptionValue> findActiveByOptionId(@Param("optionId") UUID optionId, @Param("tenantId") String tenantId);
     
     /**
      * Find active option value by option ID and value for current tenant
      */
-    @Query("SELECT ov FROM OptionValue ov WHERE ov.optionId = :optionId AND ov.value = :value AND ov.isActive = true AND ov.tenantId = :#{T(com.bharatshop.shared.tenant.TenantContext).getCurrentTenant()} AND ov.deletedAt IS NULL")
-    Optional<OptionValue> findActiveByOptionIdAndValue(@Param("optionId") UUID optionId, @Param("value") String value);
+    @Query("SELECT ov FROM OptionValue ov WHERE ov.optionId = :optionId AND ov.value = :value AND ov.isActive = true AND ov.tenantId = :tenantId AND ov.deletedAt IS NULL")
+    Optional<OptionValue> findActiveByOptionIdAndValue(@Param("optionId") UUID optionId, @Param("value") String value, @Param("tenantId") String tenantId);
     
     /**
      * Find option values by option IDs for current tenant
      */
-    @Query("SELECT ov FROM OptionValue ov WHERE ov.optionId IN :optionIds AND ov.isActive = true AND ov.tenantId = :#{T(com.bharatshop.shared.tenant.TenantContext).getCurrentTenant()} AND ov.deletedAt IS NULL ORDER BY ov.optionId ASC, ov.sortOrder ASC")
-    List<OptionValue> findActiveByOptionIds(@Param("optionIds") List<UUID> optionIds);
+    @Query("SELECT ov FROM OptionValue ov WHERE ov.optionId IN :optionIds AND ov.isActive = true AND ov.tenantId = :tenantId AND ov.deletedAt IS NULL ORDER BY ov.optionId ASC, ov.sortOrder ASC")
+    List<OptionValue> findActiveByOptionIds(@Param("optionIds") List<UUID> optionIds, @Param("tenantId") String tenantId);
     
     /**
      * Find option values by IDs for current tenant
      */
-    @Query("SELECT ov FROM OptionValue ov WHERE ov.id IN :ids AND ov.isActive = true AND ov.tenantId = :#{T(com.bharatshop.shared.tenant.TenantContext).getCurrentTenant()} AND ov.deletedAt IS NULL ORDER BY ov.sortOrder ASC")
-    List<OptionValue> findActiveByIds(@Param("ids") List<UUID> ids);
+    @Query("SELECT ov FROM OptionValue ov WHERE ov.id IN :ids AND ov.isActive = true AND ov.tenantId = :tenantId AND ov.deletedAt IS NULL ORDER BY ov.sortOrder ASC")
+    List<OptionValue> findActiveByIds(@Param("ids") List<UUID> ids, @Param("tenantId") String tenantId);
     
     /**
      * Check if option value exists for option (excluding current value)
      */
-    @Query("SELECT COUNT(ov) > 0 FROM OptionValue ov WHERE ov.optionId = :optionId AND ov.value = :value AND ov.tenantId = :#{T(com.bharatshop.shared.tenant.TenantContext).getCurrentTenant()} AND ov.id != :excludeId AND ov.deletedAt IS NULL")
-    boolean existsByOptionIdAndValueAndIdNot(@Param("optionId") UUID optionId, @Param("value") String value, @Param("excludeId") UUID excludeId);
+    @Query("SELECT COUNT(ov) > 0 FROM OptionValue ov WHERE ov.optionId = :optionId AND ov.value = :value AND ov.tenantId = :tenantId AND ov.id != :excludeId AND ov.deletedAt IS NULL")
+    boolean existsByOptionIdAndValueAndIdNot(@Param("optionId") UUID optionId, @Param("value") String value, @Param("excludeId") UUID excludeId, @Param("tenantId") String tenantId);
     
     /**
      * Check if option value exists for option
      */
-    @Query("SELECT COUNT(ov) > 0 FROM OptionValue ov WHERE ov.optionId = :optionId AND ov.value = :value AND ov.tenantId = :#{T(com.bharatshop.shared.tenant.TenantContext).getCurrentTenant()} AND ov.deletedAt IS NULL")
-    boolean existsByOptionIdAndValue(@Param("optionId") UUID optionId, @Param("value") String value);
+    @Query("SELECT COUNT(ov) > 0 FROM OptionValue ov WHERE ov.optionId = :optionId AND ov.value = :value AND ov.tenantId = :tenantId AND ov.deletedAt IS NULL")
+    boolean existsByOptionIdAndValue(@Param("optionId") UUID optionId, @Param("value") String value, @Param("tenantId") String tenantId);
     
     /**
      * Search option values by value or display value for current tenant
      */
-    @Query("SELECT ov FROM OptionValue ov WHERE ov.optionId = :optionId AND ov.isActive = true AND ov.tenantId = :#{T(com.bharatshop.shared.tenant.TenantContext).getCurrentTenant()} AND ov.deletedAt IS NULL AND (LOWER(ov.value) LIKE LOWER(CONCAT('%', :search, '%')) OR LOWER(ov.displayValue) LIKE LOWER(CONCAT('%', :search, '%'))) ORDER BY ov.sortOrder ASC")
-    List<OptionValue> searchActiveByOptionId(@Param("optionId") UUID optionId, @Param("search") String search);
+    @Query("SELECT ov FROM OptionValue ov WHERE ov.optionId = :optionId AND ov.isActive = true AND ov.tenantId = :tenantId AND ov.deletedAt IS NULL AND (LOWER(ov.value) LIKE LOWER(CONCAT('%', :search, '%')) OR LOWER(ov.displayValue) LIKE LOWER(CONCAT('%', :search, '%'))) ORDER BY ov.sortOrder ASC")
+    List<OptionValue> searchActiveByOptionId(@Param("optionId") UUID optionId, @Param("search") String search, @Param("tenantId") String tenantId);
     
     /**
      * Find active option value by ID for current tenant
      */
-    @Query("SELECT ov FROM OptionValue ov WHERE ov.id = :id AND ov.isActive = true AND ov.tenantId = :#{T(com.bharatshop.shared.tenant.TenantContext).getCurrentTenant()} AND ov.deletedAt IS NULL")
-    Optional<OptionValue> findActiveById(@Param("id") UUID id);
+    @Query("SELECT ov FROM OptionValue ov WHERE ov.id = :id AND ov.isActive = true AND ov.tenantId = :tenantId AND ov.deletedAt IS NULL")
+    Optional<OptionValue> findActiveById(@Param("id") UUID id, @Param("tenantId") String tenantId);
     
     /**
      * Count active option values by option ID
      */
-    @Query("SELECT COUNT(ov) FROM OptionValue ov WHERE ov.optionId = :optionId AND ov.isActive = true AND ov.tenantId = :#{T(com.bharatshop.shared.tenant.TenantContext).getCurrentTenant()} AND ov.deletedAt IS NULL")
-    long countActiveByOptionId(@Param("optionId") UUID optionId);
+    @Query("SELECT COUNT(ov) FROM OptionValue ov WHERE ov.optionId = :optionId AND ov.isActive = true AND ov.tenantId = :tenantId AND ov.deletedAt IS NULL")
+    long countActiveByOptionId(@Param("optionId") UUID optionId, @Param("tenantId") String tenantId);
     
     /**
      * Delete all option values by option ID (soft delete)
      */
-    @Query("UPDATE OptionValue ov SET ov.deletedAt = CURRENT_TIMESTAMP WHERE ov.optionId = :optionId AND ov.tenantId = :#{T(com.bharatshop.shared.tenant.TenantContext).getCurrentTenant()}")
-    void deleteByOptionId(@Param("optionId") UUID optionId);
+    @Query("UPDATE OptionValue ov SET ov.deletedAt = CURRENT_TIMESTAMP WHERE ov.optionId = :optionId AND ov.tenantId = :tenantId")
+    void deleteByOptionId(@Param("optionId") UUID optionId, @Param("tenantId") String tenantId);
     
     /**
      * Search option values by value or display value with pagination for current tenant
