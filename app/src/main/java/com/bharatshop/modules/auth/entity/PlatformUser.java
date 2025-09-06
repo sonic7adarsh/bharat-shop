@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
+import java.util.UUID;
+
 /**
  * Platform user entity for vendors, admins, and staff.
  * Uses JWT-based authentication with email/password login.
@@ -20,6 +22,12 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PlatformUser extends BaseEntity {
+    
+    // Explicitly declare ID to resolve Hibernate inheritance issue
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "id", updatable = false, nullable = false)
+    private UUID id;
     
     @Column(unique = true, nullable = false)
     private String email;

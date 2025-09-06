@@ -141,6 +141,12 @@ springdoc:
 
 # Logging
 logging:
+  level:
+    org.hibernate: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    org.hibernate.metamodel: DEBUG
+    org.hibernate.boot: DEBUG
   pattern:
     console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} [%X{traceId:-},%X{tenantId:-}] - %msg%n"
 

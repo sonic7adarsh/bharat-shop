@@ -3,7 +3,9 @@ package com.bharatshop;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -17,28 +19,31 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * - Constructor injection only
  * - Immutable DTOs using records
  */
-@SpringBootApplication(scanBasePackages = {
-    "com.bharatshop.app",
-    "com.bharatshop.config",
-    "com.bharatshop.modules",
-    "com.bharatshop.shared",
-    "com.bharatshop.storefront"
-})
+@SpringBootApplication
+@ComponentScan(
+    basePackages = {
+        "com.bharatshop.app",
+        "com.bharatshop.config",
+        "com.bharatshop.modules",
+        "com.bharatshop.shared",
+        "com.bharatshop.storefront",
+        "com.bharatshop.platform"
+    },
+    excludeFilters = {
+        @ComponentScan.Filter(type = FilterType.REGEX, pattern = "com\\.bharatshop\\.platform\\.PlatformApplication"),
+        @ComponentScan.Filter(type = FilterType.REGEX, pattern = "com\\.bharatshop\\.storefront\\.StorefrontApplication")
+    }
+)
 @EnableAspectJAutoProxy
 @EnableTransactionManagement
 @EnableScheduling
 @EnableJpaRepositories(basePackages = {
-    "com.bharatshop.modules.auth.repository",
-    "com.bharatshop.modules.users.repository",
     "com.bharatshop.shared.repository",
-    "com.bharatshop.storefront.repository"
+    "com.bharatshop.storefront.repository",
+    "com.bharatshop.platform.repository"
 })
 @EntityScan(basePackages = {
-    "com.bharatshop.modules.auth.entity",
-    "com.bharatshop.modules.users.entity",
-    "com.bharatshop.shared.entity",
-    "com.bharatshop.storefront.entity",
-    "com.bharatshop.storefront.model"
+    "com.bharatshop.shared.entity"
 })
 public class BharatShopApplication {
 
