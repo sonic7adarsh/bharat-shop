@@ -1,6 +1,6 @@
 package com.bharatshop.platform.controller;
 
-import com.bharatshop.platform.service.VendorService;
+import com.bharatshop.platform.service.PlatformVendorService;
 import com.bharatshop.shared.entity.Vendor;
 import com.bharatshop.shared.service.FeatureFlagService;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
+// import java.util.UUID; // Replaced with Long
 
 /**
  * REST controller for vendor management operations.
@@ -24,7 +24,7 @@ import java.util.UUID;
 @Slf4j
 public class VendorController {
     
-    private final VendorService vendorService;
+    private final PlatformVendorService vendorService;
     private final FeatureFlagService featureFlagService;
     
     /**
@@ -35,7 +35,7 @@ public class VendorController {
     public ResponseEntity<?> getVendorProfile(Principal principal) {
         try {
             // Extract vendor ID from principal (this should be implemented based on your JWT structure)
-            UUID vendorId = extractVendorIdFromPrincipal(principal);
+            Long vendorId = extractVendorIdFromPrincipal(principal);
             
             Optional<Vendor> vendor = vendorService.getVendorById(vendorId);
             
@@ -62,7 +62,7 @@ public class VendorController {
             Principal principal) {
         try {
             // Extract vendor ID from principal
-            UUID vendorId = extractVendorIdFromPrincipal(principal);
+            Long vendorId = extractVendorIdFromPrincipal(principal);
             
             Vendor updatedVendor = vendorService.updateVendor(vendorId, vendorUpdate);
             
@@ -86,7 +86,7 @@ public class VendorController {
     @PreAuthorize("hasRole('VENDOR')")
     public ResponseEntity<?> checkDomainAvailability(@RequestBody Map<String, String> request, Principal principal) {
         try {
-            UUID vendorId = extractVendorIdFromPrincipal(principal);
+            Long vendorId = extractVendorIdFromPrincipal(principal);
             
             // Enforce custom domain feature access
             featureFlagService.enforceFeatureAccess(vendorId, "customDomain");
@@ -129,7 +129,7 @@ public class VendorController {
             }
             
             // Extract vendor ID from principal
-            UUID vendorId = extractVendorIdFromPrincipal(principal);
+            Long vendorId = extractVendorIdFromPrincipal(principal);
             
             Vendor updatedVendor = vendorService.setupVendorTemplate(vendorId, templateConfig);
             
@@ -153,15 +153,15 @@ public class VendorController {
      * Extract vendor ID from JWT principal
      * This is a placeholder implementation - should be implemented based on your JWT structure
      */
-    private UUID extractVendorIdFromPrincipal(Principal principal) {
+    private Long extractVendorIdFromPrincipal(Principal principal) {
         // This should extract the vendor ID from the JWT token or user context
-        // For now, returning a placeholder UUID
+        // For now, returning a placeholder Long
         // In a real implementation, you would:
         // 1. Extract the user ID from the JWT token
         // 2. Look up the vendor associated with that user
         // 3. Return the vendor ID
         
         log.warn("Using placeholder vendor ID extraction - implement based on your JWT structure");
-        return UUID.fromString("00000000-0000-0000-0000-000000000001");
+        return 1L;
     }
 }

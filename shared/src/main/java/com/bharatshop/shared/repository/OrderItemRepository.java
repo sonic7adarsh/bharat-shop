@@ -16,82 +16,81 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
     /**
      * Find order items by order ID
      */
-    @Query("SELECT oi FROM OrderItem oi LEFT JOIN FETCH oi.product " +
-           "WHERE oi.order.id = :orderId ORDER BY oi.createdAt ASC")
+    @Query(value = "SELECT oi.* FROM order_items oi " +
+           "WHERE oi.order_id = :orderId ORDER BY oi.created_at ASC", nativeQuery = true)
     List<OrderItem> findByOrderIdWithProduct(@Param("orderId") Long orderId);
     
     /**
      * Find order items by product ID and tenant (through order relationship)
      */
-    @Query("SELECT oi FROM OrderItem oi " +
-           "JOIN oi.order o " +
-           "WHERE oi.product.id = :productId AND o.tenantId = :tenantId " +
-           "ORDER BY oi.createdAt DESC")
+    @Query(value = "SELECT oi.* FROM order_items oi " +
+           "JOIN orders o ON oi.order_id = o.id " +
+           "WHERE oi.product_id = :productId AND o.tenant_id = :tenantId " +
+           "ORDER BY oi.created_at DESC", nativeQuery = true)
     List<OrderItem> findByProductIdAndTenantId(@Param("productId") Long productId, 
                                               @Param("tenantId") Long tenantId);
     
     /**
      * Find order items by customer and tenant (through order relationship)
      */
-    @Query("SELECT oi FROM OrderItem oi " +
-           "JOIN oi.order o " +
-           "LEFT JOIN FETCH oi.product " +
-           "WHERE o.customerId = :customerId AND o.tenantId = :tenantId " +
-           "ORDER BY oi.createdAt DESC")
+    @Query(value = "SELECT oi.* FROM order_items oi " +
+           "JOIN orders o ON oi.order_id = o.id " +
+           "WHERE o.customer_id = :customerId AND o.tenant_id = :tenantId " +
+           "ORDER BY oi.created_at DESC", nativeQuery = true)
     List<OrderItem> findByCustomerIdAndTenantId(@Param("customerId") Long customerId, 
                                                @Param("tenantId") Long tenantId);
     
     /**
      * Get total quantity sold for a product
      */
-    @Query("SELECT COALESCE(SUM(oi.quantity), 0) FROM OrderItem oi " +
-           "JOIN oi.order o " +
-           "WHERE oi.product.id = :productId AND o.tenantId = :tenantId " +
-           "AND o.paymentStatus = 'COMPLETED'")
+    @Query(value = "SELECT COALESCE(SUM(oi.quantity), 0) FROM order_items oi " +
+           "JOIN orders o ON oi.order_id = o.id " +
+           "WHERE oi.product_id = :productId AND o.tenant_id = :tenantId " +
+           "AND o.payment_status = 'COMPLETED'", nativeQuery = true)
     Long getTotalQuantitySoldByProduct(@Param("productId") Long productId, 
                                        @Param("tenantId") Long tenantId);
     
     /**
      * Get total revenue for a product
      */
-    @Query("SELECT COALESCE(SUM(oi.price * oi.quantity), 0) FROM OrderItem oi " +
-           "JOIN oi.order o " +
-           "WHERE oi.product.id = :productId AND o.tenantId = :tenantId " +
-           "AND o.paymentStatus = 'COMPLETED'")
+    @Query(value = "SELECT COALESCE(SUM(oi.price * oi.quantity), 0) FROM order_items oi " +
+           "JOIN orders o ON oi.order_id = o.id " +
+           "WHERE oi.product_id = :productId AND o.tenant_id = :tenantId " +
+           "AND o.payment_status = 'COMPLETED'", nativeQuery = true)
     BigDecimal getTotalRevenueByProduct(@Param("productId") Long productId, 
                                        @Param("tenantId") Long tenantId);
     
     /**
      * Find top selling products by quantity
      */
-    @Query("SELECT oi.product.id, oi.productName, SUM(oi.quantity) as totalQuantity " +
-           "FROM OrderItem oi " +
-           "JOIN oi.order o " +
-           "WHERE o.tenantId = :tenantId AND o.paymentStatus = 'COMPLETED' " +
-           "GROUP BY oi.product.id, oi.productName " +
-           "ORDER BY totalQuantity DESC")
+    @Query(value = "SELECT oi.product_id, oi.product_name, SUM(oi.quantity) as totalQuantity " +
+           "FROM order_items oi " +
+           "JOIN orders o ON oi.order_id = o.id " +
+           "WHERE o.tenant_id = :tenantId AND o.payment_status = 'COMPLETED' " +
+           "GROUP BY oi.product_id, oi.product_name " +
+           "ORDER BY totalQuantity DESC", nativeQuery = true)
     List<Object[]> findTopSellingProductsByQuantity(@Param("tenantId") Long tenantId);
     
     /**
      * Find top selling products by revenue
      */
-    @Query("SELECT oi.product.id, oi.productName, SUM(oi.price * oi.quantity) as totalRevenue " +
-           "FROM OrderItem oi " +
-           "JOIN oi.order o " +
-           "WHERE o.tenantId = :tenantId AND o.paymentStatus = 'COMPLETED' " +
-           "GROUP BY oi.product.id, oi.productName " +
-           "ORDER BY totalRevenue DESC")
+    @Query(value = "SELECT oi.product_id, oi.product_name, SUM(oi.price * oi.quantity) as totalRevenue " +
+           "FROM order_items oi " +
+           "JOIN orders o ON oi.order_id = o.id " +
+           "WHERE o.tenant_id = :tenantId AND o.payment_status = 'COMPLETED' " +
+           "GROUP BY oi.product_id, oi.product_name " +
+           "ORDER BY totalRevenue DESC", nativeQuery = true)
     List<Object[]> findTopSellingProductsByRevenue(@Param("tenantId") Long tenantId);
     
     /**
      * Find order items within date range
      */
-    @Query("SELECT oi FROM OrderItem oi " +
-           "JOIN oi.order o " +
-           "WHERE o.tenantId = :tenantId " +
-           "AND o.createdAt BETWEEN :startDate AND :endDate " +
-           "AND o.paymentStatus = 'COMPLETED' " +
-           "ORDER BY oi.createdAt DESC")
+    @Query(value = "SELECT oi.* FROM order_items oi " +
+           "JOIN orders o ON oi.order_id = o.id " +
+           "WHERE o.tenant_id = :tenantId " +
+           "AND o.created_at BETWEEN :startDate AND :endDate " +
+           "AND o.payment_status = 'COMPLETED' " +
+           "ORDER BY oi.created_at DESC", nativeQuery = true)
     List<OrderItem> findOrderItemsByTenantIdAndDateRange(@Param("tenantId") Long tenantId,
                                                         @Param("startDate") LocalDateTime startDate,
                                                         @Param("endDate") LocalDateTime endDate);
@@ -99,24 +98,24 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
     /**
      * Count total items in an order
      */
-    @Query("SELECT COUNT(oi) FROM OrderItem oi WHERE oi.order.id = :orderId")
+    @Query(value = "SELECT COUNT(oi.id) FROM order_items oi WHERE oi.order_id = :orderId", nativeQuery = true)
     Long countByOrderId(@Param("orderId") Long orderId);
     
     /**
      * Sum total quantity in an order
      */
-    @Query("SELECT COALESCE(SUM(oi.quantity), 0) FROM OrderItem oi WHERE oi.order.id = :orderId")
+    @Query(value = "SELECT COALESCE(SUM(oi.quantity), 0) FROM order_items oi WHERE oi.order_id = :orderId", nativeQuery = true)
     Integer sumQuantityByOrderId(@Param("orderId") Long orderId);
     
     /**
      * Get customer's purchase history for a specific product
      */
-    @Query("SELECT oi FROM OrderItem oi " +
-           "JOIN oi.order o " +
-           "WHERE o.customerId = :customerId AND o.tenantId = :tenantId " +
-           "AND oi.product.id = :productId " +
-           "AND o.paymentStatus = 'COMPLETED' " +
-           "ORDER BY oi.createdAt DESC")
+    @Query(value = "SELECT oi.* FROM order_items oi " +
+           "JOIN orders o ON oi.order_id = o.id " +
+           "WHERE o.customer_id = :customerId AND o.tenant_id = :tenantId " +
+           "AND oi.product_id = :productId " +
+           "AND o.payment_status = 'COMPLETED' " +
+           "ORDER BY oi.created_at DESC", nativeQuery = true)
     List<OrderItem> findCustomerPurchaseHistoryByProduct(@Param("customerId") Long customerId,
                                                          @Param("tenantId") Long tenantId,
                                                          @Param("productId") Long productId);
@@ -124,12 +123,16 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
     /**
      * Check if customer has purchased a specific product
      */
-    @Query("SELECT CASE WHEN COUNT(oi) > 0 THEN true ELSE false END FROM OrderItem oi " +
-           "JOIN oi.order o " +
-           "WHERE o.customerId = :customerId AND o.tenantId = :tenantId " +
-           "AND oi.product.id = :productId " +
-           "AND o.paymentStatus = 'COMPLETED'")
-    boolean hasCustomerPurchasedProduct(@Param("customerId") Long customerId,
-                                        @Param("tenantId") Long tenantId,
-                                        @Param("productId") Long productId);
+    @Query(value = "SELECT COUNT(oi.id) FROM order_items oi " +
+           "JOIN orders o ON oi.order_id = o.id " +
+           "WHERE o.customer_id = :customerId AND o.tenant_id = :tenantId " +
+           "AND oi.product_id = :productId " +
+           "AND o.payment_status = 'COMPLETED'", nativeQuery = true)
+    Long countCustomerPurchasesForProduct(@Param("customerId") Long customerId,
+                                          @Param("tenantId") Long tenantId,
+                                          @Param("productId") Long productId);
+    
+    default boolean hasCustomerPurchasedProduct(Long customerId, Long tenantId, Long productId) {
+        return countCustomerPurchasesForProduct(customerId, tenantId, productId) > 0;
+    }
 }

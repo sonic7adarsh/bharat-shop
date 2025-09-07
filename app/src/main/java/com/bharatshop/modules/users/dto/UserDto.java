@@ -1,12 +1,12 @@
 package com.bharatshop.modules.users.dto;
 
-import com.bharatshop.modules.users.entity.User;
+import com.bharatshop.shared.entity.User;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
+// import java.util.UUID; // Replaced with Long
 
 /**
  * User DTOs using records for immutability.
@@ -18,7 +18,7 @@ public final class UserDto {
      * User response DTO for API responses.
      */
     public record UserResponse(
-            UUID id,
+            Long id,
             String email,
             String firstName,
             String lastName,

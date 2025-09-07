@@ -9,7 +9,6 @@ import lombok.experimental.SuperBuilder;
 
 import jakarta.validation.constraints.*;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 /**
  * OptionValue DTO with validation
@@ -21,7 +20,7 @@ import java.util.UUID;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class OptionValueDto {
     
-    private UUID id;
+    private Long id;
     
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createdAt;
@@ -30,7 +29,7 @@ public class OptionValueDto {
     private LocalDateTime updatedAt;
     
     @NotNull(message = "Option ID is required")
-    private UUID optionId;
+    private Long optionId;
     
     @NotBlank(message = "Option value is required")
     @Size(min = 1, max = 255, message = "Option value must be between 1 and 255 characters")
@@ -52,4 +51,52 @@ public class OptionValueDto {
     
     // For variant count using this option value
     private Long variantCount;
+    
+    public Boolean getIsActive() {
+        return isActive;
+    }
+    
+    public String getColorCode() {
+        return colorCode;
+    }
+    
+    public Integer getSortOrder() {
+        return sortOrder;
+    }
+    
+    public String getDisplayValue() {
+        return displayValue;
+    }
+    
+    public String getValue() {
+        return value;
+    }
+    
+    public Long getOptionId() {
+        return optionId;
+    }
+    
+    public void setColorCode(String colorCode) {
+        this.colorCode = colorCode;
+    }
+    
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
+    }
+    
+    public void setValue(String value) {
+        this.value = value;
+    }
+    
+    public void setDisplayValue(String displayValue) {
+        this.displayValue = displayValue;
+    }
+    
+    public void setSortOrder(Integer sortOrder) {
+        this.sortOrder = sortOrder;
+    }
+    
+    public void setOptionId(Long optionId) {
+        this.optionId = optionId;
+    }
 }

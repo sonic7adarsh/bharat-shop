@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
+// import java.util.UUID; // Replaced with Long
 
 /**
  * Response DTO for Vendor Analytics Dashboard.
@@ -80,7 +80,7 @@ public class VendorAnalyticsDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class TopProductData {
-        private UUID productId;
+        private Long productId;
         private String productName;
         private String productSku;
         private BigDecimal revenue;

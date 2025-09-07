@@ -1,14 +1,13 @@
 package com.bharatshop.storefront.service;
 
 import com.bharatshop.storefront.dto.auth.*;
-import com.bharatshop.storefront.entity.StorefrontUser;
+import com.bharatshop.shared.entity.User;
 import com.bharatshop.storefront.repository.StorefrontUserRepository;
 import com.bharatshop.shared.service.OtpService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -17,7 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.UUID;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,24 +43,21 @@ public class StorefrontAuthService implements UserDetailsService {
         }
         
         // Check if user already exists
-        if (userRepository.existsByEmail(request.getEmail())) {
+        if (userRepository.existsByEmailAndDeletedAtIsNull(request.getEmail())) {
             throw new IllegalArgumentException("User with this email already exists");
         }
         
-        if (request.getPhone() != null && userRepository.existsByPhone(request.getPhone())) {
+        if (request.getPhone() != null && userRepository.existsByPhoneAndDeletedAtIsNull(request.getPhone())) {
             throw new IllegalArgumentException("User with this phone number already exists");
         }
         
         // Create new customer user
-        StorefrontUser user = StorefrontUser.builder()
+        User user = User.builder()
                 .email(request.getEmail())
                 .phone(request.getPhone())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .role(StorefrontUser.StorefrontRole.CUSTOMER)
-                .enabled(true)
-                .accountNonExpired(true)
-                .accountNonLocked(true)
-                .credentialsNonExpired(true)
+                .passwordHash(passwordEncoder.encode(request.getPassword()))
+                .userType(User.UserType.CUSTOMER)
+                .status(User.UserStatus.ACTIVE)
                 .phoneVerified(false)
                 .emailVerified(false)
                 .firstName(request.getFirstName())
@@ -78,15 +74,15 @@ public class StorefrontAuthService implements UserDetailsService {
         log.info("Email login attempt for: {}", request.getEmail());
         
         // Get user details
-        StorefrontUser user = userRepository.findByEmail(request.getEmail())
+        User user = userRepository.findByEmailAndDeletedAtIsNull(request.getEmail())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         
         // Authenticate user manually
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
             throw new UsernameNotFoundException("Invalid credentials");
         }
         
-        if (!user.getEnabled()) {
+        if (user.getStatus() != User.UserStatus.ACTIVE) {
             throw new UsernameNotFoundException("Account is disabled");
         }
         
@@ -98,10 +94,10 @@ public class StorefrontAuthService implements UserDetailsService {
         log.info("Phone login attempt for: {}", request.getPhone());
         
         // Check if user exists with this phone number
-        StorefrontUser user = userRepository.findByPhone(request.getPhone())
+        User user = userRepository.findByPhoneAndDeletedAtIsNull(request.getPhone())
                 .orElseThrow(() -> new IllegalArgumentException("No account found with this phone number"));
         
-        if (!user.getEnabled()) {
+        if (user.getStatus() != User.UserStatus.ACTIVE) {
             throw new IllegalArgumentException("Account is disabled");
         }
         
@@ -121,7 +117,7 @@ public class StorefrontAuthService implements UserDetailsService {
         }
         
         // Get user
-        StorefrontUser user = userRepository.findByPhone(request.getPhone())
+        User user = userRepository.findByPhoneAndDeletedAtIsNull(request.getPhone())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         
         // Mark phone as verified if not already
@@ -149,7 +145,7 @@ public class StorefrontAuthService implements UserDetailsService {
     public CustomerProfileResponse getCurrentUserProfile(String email) {
         log.info("Getting current user profile for: {}", email);
         
-        StorefrontUser user = userRepository.findByEmail(email)
+        User user = userRepository.findByEmailAndDeletedAtIsNull(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         
         return mapToProfileResponse(user);
@@ -158,7 +154,7 @@ public class StorefrontAuthService implements UserDetailsService {
     public CustomerProfileResponse updateProfile(String email, CustomerProfileResponse profileUpdate) {
         log.info("Updating profile for user: {}", email);
         
-        StorefrontUser user = userRepository.findByEmail(email)
+        User user = userRepository.findByEmailAndDeletedAtIsNull(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         
         // Update profile fields
@@ -193,28 +189,29 @@ public class StorefrontAuthService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         // Try to find by email first, then by phone
-        StorefrontUser user = userRepository.findByEmail(username)
-                .or(() -> userRepository.findByPhone(username))
+        User user = userRepository.findByEmailAndDeletedAtIsNull(username)
+                .or(() -> userRepository.findByPhoneAndDeletedAtIsNull(username))
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with identifier: " + username));
         
-        return User.builder()
+        return org.springframework.security.core.userdetails.User.builder()
                 .username(user.getEmail()) // Always use email as username
-                .password(user.getPassword())
-                .authorities(List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name())))
-                .accountExpired(!user.getAccountNonExpired())
-                .accountLocked(!user.getAccountNonLocked())
-                .credentialsExpired(!user.getCredentialsNonExpired())
-                .disabled(!user.getEnabled())
+                .password(user.getPasswordHash())
+                .authorities(user.getRoles().stream()
+                        .map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
+                        .collect(Collectors.toList()))
+                .accountExpired(false)
+                .accountLocked(user.getStatus() == com.bharatshop.shared.entity.User.UserStatus.SUSPENDED)
+                .credentialsExpired(false)
+                .disabled(user.getStatus() != com.bharatshop.shared.entity.User.UserStatus.ACTIVE)
                 .build();
     }
 
-    private CustomerProfileResponse mapToProfileResponse(StorefrontUser user) {
+    private CustomerProfileResponse mapToProfileResponse(com.bharatshop.shared.entity.User user) {
         return CustomerProfileResponse.builder()
                 .id(user.getId())
                 .email(user.getEmail())
                 .phone(user.getPhone())
-                .role(user.getRole())
-                .enabled(user.getEnabled())
+                .enabled(user.getStatus() == com.bharatshop.shared.entity.User.UserStatus.ACTIVE)
                 .phoneVerified(user.getPhoneVerified())
                 .emailVerified(user.getEmailVerified())
                 .firstName(user.getFirstName())

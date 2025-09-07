@@ -28,7 +28,7 @@ public class ProductImportExportController {
     @GetMapping("/export/csv")
     public ResponseEntity<Resource> exportProductsToCSV(Authentication authentication) {
         try {
-            UUID tenantId = getTenantIdFromAuth(authentication);
+            Long tenantId = getTenantIdFromAuth(authentication);
             byte[] csvData = importExportService.exportProductsToCSVFile(tenantId);
             
             String filename = "products_export_" + 
@@ -73,9 +73,8 @@ public class ProductImportExportController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
             }
             
-            UUID tenantId = getTenantIdFromAuth(authentication);
-            ProductImportExportService.ImportResult result = 
-                    importExportService.importProductsFromCSV(file, tenantId);
+            Long tenantId = getTenantIdFromAuth(authentication);
+            ProductImportExportService.ImportResult result = importExportService.importProductsFromCSV(file, tenantId);
             
             Map<String, Object> response = result.toMap();
             response.put("filename", file.getOriginalFilename());
@@ -108,9 +107,8 @@ public class ProductImportExportController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
             }
             
-            UUID tenantId = getTenantIdFromAuth(authentication);
-            ProductImportExportService.ImportResult result = 
-                    importExportService.importProductsFromCSVContent(csvContent, tenantId);
+            Long tenantId = getTenantIdFromAuth(authentication);
+            ProductImportExportService.ImportResult result = importExportService.importProductsFromCSVContent(csvContent, tenantId);
             
             Map<String, Object> response = result.toMap();
             
@@ -246,9 +244,9 @@ public class ProductImportExportController {
         return instructions;
     }
 
-    private UUID getTenantIdFromAuth(Authentication authentication) {
+    private Long getTenantIdFromAuth(Authentication authentication) {
         // Extract tenant ID from JWT token or user details
         // This is a placeholder - implement based on your JWT structure
-        return UUID.fromString("00000000-0000-0000-0000-000000000001"); // For now, return a default tenant ID
+        return 1L; // For now, return a default tenant ID
     }
 }

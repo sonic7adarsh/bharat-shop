@@ -1,6 +1,6 @@
 package com.bharatshop.storefront.dto;
 
-import com.bharatshop.storefront.entity.OrderItem;
+import com.bharatshop.shared.entity.OrderItem;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -84,7 +84,7 @@ public class OrderItemResponse {
     public static OrderItemResponse fromEntity(OrderItem orderItem) {
         return OrderItemResponse.builder()
                 .id(orderItem.getId())
-                .productId(orderItem.getProduct().getId().getMostSignificantBits())
+                .productId(orderItem.getProduct().getId())
                 .productName(orderItem.getProductName())
                 .productSku(orderItem.getProductSku())
                 .productImageUrl(orderItem.getProductImageUrl())

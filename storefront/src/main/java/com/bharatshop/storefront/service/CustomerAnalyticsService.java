@@ -1,15 +1,17 @@
 package com.bharatshop.storefront.service;
 
 import com.bharatshop.shared.dto.CustomerAnalyticsDto;
-import com.bharatshop.storefront.entity.Order;
-import com.bharatshop.storefront.entity.OrderItem;
+import com.bharatshop.shared.entity.Orders;
+import com.bharatshop.shared.entity.OrderItem;
 import com.bharatshop.storefront.repository.StorefrontOrderRepository;
 import com.bharatshop.storefront.repository.StorefrontOrderItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -17,6 +19,8 @@ import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Objects;
+
 import java.util.stream.Collectors;
 
 /**
@@ -37,7 +41,7 @@ public class CustomerAnalyticsService {
     /**
      * Get comprehensive customer analytics for dashboard
      */
-    public CustomerAnalyticsDto getCustomerAnalytics(Long customerId, Long tenantId) {
+    public CustomerAnalyticsDto getCustomerAnalytics(Long customerId, String tenantId) {
         log.debug("Calculating customer analytics for customer: {} in tenant: {}", customerId, tenantId);
         
         return CustomerAnalyticsDto.builder()
@@ -48,12 +52,12 @@ public class CustomerAnalyticsService {
                 .totalSpent(getTotalSpent(customerId, tenantId))
                 .averageOrderValue(getAverageOrderValue(customerId, tenantId))
                 .recentOrders(getRecentOrders(customerId, tenantId, 10))
-                .draftOrders(getOrdersByStatus(customerId, tenantId, Order.OrderStatus.DRAFT))
-                .confirmedOrders(getOrdersByStatus(customerId, tenantId, Order.OrderStatus.CONFIRMED))
-                .packedOrders(getOrdersByStatus(customerId, tenantId, Order.OrderStatus.PACKED))
-                .shippedOrders(getOrdersByStatus(customerId, tenantId, Order.OrderStatus.SHIPPED))
-                .deliveredOrders(getOrdersByStatus(customerId, tenantId, Order.OrderStatus.DELIVERED))
-                .returnedOrders(getOrdersByStatus(customerId, tenantId, Order.OrderStatus.RETURNED))
+                .draftOrders(getOrdersByStatus(customerId, tenantId, Orders.OrderStatus.DRAFT))
+                .confirmedOrders(getOrdersByStatus(customerId, tenantId, Orders.OrderStatus.CONFIRMED))
+                .packedOrders(getOrdersByStatus(customerId, tenantId, Orders.OrderStatus.PACKED))
+                .shippedOrders(getOrdersByStatus(customerId, tenantId, Orders.OrderStatus.SHIPPED))
+                .deliveredOrders(getOrdersByStatus(customerId, tenantId, Orders.OrderStatus.DELIVERED))
+                .returnedOrders(getOrdersByStatus(customerId, tenantId, Orders.OrderStatus.RETURNED))
                 .lastOrderDate(getLastOrderDate(customerId, tenantId))
                 .firstOrderDate(getFirstOrderDate(customerId, tenantId))
                 .daysSinceLastOrder(getDaysSinceLastOrder(customerId, tenantId))
@@ -67,43 +71,48 @@ public class CustomerAnalyticsService {
     /**
      * Get total number of orders for customer
      */
-    private Long getTotalOrders(Long customerId, Long tenantId) {
-        return orderRepository.countByCustomerIdAndTenantId(customerId, tenantId);
+    private Long getTotalOrders(Long customerId, String tenantId) {
+        return orderRepository.countByCustomerIdAndTenantId(customerId, Long.parseLong(tenantId));
     }
     
     /**
      * Get number of completed orders for customer
      */
-    private Long getCompletedOrders(Long customerId, Long tenantId) {
-        return orderRepository.countByCustomerIdAndTenantIdAndStatus(customerId, tenantId, Order.OrderStatus.DELIVERED);
+    private Long getCompletedOrders(Long customerId, String tenantId) {
+        return orderRepository.countByCustomerIdAndTenantIdAndStatus(customerId, Long.parseLong(tenantId), Orders.OrderStatus.DELIVERED);
     }
     
     /**
      * Get number of pending orders for customer
      */
-    private Long getPendingOrders(Long customerId, Long tenantId) {
-        return orderRepository.countByCustomerIdAndTenantIdAndStatus(customerId, tenantId, Order.OrderStatus.PENDING);
+    private Long getPendingOrders(Long customerId, String tenantId) {
+        return orderRepository.countByCustomerIdAndTenantIdAndStatus(customerId, Long.parseLong(tenantId), Orders.OrderStatus.PENDING);
     }
     
     /**
      * Get number of cancelled orders for customer
      */
-    private Long getCancelledOrders(Long customerId, Long tenantId) {
-        return orderRepository.countByCustomerIdAndTenantIdAndStatus(customerId, tenantId, Order.OrderStatus.CANCELLED);
+    private Long getCancelledOrders(Long customerId, String tenantId) {
+        return orderRepository.countByCustomerIdAndTenantIdAndStatus(customerId, Long.parseLong(tenantId), Orders.OrderStatus.CANCELLED);
     }
     
     /**
      * Get total amount spent by customer
      */
-    private BigDecimal getTotalSpent(Long customerId, Long tenantId) {
-        BigDecimal total = orderRepository.getTotalOrderValueByCustomer(customerId, tenantId);
-        return total != null ? total : BigDecimal.ZERO;
+    private BigDecimal getTotalSpent(Long customerId, String tenantId) {
+        Page<Orders> allOrdersPage = orderRepository.findByCustomerIdAndTenantIdOrderByCreatedAtDesc(
+                customerId, Long.parseLong(tenantId), Pageable.unpaged());
+        List<Orders> allOrders = allOrdersPage.getContent();
+        return allOrders.stream()
+                .map(Orders::getTotalAmount)
+                .filter(Objects::nonNull)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
     
     /**
      * Calculate average order value for customer
      */
-    private BigDecimal getAverageOrderValue(Long customerId, Long tenantId) {
+    private BigDecimal getAverageOrderValue(Long customerId, String tenantId) {
         BigDecimal totalSpent = getTotalSpent(customerId, tenantId);
         Long totalOrders = getTotalOrders(customerId, tenantId);
         
@@ -117,8 +126,10 @@ public class CustomerAnalyticsService {
     /**
      * Get recent orders for customer
      */
-    private List<CustomerAnalyticsDto.OrderHistoryData> getRecentOrders(Long customerId, Long tenantId, int limit) {
-        List<Order> orders = orderRepository.findRecentOrdersByCustomer(customerId, tenantId, PageRequest.of(0, limit));
+    private List<CustomerAnalyticsDto.OrderHistoryData> getRecentOrders(Long customerId, String tenantId, int limit) {
+        Page<Orders> recentOrdersPage = orderRepository.findByCustomerIdAndTenantIdOrderByCreatedAtDesc(
+                customerId, Long.parseLong(tenantId), PageRequest.of(0, limit));
+        List<Orders> orders = recentOrdersPage.getContent();
         
         return orders.stream()
                 .map(this::convertToOrderHistoryData)
@@ -128,22 +139,23 @@ public class CustomerAnalyticsService {
     /**
      * Get number of orders by status
      */
-    private Long getOrdersByStatus(Long customerId, Long tenantId, Order.OrderStatus status) {
-        return orderRepository.countByCustomerIdAndTenantIdAndStatus(customerId, tenantId, status);
+    private Long getOrdersByStatus(Long customerId, String tenantId, Orders.OrderStatus status) {
+        return orderRepository.countByCustomerIdAndTenantIdAndStatus(customerId, Long.parseLong(tenantId), status);
     }
     
     /**
      * Get last order date for customer
      */
-    private LocalDateTime getLastOrderDate(Long customerId, Long tenantId) {
-        List<Order> recentOrders = orderRepository.findRecentOrdersByCustomer(customerId, tenantId, PageRequest.of(0, 1));
+    private LocalDateTime getLastOrderDate(Long customerId, String tenantId) {
+        Page<Orders> recentOrdersPage = orderRepository.findByCustomerIdAndTenantIdOrderByCreatedAtDesc(customerId, Long.parseLong(tenantId), PageRequest.of(0, 1));
+        List<Orders> recentOrders = recentOrdersPage.getContent();
         return recentOrders.isEmpty() ? null : recentOrders.get(0).getCreatedAt();
     }
     
     /**
      * Get first order date for customer
      */
-    private LocalDateTime getFirstOrderDate(Long customerId, Long tenantId) {
+    private LocalDateTime getFirstOrderDate(Long customerId, String tenantId) {
         // This would require a different query to get the oldest order
         // For now, returning null as placeholder
         return null;
@@ -152,7 +164,7 @@ public class CustomerAnalyticsService {
     /**
      * Calculate days since last order
      */
-    private Integer getDaysSinceLastOrder(Long customerId, Long tenantId) {
+    private Integer getDaysSinceLastOrder(Long customerId, String tenantId) {
         LocalDateTime lastOrderDate = getLastOrderDate(customerId, tenantId);
         if (lastOrderDate == null) {
             return null;
@@ -163,7 +175,7 @@ public class CustomerAnalyticsService {
     /**
      * Calculate total days as customer
      */
-    private Integer getTotalOrderDays(Long customerId, Long tenantId) {
+    private Integer getTotalOrderDays(Long customerId, String tenantId) {
         LocalDateTime firstOrderDate = getFirstOrderDate(customerId, tenantId);
         if (firstOrderDate == null) {
             return null;
@@ -174,7 +186,7 @@ public class CustomerAnalyticsService {
     /**
      * Get favorite products based on purchase frequency and amount
      */
-    private List<CustomerAnalyticsDto.FavoriteProductData> getFavoriteProducts(Long customerId, Long tenantId, int limit) {
+    private List<CustomerAnalyticsDto.FavoriteProductData> getFavoriteProducts(Long customerId, String tenantId, int limit) {
         // This would require complex queries to analyze purchase patterns
         // For now, returning empty list as placeholder
         return List.of();
@@ -183,7 +195,7 @@ public class CustomerAnalyticsService {
     /**
      * Convert Order entity to OrderHistoryData DTO
      */
-    private CustomerAnalyticsDto.OrderHistoryData convertToOrderHistoryData(Order order) {
+    private CustomerAnalyticsDto.OrderHistoryData convertToOrderHistoryData(Orders order) {
         List<CustomerAnalyticsDto.OrderItemData> items = order.getItems() != null ?
                 order.getItems().stream()
                         .map(this::convertToOrderItemData)

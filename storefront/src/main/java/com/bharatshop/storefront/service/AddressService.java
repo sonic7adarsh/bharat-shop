@@ -4,10 +4,9 @@ import com.bharatshop.shared.entity.CustomerAddress;
 import com.bharatshop.shared.repository.CustomerAddressRepository;
 import com.bharatshop.storefront.dto.AddressRequest;
 import com.bharatshop.storefront.dto.AddressResponse;
-import com.bharatshop.storefront.entity.StorefrontUser;
+import com.bharatshop.shared.entity.User;
 import com.bharatshop.storefront.repository.StorefrontUserRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
+
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +33,7 @@ public class AddressService {
      * Get customer ID and tenant ID from email
      */
     private CustomerInfo getCustomerInfo(String email) {
-        StorefrontUser user = userRepository.findByEmail(email)
+        User user = userRepository.findByEmailAndDeletedAtIsNull(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Customer not found with email: " + email));
         
         // Convert UUID to Long using hashCode for compatibility with CustomerAddress entity
@@ -134,7 +133,7 @@ public class AddressService {
      * Get customer ID by email (for controller use)
      */
     public Long getCustomerIdByEmail(String email) {
-        StorefrontUser user = userRepository.findByEmail(email)
+        User user = userRepository.findByEmailAndDeletedAtIsNull(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Customer not found with email: " + email));
         
         // Convert UUID to Long using hashCode for compatibility

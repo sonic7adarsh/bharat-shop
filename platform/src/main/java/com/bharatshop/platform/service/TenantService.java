@@ -33,7 +33,7 @@ public class TenantService {
     }
     
     @Cacheable(value = "tenant", key = "#id")
-    public TenantResponseDto getTenantById(UUID id) {
+    public TenantResponseDto getTenantById(Long id) {
         log.debug("Fetching tenant by id: {}", id);
         Tenant tenant = tenantRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Tenant not found with id: " + id));
@@ -69,7 +69,7 @@ public class TenantService {
     
     @Transactional
     @CacheEvict(value = {"tenants", "tenant"}, allEntries = true)
-    public TenantResponseDto updateTenant(UUID id, TenantCreateDto updateDto) {
+    public TenantResponseDto updateTenant(Long id, TenantCreateDto updateDto) {
         log.info("Updating tenant with id: {}", id);
         
         Tenant tenant = tenantRepository.findById(id)
@@ -98,7 +98,7 @@ public class TenantService {
     
     @Transactional
     @CacheEvict(value = {"tenants", "tenant"}, allEntries = true)
-    public void deleteTenant(UUID id) {
+    public void deleteTenant(Long id) {
         log.info("Deleting tenant with id: {}", id);
         
         if (!tenantRepository.existsById(id)) {

@@ -62,8 +62,56 @@ public class Option extends BaseEntity {
         CUSTOM     // Custom option type
     }
     
-    // Manual getter to fix Lombok issue
+    // Manual getters and setters to fix Lombok issue
     public String getName() {
         return name;
+    }
+    
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+    
+    public void setType(OptionType type) {
+        this.type = type;
+    }
+    
+    public void setIsRequired(Boolean isRequired) {
+        this.isRequired = isRequired;
+    }
+    
+    public void setSortOrder(Integer sortOrder) {
+        this.sortOrder = sortOrder;
+    }
+    
+    public Boolean getIsActive() {
+        return isActive;
+    }
+    
+    public Integer getSortOrder() {
+        return sortOrder;
+    }
+    
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
+    }
+    
+    public String getDisplayName() {
+        return displayName;
+    }
+    
+    public OptionType getType() {
+        return type;
+    }
+    
+    public Boolean getIsRequired() {
+        return isRequired;
+    }
+    
+    public Long getId() {
+        return id;
     }
 }

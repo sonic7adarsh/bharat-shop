@@ -41,7 +41,7 @@ public class ReservationService {
      * @throws IllegalArgumentException if insufficient stock available
      */
     @Transactional
-    public Reservation reserveStock(UUID tenantId, UUID productVariantId, Integer quantity, Integer timeoutMinutes) {
+    public Reservation reserveStock(Long tenantId, Long productVariantId, Integer quantity, Integer timeoutMinutes) {
         if (quantity <= 0) {
             throw new IllegalArgumentException("Quantity must be positive");
         }
@@ -101,7 +101,7 @@ public class ReservationService {
      * Reserve stock with default timeout
      */
     @Transactional
-    public Reservation reserveStock(UUID tenantId, UUID productVariantId, Integer quantity) {
+    public Reservation reserveStock(Long tenantId, Long productVariantId, Integer quantity) {
         return reserveStock(tenantId, productVariantId, quantity, null);
     }
     
@@ -109,7 +109,7 @@ public class ReservationService {
      * Commit all reservations for an order
      */
     @Transactional
-    public void commitReservations(UUID tenantId, Long orderId) {
+    public void commitReservations(Long tenantId, Long orderId) {
         List<Reservation> reservations = reservationRepository.findByOrderIdAndTenantId(orderId, tenantId);
         List<Long> reservationIds = reservations.stream()
                 .filter(r -> r.getStatus() == Reservation.ReservationStatus.ACTIVE)
@@ -129,7 +129,7 @@ public class ReservationService {
      * @param orderId The order ID to associate with reservations
      */
     @Transactional
-    public void commitReservations(UUID tenantId, List<Long> reservationIds, Long orderId) {
+    public void commitReservations(Long tenantId, List<Long> reservationIds, Long orderId) {
         for (Long reservationId : reservationIds) {
             Optional<Reservation> reservationOpt = reservationRepository.findByIdAndTenantIdWithLock(reservationId, tenantId);
             
@@ -179,7 +179,7 @@ public class ReservationService {
      * Release a specific reservation
      */
     @Transactional
-    public void releaseReservation(UUID tenantId, Long reservationId) {
+    public void releaseReservation(Long tenantId, Long reservationId) {
         Optional<Reservation> reservationOpt = reservationRepository.findByIdAndTenantIdWithLock(reservationId, tenantId);
         
         if (reservationOpt.isEmpty()) {
@@ -204,7 +204,7 @@ public class ReservationService {
      * Release all reservations for an order (e.g., when order is cancelled)
      */
     @Transactional
-    public void releaseOrderReservations(UUID tenantId, Long orderId) {
+    public void releaseOrderReservations(Long tenantId, Long orderId) {
         List<Reservation> reservations = reservationRepository.findByOrderIdAndTenantId(orderId, tenantId);
         
         for (Reservation reservation : reservations) {
@@ -236,8 +236,8 @@ public class ReservationService {
      * Get available stock for a product variant (total stock - active reservations)
      */
     @Transactional(readOnly = true)
-    public int getAvailableStock(UUID tenantId, UUID productVariantId) {
-        Optional<ProductVariant> variantOpt = productVariantRepository.findById(productVariantId);
+    public int getAvailableStock(Long tenantId, Long productVariantId) {
+        Optional<ProductVariant> variantOpt = productVariantRepository.findActiveByIdAndTenantId(productVariantId, tenantId);
         if (variantOpt.isEmpty()) {
             return 0;
         }
@@ -260,7 +260,7 @@ public class ReservationService {
      * Get all active reservations for a tenant
      */
     @Transactional(readOnly = true)
-    public List<Reservation> getActiveReservations(UUID tenantId) {
+    public List<Reservation> getActiveReservations(Long tenantId) {
         return reservationRepository.findByTenantIdAndStatusOrderByCreatedAtDesc(
             tenantId, Reservation.ReservationStatus.ACTIVE
         );
@@ -270,7 +270,7 @@ public class ReservationService {
      * Get active reservations for a tenant with pagination
      */
     @Transactional(readOnly = true)
-    public Page<Reservation> getActiveReservations(UUID tenantId, Pageable pageable) {
+    public Page<Reservation> getActiveReservations(Long tenantId, Pageable pageable) {
         return reservationRepository.findByTenantIdAndStatus(tenantId, Reservation.ReservationStatus.ACTIVE, pageable);
     }
     
@@ -278,7 +278,7 @@ public class ReservationService {
      * Count active reservations for a tenant
      */
     @Transactional(readOnly = true)
-    public long countActiveReservations(UUID tenantId) {
+    public long countActiveReservations(Long tenantId) {
         return reservationRepository.countByTenantIdAndStatus(tenantId, Reservation.ReservationStatus.ACTIVE);
     }
     
@@ -286,7 +286,7 @@ public class ReservationService {
      * Get stale reservations (older than threshold) for a specific tenant
      */
     @Transactional(readOnly = true)
-    public List<Reservation> getStaleReservations(UUID tenantId, int thresholdMinutes) {
+    public List<Reservation> getStaleReservations(Long tenantId, int thresholdMinutes) {
         LocalDateTime threshold = LocalDateTime.now().minusMinutes(thresholdMinutes);
         return reservationRepository.findStaleReservations(tenantId, threshold);
     }
@@ -298,26 +298,5 @@ public class ReservationService {
     public List<Reservation> getStaleReservations(int thresholdMinutes) {
         LocalDateTime threshold = LocalDateTime.now().minusMinutes(thresholdMinutes);
         return reservationRepository.findStaleReservationsAllTenants(threshold);
-    }
-    
-    /**
-     * Release a specific reservation by ID and tenant
-     */
-    @Transactional
-    public void releaseReservation(Long reservationId, UUID tenantId) {
-        Optional<Reservation> reservationOpt = reservationRepository.findByIdAndTenantId(reservationId, tenantId);
-        if (reservationOpt.isEmpty()) {
-            throw new IllegalArgumentException("Reservation not found or access denied");
-        }
-        
-        Reservation reservation = reservationOpt.get();
-        if (reservation.getStatus() != Reservation.ReservationStatus.ACTIVE) {
-            throw new IllegalStateException("Reservation is not active");
-        }
-        
-        reservation.markAsReleased();
-        reservationRepository.save(reservation);
-        
-        log.info("Manually released reservation {} for tenant {}", reservationId, tenantId);
     }
 }

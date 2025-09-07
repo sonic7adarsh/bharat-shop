@@ -7,7 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-import java.util.UUID;
+// import java.util.UUID; // Replaced with Long
 
 /**
  * ProductOption entity representing the many-to-many relationship between products and options.
@@ -31,10 +31,10 @@ import java.util.UUID;
 public class ProductOption extends BaseEntity {
 
     @Column(name = "product_id", nullable = false)
-    private UUID productId;
+    private Long productId;
 
     @Column(name = "option_id", nullable = false)
-    private UUID optionId;
+    private Long optionId;
 
     @Column(name = "is_required", nullable = false)
     private Boolean isRequired = false;
@@ -51,4 +51,40 @@ public class ProductOption extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "option_id", insertable = false, updatable = false)
     private Option option;
+    
+    public void setSortOrder(Integer sortOrder) {
+        this.sortOrder = sortOrder;
+    }
+    
+    public void setIsRequired(Boolean isRequired) {
+        this.isRequired = isRequired;
+    }
+    
+    public Integer getSortOrder() {
+        return sortOrder;
+    }
+    
+    public void setOptionId(Long optionId) {
+        this.optionId = optionId;
+    }
+    
+    public Long getOptionId() {
+        return optionId;
+    }
+    
+    public Boolean getIsRequired() {
+        return isRequired;
+    }
+    
+    public void setProductId(Long productId) {
+        this.productId = productId;
+    }
+    
+    public Long getId() {
+        return id;
+    }
+    
+    public Long getProductId() {
+        return productId;
+    }
 }

@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.UUID;
+// import java.util.UUID; // Replaced with Long
 
 @Data
 @Builder
@@ -16,7 +16,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class PlanResponseDto {
 
-    private UUID id;
+    private Long id;
     private String name;
     private BigDecimal price;
     private JsonNode features;
@@ -66,7 +66,7 @@ public class PlanResponseDto {
     }
     
     public static class PlanResponseDtoBuilder {
-        private UUID id;
+        private Long id;
         private String name;
         private BigDecimal price;
         private JsonNode features;
@@ -85,7 +85,7 @@ public class PlanResponseDto {
         private Boolean hasPrioritySupport;
         private Long storageLimit;
         
-        public PlanResponseDtoBuilder id(UUID id) {
+        public PlanResponseDtoBuilder id(Long id) {
             this.id = id;
             return this;
         }

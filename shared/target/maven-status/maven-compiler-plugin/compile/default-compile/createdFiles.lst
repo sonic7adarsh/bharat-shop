@@ -1,15 +1,17 @@
-com\bharatshop\shared\entity\Order$PaymentStatus.class
 com\bharatshop\shared\entity\Cart.class
 com\bharatshop\shared\repository\OrderRepository.class
+com\bharatshop\shared\entity\Orders.class
 com\bharatshop\shared\service\SearchService$SearchResult.class
 com\bharatshop\shared\dto\CustomerDto$CustomerAddressDto$AddressType.class
 com\bharatshop\shared\dto\ProductVariantDto.class
 com\bharatshop\shared\entity\Plan.class
+com\bharatshop\shared\entity\User$UserType.class
 com\bharatshop\shared\dto\CustomerDto.class
 com\bharatshop\shared\entity\Category$CategoryBuilder.class
 com\bharatshop\shared\entity\Payment.class
 com\bharatshop\shared\service\CurrencyService.class
 com\bharatshop\shared\entity\Option$OptionType.class
+com\bharatshop\shared\entity\Orders$PaymentStatus.class
 com\bharatshop\shared\entity\PaymentGateway$GatewayType.class
 com\bharatshop\shared\util\FileUploadValidator.class
 com\bharatshop\shared\dto\CategoryDto$CategoryDtoBuilder.class
@@ -19,10 +21,8 @@ com\bharatshop\shared\entity\OptionValue$OptionValueBuilderImpl.class
 com\bharatshop\shared\entity\Page$PageBuilder.class
 com\bharatshop\shared\service\RazorpayService.class
 com\bharatshop\shared\entity\Template.class
-com\bharatshop\shared\mapper\ProductVariantOptionValueMapperImpl.class
 com\bharatshop\shared\mapper\ProductVariantMapper$1.class
 com\bharatshop\shared\dto\media\PresignUploadResponse.class
-com\bharatshop\shared\mapper\ProductOptionMapperImpl.class
 com\bharatshop\shared\dto\CustomerDto$CustomerStatus.class
 com\bharatshop\shared\entity\Payment$PaymentBuilder.class
 com\bharatshop\shared\exception\GlobalExceptionHandler.class
@@ -33,7 +33,6 @@ com\bharatshop\shared\repository\SubscriptionRepository.class
 com\bharatshop\shared\service\SearchService$SortOption.class
 com\bharatshop\shared\dto\OptionDto$OptionDtoBuilderImpl.class
 com\bharatshop\shared\service\NotificationService$NotificationResult.class
-com\bharatshop\shared\entity\Order$OrderBuilder.class
 com\bharatshop\shared\dto\ProductDto$ProductStatus.class
 com\bharatshop\shared\dto\ApiResponse$ApiResponseBuilder.class
 com\bharatshop\shared\dto\CustomerDto$CustomerDtoBuilderImpl.class
@@ -64,12 +63,13 @@ com\bharatshop\shared\repository\ProductRepository.class
 com\bharatshop\shared\dto\PagedResponse.class
 com\bharatshop\shared\entity\OptionValue.class
 com\bharatshop\shared\filter\JwtAuthenticationFilter.class
-com\bharatshop\shared\mapper\ProductVariantMapperImpl.class
+com\bharatshop\shared\repository\SharedStorefrontUserRepository.class
 com\bharatshop\shared\util\FileUploadValidator$ValidationResult.class
 com\bharatshop\shared\dto\CustomerAnalyticsDto$OrderHistoryData.class
 com\bharatshop\shared\dto\ProductVariantDto$ProductVariantDtoBuilderImpl.class
 com\bharatshop\shared\dto\CustomerAnalyticsDto$WishlistItemData$WishlistItemDataBuilder.class
 com\bharatshop\shared\dto\PlanResponseDto$PlanResponseDtoBuilder.class
+com\bharatshop\shared\entity\Orders$OrderStatus.class
 com\bharatshop\shared\dto\ProductVariantDto$ProductVariantDtoBuilder.class
 com\bharatshop\shared\entity\MediaFile.class
 com\bharatshop\shared\entity\Payment$PaymentStatus.class
@@ -78,7 +78,6 @@ com\bharatshop\shared\dto\VendorAnalyticsDto$MonthlyRevenueData.class
 com\bharatshop\shared\entity\ProductOption.class
 com\bharatshop\shared\dto\ProductDto$ProductDtoBuilder.class
 com\bharatshop\shared\dto\VendorAnalyticsDto.class
-com\bharatshop\shared\entity\Order.class
 com\bharatshop\shared\entity\Wishlist$WishlistBuilder.class
 com\bharatshop\shared\filter\SessionAuthenticationFilter.class
 com\bharatshop\shared\entity\PaymentGateway.class
@@ -87,9 +86,9 @@ com\bharatshop\shared\dto\ProductOptionDto$ProductOptionDtoBuilder.class
 com\bharatshop\shared\entity\ProductImage$ProductImageBuilderImpl.class
 com\bharatshop\shared\config\InternationalizationConfig.class
 com\bharatshop\shared\config\SecurityConfig.class
+com\bharatshop\shared\entity\User.class
 com\bharatshop\shared\service\JwtService.class
 com\bharatshop\shared\dto\ApiResponse.class
-com\bharatshop\shared\mapper\OptionMapperImpl.class
 com\bharatshop\shared\service\NotificationService.class
 com\bharatshop\shared\util\SlugUtils.class
 com\bharatshop\shared\controller\MediaController.class
@@ -98,6 +97,7 @@ com\bharatshop\shared\mapper\ProductVariantMapper.class
 com\bharatshop\shared\entity\Vendor$VendorStatus.class
 com\bharatshop\shared\repository\CategoryRepository.class
 com\bharatshop\shared\entity\CustomerAddress.class
+com\bharatshop\shared\entity\Orders$OrdersBuilder.class
 com\bharatshop\shared\repository\TemplateRepository.class
 com\bharatshop\shared\dto\OptionValueDto$OptionValueDtoBuilder.class
 com\bharatshop\shared\repository\OrderItemRepository.class
@@ -116,7 +116,6 @@ com\bharatshop\shared\entity\ProductVariant.class
 com\bharatshop\shared\entity\Cart$CartBuilder.class
 com\bharatshop\shared\repository\VendorRepository.class
 com\bharatshop\shared\repository\PaymentRepository.class
-com\bharatshop\shared\entity\Order$OrderStatus.class
 com\bharatshop\shared\entity\ProductVariantOptionValue$ProductVariantOptionValueBuilder.class
 com\bharatshop\shared\service\FeatureFlagService.class
 com\bharatshop\shared\dto\CustomerAnalyticsDto$OrderItemData.class
@@ -125,6 +124,7 @@ com\bharatshop\shared\dto\CustomerAnalyticsDto$OrderItemData$OrderItemDataBuilde
 com\bharatshop\shared\service\OtpService$OtpData.class
 com\bharatshop\shared\entity\Vendor$VendorBuilder.class
 com\bharatshop\shared\entity\MediaFile$MediaType.class
+com\bharatshop\shared\entity\User$UserRole.class
 com\bharatshop\shared\repository\ProductOptionRepository.class
 com\bharatshop\shared\service\OtpService.class
 com\bharatshop\shared\entity\ProductImage$ProductImageBuilder.class
@@ -142,7 +142,6 @@ com\bharatshop\shared\entity\CartItem.class
 com\bharatshop\shared\mapper\OptionValueMapper.class
 com\bharatshop\shared\dto\ProductOptionDto$ProductOptionDtoBuilderImpl.class
 com\bharatshop\shared\dto\BaseDto$BaseDtoBuilder.class
-com\bharatshop\shared\mapper\OptionValueMapperImpl.class
 com\bharatshop\shared\repository\CartItemRepository.class
 com\bharatshop\shared\service\NotificationService$NotificationRequest.class
 com\bharatshop\shared\config\S3Config.class
@@ -184,7 +183,10 @@ com\bharatshop\shared\config\PasswordConfig.class
 com\bharatshop\shared\entity\Reservation.class
 com\bharatshop\shared\dto\SubscriptionRequestDto$SubscriptionRequestDtoBuilder.class
 com\bharatshop\shared\dto\OptionValueDto.class
+com\bharatshop\shared\entity\User$UserBuilder.class
+com\bharatshop\shared\entity\User$UserBuilderImpl.class
 com\bharatshop\shared\entity\Product$ProductBuilderImpl.class
+com\bharatshop\shared\entity\User$UserStatus.class
 com\bharatshop\shared\dto\PageRequestDto$PageRequestDtoBuilder.class
 com\bharatshop\shared\dto\ProductDto.class
 com\bharatshop\shared\dto\CategoryDto.class

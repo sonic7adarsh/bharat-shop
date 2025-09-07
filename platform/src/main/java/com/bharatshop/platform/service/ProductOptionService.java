@@ -5,7 +5,8 @@ import com.bharatshop.shared.entity.ProductOption;
 import com.bharatshop.shared.mapper.ProductOptionMapper;
 import com.bharatshop.shared.repository.ProductOptionRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -14,54 +15,53 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
-@Transactional
 public class ProductOptionService {
+
+    private static final Logger log = LoggerFactory.getLogger(ProductOptionService.class);
 
     private final ProductOptionRepository productOptionRepository;
     private final ProductOptionMapper productOptionMapper;
 
     @Transactional(readOnly = true)
-    public List<ProductOptionDto> getProductOptions(UUID productId, UUID tenantId) {
+    public List<ProductOptionDto> getProductOptions(Long productId, Long tenantId) {
         List<ProductOption> productOptions = productOptionRepository.findActiveByProductIdAndTenantId(productId, tenantId);
         return productOptionMapper.toDtoList(productOptions);
     }
 
     @Transactional(readOnly = true)
-    public Page<ProductOptionDto> getProductOptions(UUID productId, UUID tenantId, Pageable pageable) {
+    public Page<ProductOptionDto> getProductOptions(Long productId, Long tenantId, Pageable pageable) {
         Page<ProductOption> productOptions = productOptionRepository.findActiveByProductIdAndTenantId(productId, tenantId, pageable);
         return productOptions.map(productOptionMapper::toDto);
     }
 
     @Transactional(readOnly = true)
-    public Optional<ProductOptionDto> getProductOption(UUID productId, UUID optionId, UUID tenantId) {
+    public Optional<ProductOptionDto> getProductOption(Long productId, Long optionId, Long tenantId) {
         return productOptionRepository.findActiveByProductIdAndOptionIdAndTenantId(productId, optionId, tenantId)
                 .map(productOptionMapper::toDto);
     }
 
     @Transactional(readOnly = true)
-    public List<ProductOptionDto> getRequiredProductOptions(UUID productId, UUID tenantId) {
+    public List<ProductOptionDto> getRequiredProductOptions(Long productId, Long tenantId) {
         List<ProductOption> productOptions = productOptionRepository.findActiveRequiredByProductIdAndTenantId(productId, tenantId);
         return productOptionMapper.toDtoList(productOptions);
     }
 
     @Transactional(readOnly = true)
-    public List<ProductOptionDto> getProductOptionsByOption(UUID optionId, UUID tenantId) {
+    public List<ProductOptionDto> getProductOptionsByOption(Long optionId, Long tenantId) {
         List<ProductOption> productOptions = productOptionRepository.findActiveByOptionIdAndTenantId(optionId, tenantId);
         return productOptionMapper.toDtoList(productOptions);
     }
 
     @Transactional(readOnly = true)
-    public List<ProductOptionDto> getProductOptionsByProducts(List<UUID> productIds, UUID tenantId) {
+    public List<ProductOptionDto> getProductOptionsByProducts(List<Long> productIds, Long tenantId) {
         List<ProductOption> productOptions = productOptionRepository.findActiveByProductIdsAndTenantId(productIds, tenantId);
         return productOptionMapper.toDtoList(productOptions);
     }
 
-    public ProductOptionDto addOptionToProduct(UUID productId, UUID optionId, boolean isRequired, Integer sortOrder, UUID tenantId) {
+    public ProductOptionDto addOptionToProduct(Long productId, Long optionId, boolean isRequired, Integer sortOrder, Long tenantId) {
         // Check if option is already assigned to this product
         if (productOptionRepository.existsByProductIdAndOptionIdAndTenantId(productId, optionId, tenantId)) {
             throw new IllegalArgumentException("Option is already assigned to this product");
@@ -82,7 +82,7 @@ public class ProductOptionService {
         return productOptionMapper.toDto(savedProductOption);
     }
 
-    public ProductOptionDto updateProductOption(UUID productId, UUID optionId, ProductOptionDto productOptionDto, UUID tenantId) {
+    public ProductOptionDto updateProductOption(Long productId, Long optionId, ProductOptionDto productOptionDto, Long tenantId) {
         ProductOption existingProductOption = productOptionRepository.findActiveByProductIdAndOptionIdAndTenantId(productId, optionId, tenantId)
                 .orElseThrow(() -> new RuntimeException("Product option not found"));
 
@@ -94,7 +94,7 @@ public class ProductOptionService {
         return productOptionMapper.toDto(savedProductOption);
     }
 
-    public void removeOptionFromProduct(UUID productId, UUID optionId, UUID tenantId) {
+    public void removeOptionFromProduct(Long productId, Long optionId, Long tenantId) {
         ProductOption productOption = productOptionRepository.findActiveByProductIdAndOptionIdAndTenantId(productId, optionId, tenantId)
                 .orElseThrow(() -> new RuntimeException("Product option not found"));
         
@@ -105,17 +105,17 @@ public class ProductOptionService {
         productOptionRepository.save(productOption);
     }
 
-    public void removeAllOptionsFromProduct(UUID productId, UUID tenantId) {
+    public void removeAllOptionsFromProduct(Long productId, Long tenantId) {
         log.info("Soft deleting all options for product: {} and tenant: {}", productId, tenantId);
         productOptionRepository.softDeleteByProductIdAndTenantId(productId, tenantId);
     }
 
-    public void removeProductsFromOption(UUID optionId, UUID tenantId) {
+    public void removeProductsFromOption(Long optionId, Long tenantId) {
         log.info("Soft deleting all products for option: {} and tenant: {}", optionId, tenantId);
         productOptionRepository.softDeleteByOptionIdAndTenantId(optionId, tenantId);
     }
 
-    public ProductOptionDto updateRequiredStatus(UUID productId, UUID optionId, boolean isRequired, UUID tenantId) {
+    public ProductOptionDto updateRequiredStatus(Long productId, Long optionId, boolean isRequired, Long tenantId) {
         ProductOption productOption = productOptionRepository.findActiveByProductIdAndOptionIdAndTenantId(productId, optionId, tenantId)
                 .orElseThrow(() -> new RuntimeException("Product option not found"));
         
@@ -127,7 +127,7 @@ public class ProductOptionService {
         return productOptionMapper.toDto(savedProductOption);
     }
 
-    public ProductOptionDto updateSortOrder(UUID productId, UUID optionId, Integer sortOrder, UUID tenantId) {
+    public ProductOptionDto updateSortOrder(Long productId, Long optionId, Integer sortOrder, Long tenantId) {
         ProductOption productOption = productOptionRepository.findActiveByProductIdAndOptionIdAndTenantId(productId, optionId, tenantId)
                 .orElseThrow(() -> new RuntimeException("Product option not found"));
         
@@ -140,27 +140,27 @@ public class ProductOptionService {
     }
 
     @Transactional(readOnly = true)
-    public long getProductOptionCount(UUID productId, UUID tenantId) {
+    public long getProductOptionCount(Long productId, Long tenantId) {
         return productOptionRepository.countActiveByProductIdAndTenantId(productId, tenantId);
     }
 
     @Transactional(readOnly = true)
-    public long getOptionProductCount(UUID optionId, UUID tenantId) {
+    public long getOptionProductCount(Long optionId, Long tenantId) {
         return productOptionRepository.countActiveByOptionIdAndTenantId(optionId, tenantId);
     }
 
     @Transactional(readOnly = true)
-    public List<UUID> getProductIdsByOption(UUID optionId, UUID tenantId) {
+    public List<Long> getProductIdsByOption(Long optionId, Long tenantId) {
         return productOptionRepository.findProductIdsByOptionIdAndTenantId(optionId, tenantId);
     }
 
     @Transactional(readOnly = true)
-    public boolean hasRequiredOptions(UUID productId, UUID tenantId) {
+    public boolean hasRequiredOptions(Long productId, Long tenantId) {
         return productOptionRepository.countActiveRequiredByProductIdAndTenantId(productId, tenantId) > 0;
     }
 
     @Transactional(readOnly = true)
-    public boolean isOptionAssignedToProduct(UUID productId, UUID optionId, UUID tenantId) {
+    public boolean isOptionAssignedToProduct(Long productId, Long optionId, Long tenantId) {
         return productOptionRepository.existsByProductIdAndOptionIdAndTenantId(productId, optionId, tenantId);
     }
 }

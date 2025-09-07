@@ -26,7 +26,7 @@ import java.util.UUID;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProductVariantDto {
     
-    private UUID id;
+    private Long id;
     
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createdAt;
@@ -35,7 +35,7 @@ public class ProductVariantDto {
     private LocalDateTime updatedAt;
     
     @NotNull(message = "Product ID is required")
-    private UUID productId;
+    private Long productId;
     
     @NotBlank(message = "SKU is required")
     @Pattern(regexp = "^[A-Z0-9-_]+$", message = "SKU must contain only uppercase letters, numbers, hyphens, and underscores")
@@ -63,7 +63,7 @@ public class ProductVariantDto {
     // JSON attributes as Map for easier handling in DTOs
     private Map<String, Object> attributes;
     
-    private UUID imageId;
+    private Long imageId;
     
     private Boolean isDefault = false;
     
@@ -129,5 +129,77 @@ public class ProductVariantDto {
     
     public void setIsLowStock(boolean isLowStock) {
         this.isLowStock = isLowStock;
+    }
+    
+    public ProductVariant.VariantStatus getStatus() {
+        return status;
+    }
+    
+    public Map<String, Object> getAttributes() {
+        return attributes;
+    }
+    
+    public String getDimensions() {
+        return dimensions;
+    }
+    
+    public BigDecimal getWeight() {
+        return weight;
+    }
+    
+    public String getSku() {
+        return sku;
+    }
+    
+    public String getBarcode() {
+        return barcode;
+    }
+    
+    public Long getProductId() {
+        return productId;
+    }
+    
+    public void setStatus(ProductVariant.VariantStatus status) {
+        this.status = status;
+    }
+    
+    public void setStock(int stock) {
+        this.stock = stock;
+    }
+    
+    public void setAttributes(Map<String, Object> attributes) {
+        this.attributes = attributes;
+    }
+    
+    public void setWeight(BigDecimal weight) {
+        this.weight = weight;
+    }
+    
+    public void setDimensions(String dimensions) {
+        this.dimensions = dimensions;
+    }
+    
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+    
+    public void setSalePrice(BigDecimal salePrice) {
+        this.salePrice = salePrice;
+    }
+    
+    public void setId(Long id) {
+        this.id = id;
+    }
+    
+    public void setSku(String sku) {
+        this.sku = sku;
+    }
+    
+    public void setBarcode(String barcode) {
+        this.barcode = barcode;
+    }
+    
+    public void setProductId(Long productId) {
+        this.productId = productId;
     }
 }

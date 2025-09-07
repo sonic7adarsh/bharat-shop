@@ -10,7 +10,6 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -21,9 +20,9 @@ import java.util.UUID;
 public abstract class BaseEntity {
     
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)
-    protected UUID id;
+    protected Long id;
     
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -37,7 +36,7 @@ public abstract class BaseEntity {
     protected LocalDateTime deletedAt;
     
     @Column(name = "tenant_id")
-    protected UUID tenantId;
+    protected String tenantId;
     
     @PrePersist
     protected void onCreate() {

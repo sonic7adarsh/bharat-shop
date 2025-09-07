@@ -17,39 +17,36 @@ public interface CustomerAddressRepository extends JpaRepository<CustomerAddress
     /**
      * Find all addresses for a customer in a specific tenant
      */
-    @Query("SELECT ca FROM CustomerAddress ca WHERE ca.customerId = :customerId AND ca.tenantId = :tenantId AND ca.isActive = true ORDER BY ca.isDefault DESC, ca.createdAt DESC")
+    @Query(value = "SELECT * FROM customer_addresses ca WHERE ca.customer_id = :customerId AND ca.tenant_id = :tenantId AND ca.is_active = true ORDER BY ca.is_default DESC, ca.created_at DESC", nativeQuery = true)
     List<CustomerAddress> findByCustomerIdAndTenantId(@Param("customerId") Long customerId, @Param("tenantId") Long tenantId);
     
     /**
      * Find active addresses for a customer in a specific tenant
      */
-    @Query("SELECT ca FROM CustomerAddress ca WHERE ca.customerId = :customerId AND ca.tenantId = :tenantId AND ca.isActive = true ORDER BY ca.isDefault DESC, ca.createdAt DESC")
+    @Query(value = "SELECT * FROM customer_addresses ca WHERE ca.customer_id = :customerId AND ca.tenant_id = :tenantId AND ca.is_active = true ORDER BY ca.is_default DESC, ca.created_at DESC", nativeQuery = true)
     List<CustomerAddress> findActiveByCustomerIdAndTenantId(@Param("customerId") Long customerId, @Param("tenantId") Long tenantId);
     
     /**
      * Find default address for a customer in a specific tenant
      */
-    @Query("SELECT ca FROM CustomerAddress ca WHERE ca.customerId = :customerId AND ca.tenantId = :tenantId AND ca.isDefault = true AND ca.isActive = true")
-    Optional<CustomerAddress> findDefaultByCustomerIdAndTenantId(@Param("customerId") Long customerId, @Param("tenantId") Long tenantId);
+    Optional<CustomerAddress> findByCustomerIdAndTenantIdAndIsDefaultTrueAndIsActiveTrue(Long customerId, Long tenantId);
     
     /**
      * Find address by ID, customer ID and tenant ID (for security)
      */
-    @Query("SELECT ca FROM CustomerAddress ca WHERE ca.id = :id AND ca.customerId = :customerId AND ca.tenantId = :tenantId")
-    Optional<CustomerAddress> findByIdAndCustomerIdAndTenantId(@Param("id") Long id, @Param("customerId") Long customerId, @Param("tenantId") Long tenantId);
+    Optional<CustomerAddress> findByIdAndCustomerIdAndTenantId(Long id, Long customerId, Long tenantId);
     
     /**
      * Count active addresses for a customer
      */
-    @Query("SELECT COUNT(ca) FROM CustomerAddress ca WHERE ca.customerId = :customerId AND ca.tenantId = :tenantId AND ca.isActive = true")
-    long countActiveByCustomerIdAndTenantId(@Param("customerId") Long customerId, @Param("tenantId") Long tenantId);
+    long countByCustomerIdAndTenantIdAndIsActiveTrue(Long customerId, Long tenantId);
     
     /**
      * Set all addresses as non-default for a customer (used before setting a new default)
      */
     @Modifying
     @Transactional
-    @Query("UPDATE CustomerAddress ca SET ca.isDefault = false WHERE ca.customerId = :customerId AND ca.tenantId = :tenantId")
+    @Query(value = "UPDATE customer_addresses SET is_default = false WHERE customer_id = :customerId AND tenant_id = :tenantId", nativeQuery = true)
     void clearDefaultForCustomer(@Param("customerId") Long customerId, @Param("tenantId") Long tenantId);
     
     /**
@@ -57,12 +54,27 @@ public interface CustomerAddressRepository extends JpaRepository<CustomerAddress
      */
     @Modifying
     @Transactional
-    @Query("UPDATE CustomerAddress ca SET ca.isActive = false WHERE ca.id = :id AND ca.customerId = :customerId AND ca.tenantId = :tenantId")
+    @Query(value = "UPDATE customer_addresses SET is_active = false WHERE id = :id AND customer_id = :customerId AND tenant_id = :tenantId", nativeQuery = true)
     int softDeleteByIdAndCustomerIdAndTenantId(@Param("id") Long id, @Param("customerId") Long customerId, @Param("tenantId") Long tenantId);
     
     /**
-     * Check if address exists for customer
+     * Check if address exists for customer (active addresses only)
      */
-    @Query("SELECT COUNT(ca) > 0 FROM CustomerAddress ca WHERE ca.id = :id AND ca.customerId = :customerId AND ca.tenantId = :tenantId AND ca.isActive = true")
-    boolean existsByIdAndCustomerIdAndTenantId(@Param("id") Long id, @Param("customerId") Long customerId, @Param("tenantId") Long tenantId);
+    boolean existsByIdAndCustomerIdAndTenantIdAndIsActiveTrue(Long id, Long customerId, Long tenantId);
+    
+    /**
+     * Count active addresses for a customer and tenant
+     */
+    @Query(value = "SELECT COUNT(*) FROM customer_addresses WHERE customer_id = ?1 AND tenant_id = ?2 AND is_active = true", nativeQuery = true)
+    long countActiveByCustomerIdAndTenantId(Long customerId, Long tenantId);
+    
+    /**
+     * Check if address exists by ID, customer ID and tenant ID
+     */
+    boolean existsByIdAndCustomerIdAndTenantId(Long id, Long customerId, Long tenantId);
+    
+    /**
+     * Find default address by customer ID and tenant ID
+     */
+    Optional<CustomerAddress> findDefaultByCustomerIdAndTenantId(Long customerId, Long tenantId);
 }

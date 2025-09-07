@@ -34,7 +34,7 @@ public class FeatureFlagService {
     private static final boolean DEFAULT_EMAIL_SUPPORT = false;
     private static final boolean DEFAULT_PRIORITY_SUPPORT = false;
 
-    public boolean hasFeature(UUID vendorId, String featureName) {
+    public boolean hasFeature(Long vendorId, String featureName) {
         try {
             Optional<Subscription> activeSubscription = getActiveSubscription(vendorId);
             
@@ -59,7 +59,7 @@ public class FeatureFlagService {
         }
     }
 
-    public int getFeatureLimit(UUID vendorId, String featureName) {
+    public int getFeatureLimit(Long vendorId, String featureName) {
         try {
             Optional<Subscription> activeSubscription = getActiveSubscription(vendorId);
             
@@ -84,7 +84,7 @@ public class FeatureFlagService {
         }
     }
 
-    public long getFeatureLimitLong(UUID vendorId, String featureName) {
+    public long getFeatureLimitLong(Long vendorId, String featureName) {
         try {
             Optional<Subscription> activeSubscription = getActiveSubscription(vendorId);
             
@@ -109,14 +109,14 @@ public class FeatureFlagService {
         }
     }
 
-    public void enforceProductLimit(UUID vendorId, int currentProductCount) {
+    public void enforceProductLimit(Long vendorId, int currentProductCount) {
         int maxProducts = getFeatureLimit(vendorId, "maxProducts");
         if (currentProductCount >= maxProducts) {
             throw new RuntimeException("Product limit exceeded. Current plan allows maximum " + maxProducts + " products.");
         }
     }
 
-    public void enforceStorageLimit(UUID vendorId, long currentStorageUsed, long additionalStorage) {
+    public void enforceStorageLimit(Long vendorId, long currentStorageUsed, long additionalStorage) {
         long storageLimit = getFeatureLimitLong(vendorId, "storageLimit");
         if (currentStorageUsed + additionalStorage > storageLimit) {
             long limitInMB = storageLimit / (1024 * 1024);
@@ -124,27 +124,27 @@ public class FeatureFlagService {
         }
     }
 
-    public void enforceOrderLimit(UUID vendorId, int currentOrderCount) {
+    public void enforceOrderLimit(Long vendorId, int currentOrderCount) {
         int maxOrders = getFeatureLimit(vendorId, "maxOrders");
         if (currentOrderCount >= maxOrders) {
             throw new RuntimeException("Order limit exceeded. Current plan allows maximum " + maxOrders + " orders per month.");
         }
     }
 
-    public void enforceCategoryLimit(UUID vendorId, int currentCategoryCount) {
+    public void enforceCategoryLimit(Long vendorId, int currentCategoryCount) {
         int maxCategories = getFeatureLimit(vendorId, "maxCategories");
         if (currentCategoryCount >= maxCategories) {
             throw new RuntimeException("Category limit exceeded. Current plan allows maximum " + maxCategories + " categories.");
         }
     }
 
-    public void enforceFeatureAccess(UUID vendorId, String featureName) {
+    public void enforceFeatureAccess(Long vendorId, String featureName) {
         if (!hasFeature(vendorId, featureName)) {
             throw new RuntimeException("Feature '" + featureName + "' is not available in your current plan. Please upgrade to access this feature.");
         }
     }
 
-    private Optional<Subscription> getActiveSubscription(UUID vendorId) {
+    private Optional<Subscription> getActiveSubscription(Long vendorId) {
         return subscriptionRepository.findActiveByVendorId(vendorId, LocalDateTime.now())
                 .filter(subscription -> 
                     subscription.getStatus() == SubscriptionStatus.ACTIVE &&
@@ -191,17 +191,17 @@ public class FeatureFlagService {
         }
     }
 
-    public JsonNode getCurrentPlanFeatures(UUID vendorId) {
+    public JsonNode getCurrentPlanFeatures(Long vendorId) {
         Optional<Subscription> activeSubscription = getActiveSubscription(vendorId);
         return activeSubscription.map(subscription -> subscription.getPlan().getFeatures())
                 .orElse(null);
     }
 
-    public boolean isSubscriptionActive(UUID vendorId) {
+    public boolean isSubscriptionActive(Long vendorId) {
         return getActiveSubscription(vendorId).isPresent();
     }
 
-    public String getCurrentPlanName(UUID vendorId) {
+    public String getCurrentPlanName(Long vendorId) {
         return getActiveSubscription(vendorId)
                 .map(subscription -> subscription.getPlan().getName())
                 .orElse("Free Plan");

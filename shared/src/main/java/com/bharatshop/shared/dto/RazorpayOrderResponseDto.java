@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.util.UUID;
+// import java.util.UUID; // Replaced with Long
 
 @Data
 @Builder
@@ -21,7 +21,7 @@ public class RazorpayOrderResponseDto {
     private String name;
     private String description;
     private String image;
-    private UUID subscriptionId;
+    private Long subscriptionId;
     private String prefillName;
     private String prefillEmail;
     private String prefillContact;
@@ -52,7 +52,7 @@ public class RazorpayOrderResponseDto {
         private String name;
         private String description;
         private String image;
-        private UUID subscriptionId;
+        private Long subscriptionId;
         private String prefillName;
         private String prefillEmail;
         private String prefillContact;
@@ -98,7 +98,7 @@ public class RazorpayOrderResponseDto {
             return this;
         }
         
-        public RazorpayOrderResponseDtoBuilder subscriptionId(UUID subscriptionId) {
+        public RazorpayOrderResponseDtoBuilder subscriptionId(Long subscriptionId) {
             this.subscriptionId = subscriptionId;
             return this;
         }

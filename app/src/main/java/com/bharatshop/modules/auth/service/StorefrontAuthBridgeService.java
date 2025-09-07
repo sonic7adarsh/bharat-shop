@@ -1,42 +1,45 @@
 package com.bharatshop.modules.auth.service;
 
 import com.bharatshop.modules.auth.dto.StorefrontAuthDto;
-import com.bharatshop.shared.entity.StorefrontUser;
-import com.bharatshop.shared.repository.StorefrontUserRepository;
-import lombok.RequiredArgsConstructor;
+import com.bharatshop.shared.entity.User;
+import com.bharatshop.storefront.repository.StorefrontUserRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
-import java.util.UUID;
 
 /**
  * Bridge service for storefront authentication using shared entities
  */
 @Service
-@RequiredArgsConstructor
 @Slf4j
 @Transactional
 public class StorefrontAuthBridgeService {
     
-    private final StorefrontUserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+    @Autowired
+    @Qualifier("storefrontUserRepository")
+    private StorefrontUserRepository userRepository;
+    
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     
     public StorefrontAuthDto.AuthResponse register(StorefrontAuthDto.RegisterRequest request) {
         // Check if user already exists
-        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+        if (userRepository.findByEmailAndDeletedAtIsNull(request.getEmail()).isPresent()) {
             throw new RuntimeException("User with email already exists");
         }
         
-        if (request.getPhone() != null && userRepository.findByPhone(request.getPhone()).isPresent()) {
+        if (request.getPhone() != null && userRepository.findByPhoneAndDeletedAtIsNull(request.getPhone()).isPresent()) {
             throw new RuntimeException("User with phone number already exists");
         }
         
         // Create new user
-        StorefrontUser user = new StorefrontUser();
+        User user = new User();
         user.setEmail(request.getEmail());
         user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         user.setFirstName(request.getFirstName());
@@ -47,7 +50,7 @@ public class StorefrontAuthBridgeService {
         user.setCreatedAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
         
-        StorefrontUser savedUser = userRepository.save(user);
+        User savedUser = userRepository.save(user);
         
         // Convert to DTO
         StorefrontAuthDto.UserInfo userInfo = StorefrontAuthDto.UserInfo.builder()
@@ -57,8 +60,8 @@ public class StorefrontAuthBridgeService {
                 .firstName(savedUser.getFirstName())
                 .lastName(savedUser.getLastName())
                 .status("ACTIVE")
-                .emailVerified(savedUser.isEmailVerified())
-                .phoneVerified(savedUser.isPhoneVerified())
+                .emailVerified(savedUser.getEmailVerified())
+                .phoneVerified(savedUser.getPhoneVerified())
                 .createdAt(savedUser.getCreatedAt())
                 .build();
         
@@ -70,16 +73,16 @@ public class StorefrontAuthBridgeService {
     
     public StorefrontAuthDto.AuthResponse login(StorefrontAuthDto.LoginRequest request) {
         // Find user by email or phone
-        Optional<StorefrontUser> userOpt = userRepository.findByEmail(request.getEmailOrPhone());
+        Optional<User> userOpt = userRepository.findByEmailAndDeletedAtIsNull(request.getEmailOrPhone());
         if (userOpt.isEmpty()) {
-            userOpt = userRepository.findByPhone(request.getEmailOrPhone());
+            userOpt = userRepository.findByPhoneAndDeletedAtIsNull(request.getEmailOrPhone());
         }
         
         if (userOpt.isEmpty()) {
             throw new RuntimeException("User not found");
         }
         
-        StorefrontUser user = userOpt.get();
+        User user = userOpt.get();
         
         // Verify password
         if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
@@ -94,8 +97,8 @@ public class StorefrontAuthBridgeService {
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .status("ACTIVE")
-                .emailVerified(user.isEmailVerified())
-                .phoneVerified(user.isPhoneVerified())
+                .emailVerified(user.getEmailVerified())
+                .phoneVerified(user.getPhoneVerified())
                 .createdAt(user.getCreatedAt())
                 .build();
         
@@ -107,7 +110,7 @@ public class StorefrontAuthBridgeService {
     
     public StorefrontAuthDto.UserInfo updateUserProfile(String userId, StorefrontAuthDto.UpdateProfileRequest request) {
         // Find user by ID
-        StorefrontUser user = userRepository.findById(UUID.fromString(userId))
+        User user = userRepository.findById(Long.parseLong(userId))
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
         
         // Update fields
@@ -131,15 +134,15 @@ public class StorefrontAuthBridgeService {
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .status("ACTIVE")
-                .emailVerified(user.isEmailVerified())
-                .phoneVerified(user.isPhoneVerified())
+                .emailVerified(user.getEmailVerified())
+                .phoneVerified(user.getPhoneVerified())
                 .createdAt(user.getCreatedAt())
                 .build();
     }
     
     public StorefrontAuthDto.MessageResponse changePassword(String userId, StorefrontAuthDto.ChangePasswordRequest request) {
         // Find user by ID
-        StorefrontUser user = userRepository.findById(UUID.fromString(userId))
+        User user = userRepository.findById(Long.parseLong(userId))
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
         
         // Verify current password
@@ -174,7 +177,7 @@ public class StorefrontAuthBridgeService {
     }
     
     public StorefrontAuthDto.UserInfo getProfile(String userId) {
-        StorefrontUser user = userRepository.findById(UUID.fromString(userId))
+        User user = userRepository.findById(Long.parseLong(userId))
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
         
         return StorefrontAuthDto.UserInfo.builder()
@@ -184,8 +187,8 @@ public class StorefrontAuthBridgeService {
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .status("ACTIVE")
-                .emailVerified(user.isEmailVerified())
-                .phoneVerified(user.isPhoneVerified())
+                .emailVerified(user.getEmailVerified())
+                .phoneVerified(user.getPhoneVerified())
                 .createdAt(user.getCreatedAt())
                 .build();
     }

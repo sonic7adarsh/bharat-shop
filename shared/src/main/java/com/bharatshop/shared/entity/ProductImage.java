@@ -7,7 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-import java.util.UUID;
+// import java.util.UUID; // Replaced with Long
 
 @Entity
 @Table(name = "product_images")
@@ -19,7 +19,7 @@ import java.util.UUID;
 public class ProductImage extends BaseEntity {
 
     @Column(name = "product_id", nullable = false)
-    private UUID productId;
+    private Long productId;
 
     @Column(name = "media_id", nullable = false)
     private Long mediaId;

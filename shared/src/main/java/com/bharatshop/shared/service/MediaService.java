@@ -51,7 +51,7 @@ public class MediaService {
     /**
      * Generate presigned upload URL for file upload
      */
-    public PresignedUploadResponse generatePresignedUploadUrl(Long tenantId, String filename, 
+    public PresignedUploadResponse generatePresignedUploadUrl(String tenantId, String filename, 
                                                             String contentType, Long fileSize) {
         // Validate file upload using FileUploadValidator
         FileUploadValidator.ValidationResult validationResult = 
@@ -155,7 +155,7 @@ public class MediaService {
      * Get MediaFile by ID and tenant
      */
     @Transactional(readOnly = true)
-    public Optional<MediaFile> getMediaFile(Long id, Long tenantId) {
+    public Optional<MediaFile> getMediaFile(Long id, String tenantId) {
         return mediaFileRepository.findByIdAndTenantIdAndNotDeleted(id, tenantId);
     }
     
@@ -163,7 +163,7 @@ public class MediaService {
      * Get MediaFiles by tenant with pagination
      */
     @Transactional(readOnly = true)
-    public Page<MediaFile> getMediaFiles(Long tenantId, Pageable pageable) {
+    public Page<MediaFile> getMediaFiles(String tenantId, Pageable pageable) {
         return mediaFileRepository.findByTenantIdAndNotDeleted(tenantId, pageable);
     }
     
@@ -171,14 +171,14 @@ public class MediaService {
      * Get MediaFiles by tenant and type
      */
     @Transactional(readOnly = true)
-    public Page<MediaFile> getMediaFilesByType(Long tenantId, MediaFile.MediaType type, Pageable pageable) {
+    public Page<MediaFile> getMediaFilesByType(String tenantId, MediaFile.MediaType type, Pageable pageable) {
         return mediaFileRepository.findByTenantIdAndTypeAndNotDeleted(tenantId, type, pageable);
     }
     
     /**
      * Delete MediaFile (soft delete)
      */
-    public void deleteMediaFile(Long id, Long tenantId) {
+    public void deleteMediaFile(Long id, String tenantId) {
         Optional<MediaFile> mediaFileOpt = mediaFileRepository.findByIdAndTenantIdAndNotDeleted(id, tenantId);
         
         if (mediaFileOpt.isEmpty()) {
@@ -196,7 +196,7 @@ public class MediaService {
      * Get storage usage for tenant
      */
     @Transactional(readOnly = true)
-    public StorageUsage getStorageUsage(Long tenantId) {
+    public StorageUsage getStorageUsage(String tenantId) {
         long totalFiles = mediaFileRepository.countByTenantIdAndNotDeleted(tenantId);
         long totalSize = mediaFileRepository.calculateTotalSizeByTenantIdAndNotDeleted(tenantId);
         
@@ -233,7 +233,7 @@ public class MediaService {
     
 
     
-    private String generateFileKey(Long tenantId, MediaFile.MediaType mediaType, String filename) {
+    private String generateFileKey(String tenantId, MediaFile.MediaType mediaType, String filename) {
         String extension = getFileExtension(filename);
         String uuid = UUID.randomUUID().toString();
         return String.format("tenant-%d/%s/%s%s", tenantId, mediaType.name().toLowerCase(), uuid, extension);

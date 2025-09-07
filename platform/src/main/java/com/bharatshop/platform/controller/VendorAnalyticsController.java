@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.Map;
-import java.util.UUID;
+// import java.util.UUID; // Replaced with Long
 
 /**
  * REST controller for vendor analytics and dashboard operations.
@@ -37,7 +37,7 @@ public class VendorAnalyticsController {
             Long tenantId = getTenantIdFromAuth(authentication);
             
             // Enforce analytics feature access
-            featureFlagService.enforceFeatureAccess(UUID.fromString(tenantId.toString()), "analytics");
+            featureFlagService.enforceFeatureAccess(tenantId, "analytics");
             
             LocalDateTime toDate = LocalDateTime.now();
             LocalDateTime fromDate = toDate.minusMonths(12); // Default to last 12 months
@@ -62,7 +62,7 @@ public class VendorAnalyticsController {
             Long tenantId = getTenantIdFromAuth(authentication);
             
             // Enforce analytics feature access
-            featureFlagService.enforceFeatureAccess(UUID.fromString(tenantId.toString()), "analytics");
+            featureFlagService.enforceFeatureAccess(tenantId, "analytics");
             
             LocalDateTime toDate = LocalDateTime.now();
             LocalDateTime fromDate = toDate.minusMonths(12); // Default to last 12 months
@@ -94,7 +94,7 @@ public class VendorAnalyticsController {
             Long tenantId = getTenantIdFromAuth(authentication);
             
             // Enforce analytics feature access
-            featureFlagService.enforceFeatureAccess(UUID.fromString(tenantId.toString()), "analytics");
+            featureFlagService.enforceFeatureAccess(tenantId, "analytics");
             
             LocalDateTime toDate = LocalDateTime.now();
             LocalDateTime fromDate = toDate.minusMonths(12); // Default to last 12 months
@@ -129,7 +129,7 @@ public class VendorAnalyticsController {
             Long tenantId = getTenantIdFromAuth(authentication);
             
             // Enforce analytics feature access
-            featureFlagService.enforceFeatureAccess(UUID.fromString(tenantId.toString()), "analytics");
+            featureFlagService.enforceFeatureAccess(tenantId, "analytics");
             
             LocalDateTime toDate = LocalDateTime.now();
             LocalDateTime fromDate = toDate.minusMonths(12); // Default to last 12 months
@@ -166,7 +166,7 @@ public class VendorAnalyticsController {
             Long tenantId = getTenantIdFromAuth(authentication);
             
             // Enforce analytics feature access
-            featureFlagService.enforceFeatureAccess(UUID.fromString(tenantId.toString()), "analytics");
+            featureFlagService.enforceFeatureAccess(tenantId, "analytics");
             
             LocalDateTime toDate = LocalDateTime.now();
             LocalDateTime fromDate = toDate.minusMonths(12); // Default to last 12 months
@@ -197,7 +197,7 @@ public class VendorAnalyticsController {
             Long tenantId = getTenantIdFromAuth(authentication);
             
             // Enforce analytics feature access
-            featureFlagService.enforceFeatureAccess(UUID.fromString(tenantId.toString()), "analytics");
+            featureFlagService.enforceFeatureAccess(tenantId, "analytics");
             
             LocalDateTime toDate = LocalDateTime.now();
             LocalDateTime fromDate = toDate.minusMonths(12); // Default to last 12 months

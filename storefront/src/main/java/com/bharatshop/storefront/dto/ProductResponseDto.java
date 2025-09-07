@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
+// import java.util.UUID; // Replaced with Long
 import com.bharatshop.shared.dto.ProductVariantDto;
 import com.bharatshop.shared.dto.ProductOptionDto;
 
@@ -21,8 +21,8 @@ import com.bharatshop.shared.dto.ProductOptionDto;
 @Schema(description = "Product response data")
 public class ProductResponseDto {
     
-    @Schema(description = "Product ID", example = "550e8400-e29b-41d4-a716-446655440000")
-    private UUID id;
+    @Schema(description = "Product ID", example = "1")
+    private Long id;
     
     @Schema(description = "Product name", example = "iPhone 15 Pro")
     private String name;
@@ -126,7 +126,7 @@ public class ProductResponseDto {
     }
     
     public static class ProductResponseDtoBuilder {
-        private UUID id;
+        private Long id;
         private String name;
         private String description;
         private BigDecimal price;
@@ -152,7 +152,7 @@ public class ProductResponseDto {
         private List<ProductOptionDto> options;
         private Boolean hasVariants;
         
-        public ProductResponseDtoBuilder id(UUID id) {
+        public ProductResponseDtoBuilder id(Long id) {
             this.id = id;
             return this;
         }

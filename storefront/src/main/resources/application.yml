@@ -134,6 +134,7 @@ app:
       key-id: rzp_test_key
       key-secret: rzp_test_secret
       webhook-secret: webhook_secret
+      currency: INR
 
 ---
 spring:

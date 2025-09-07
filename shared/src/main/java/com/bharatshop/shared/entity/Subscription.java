@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
+// import java.util.UUID; // Replaced with Long
 
 @Entity
 @Table(name = "subscriptions")
@@ -22,10 +22,10 @@ import java.util.UUID;
 public class Subscription extends BaseEntity {
 
     @Column(name = "vendor_id", nullable = false)
-    private UUID vendorId;
+    private Long vendorId;
 
     @Column(name = "plan_id", nullable = false)
-    private UUID planId;
+    private Long planId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "plan_id", insertable = false, updatable = false)
@@ -84,7 +84,7 @@ public class Subscription extends BaseEntity {
     }
 
     // Manual getters for fields that Lombok might not be generating
-    public UUID getId() {
+    public Long getId() {
         return this.id;
     }
     
@@ -100,7 +100,7 @@ public class Subscription extends BaseEntity {
         return this.deletedAt;
     }
     
-    public UUID getTenantId() {
+    public Long getTenantId() {
         return this.tenantId;
     }
 
@@ -116,11 +116,11 @@ public class Subscription extends BaseEntity {
         return status;
     }
 
-    public UUID getVendorId() {
+    public Long getVendorId() {
         return vendorId;
     }
 
-    public UUID getPlanId() {
+    public Long getPlanId() {
         return planId;
     }
 
@@ -157,11 +157,11 @@ public class Subscription extends BaseEntity {
     }
     
     // Setter methods
-    public void setVendorId(UUID vendorId) {
+    public void setVendorId(Long vendorId) {
         this.vendorId = vendorId;
     }
     
-    public void setPlanId(UUID planId) {
+    public void setPlanId(Long planId) {
         this.planId = planId;
     }
     

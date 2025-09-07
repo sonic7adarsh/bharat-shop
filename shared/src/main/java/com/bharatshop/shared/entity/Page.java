@@ -89,7 +89,7 @@ public class Page extends BaseEntity {
         return this.deletedAt;
     }
     
-    public java.util.UUID getId() {
+    public Long getId() {
         return this.id;
     }
     
@@ -101,7 +101,7 @@ public class Page extends BaseEntity {
         return this.updatedAt;
     }
     
-    public java.util.UUID getTenantId() {
+    public Long getTenantId() {
         return this.tenantId;
     }
     
@@ -275,7 +275,7 @@ public class Page extends BaseEntity {
         this.deletedAt = deletedAt;
     }
     
-    public void setId(java.util.UUID id) {
+    public void setId(Long id) {
         this.id = id;
     }
     
@@ -283,7 +283,7 @@ public class Page extends BaseEntity {
         this.createdAt = createdAt;
     }
     
-    public void setTenantId(java.util.UUID tenantId) {
+    public void setTenantId(Long tenantId) {
         this.tenantId = tenantId;
     }
     

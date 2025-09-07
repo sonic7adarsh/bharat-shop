@@ -7,7 +7,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-import java.util.UUID;
+import java.time.LocalDateTime;
+// import java.util.UUID; // Replaced with Long
 
 /**
  * ProductVariantOptionValue entity representing the relationship between product variants and option values.
@@ -33,13 +34,13 @@ import java.util.UUID;
 public class ProductVariantOptionValue extends BaseEntity {
 
     @Column(name = "variant_id", nullable = false)
-    private UUID variantId;
+    private Long variantId;
 
     @Column(name = "option_id", nullable = false)
-    private UUID optionId;
+    private Long optionId;
 
     @Column(name = "option_value_id", nullable = false)
-    private UUID optionValueId;
+    private Long optionValueId;
 
     // Many-to-one relationship with ProductVariant
     @ManyToOne(fetch = FetchType.LAZY)
@@ -63,5 +64,41 @@ public class ProductVariantOptionValue extends BaseEntity {
     
     public OptionValue getOptionValue() {
         return optionValue;
+    }
+    
+    public void setOptionId(Long optionId) {
+        this.optionId = optionId;
+    }
+    
+    public void setOptionValueId(Long optionValueId) {
+        this.optionValueId = optionValueId;
+    }
+    
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+    
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+    
+    public void setVariantId(Long variantId) {
+        this.variantId = variantId;
+    }
+    
+    public Long getVariantId() {
+        return variantId;
+    }
+    
+    public Long getOptionId() {
+        return optionId;
+    }
+    
+    public Long getOptionValueId() {
+        return optionValueId;
+    }
+    
+    public Long getId() {
+        return id;
     }
 }

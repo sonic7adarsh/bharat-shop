@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
+// import java.util.UUID; // Replaced with Long
 
 @RestController
 @RequestMapping("/api/platform/products")
@@ -25,11 +25,11 @@ public class ProductImageController {
 
     @GetMapping("/{productId}/images")
     public ResponseEntity<List<ProductImage>> getProductImages(
-            @PathVariable UUID productId,
+            @PathVariable Long productId,
             Authentication authentication) {
         
         try {
-            UUID tenantId = getTenantIdFromAuth(authentication);
+            Long tenantId = getTenantIdFromAuth(authentication);
             List<ProductImage> images = productImageService.getProductImages(productId, tenantId);
             return ResponseEntity.ok(images);
         } catch (RuntimeException e) {
@@ -44,11 +44,11 @@ public class ProductImageController {
 
     @GetMapping("/{productId}/images/primary")
     public ResponseEntity<ProductImage> getPrimaryImage(
-            @PathVariable UUID productId,
+            @PathVariable Long productId,
             Authentication authentication) {
         
         try {
-            UUID tenantId = getTenantIdFromAuth(authentication);
+            Long tenantId = getTenantIdFromAuth(authentication);
             Optional<ProductImage> primaryImage = productImageService.getPrimaryImage(productId, tenantId);
             return primaryImage.map(ResponseEntity::ok)
                     .orElse(ResponseEntity.notFound().build());
@@ -64,14 +64,14 @@ public class ProductImageController {
 
     @PostMapping("/{productId}/images")
     public ResponseEntity<Map<String, Object>> uploadProductImage(
-            @PathVariable UUID productId,
+            @PathVariable Long productId,
             @RequestParam("file") MultipartFile file,
             @RequestParam(value = "altText", required = false) String altText,
             @RequestParam(value = "isPrimary", required = false) Boolean isPrimary,
             Authentication authentication) {
         
         try {
-            UUID tenantId = getTenantIdFromAuth(authentication);
+            Long tenantId = getTenantIdFromAuth(authentication);
             ProductImage uploadedImage = productImageService.uploadProductImage(
                     productId, tenantId, file, altText, isPrimary);
             
@@ -111,13 +111,13 @@ public class ProductImageController {
 
     @PostMapping("/{productId}/images/multiple")
     public ResponseEntity<Map<String, Object>> uploadMultipleImages(
-            @PathVariable UUID productId,
+            @PathVariable Long productId,
             @RequestParam("files") MultipartFile[] files,
             @RequestParam(value = "altTexts", required = false) String[] altTexts,
             Authentication authentication) {
         
         try {
-            UUID tenantId = getTenantIdFromAuth(authentication);
+            Long tenantId = getTenantIdFromAuth(authentication);
             
             Map<String, Object> response = new HashMap<>();
             response.put("uploadedImages", new java.util.ArrayList<>());
@@ -178,12 +178,12 @@ public class ProductImageController {
 
     @PutMapping("/images/{imageId}")
     public ResponseEntity<ProductImage> updateProductImage(
-            @PathVariable UUID imageId,
+            @PathVariable Long imageId,
             @RequestBody Map<String, Object> updateData,
             Authentication authentication) {
         
         try {
-            UUID tenantId = getTenantIdFromAuth(authentication);
+            Long tenantId = getTenantIdFromAuth(authentication);
             
             String altText = (String) updateData.get("altText");
             Boolean isPrimary = (Boolean) updateData.get("isPrimary");
@@ -207,11 +207,11 @@ public class ProductImageController {
 
     @DeleteMapping("/images/{imageId}")
     public ResponseEntity<Map<String, Object>> deleteProductImage(
-            @PathVariable UUID imageId,
+            @PathVariable Long imageId,
             Authentication authentication) {
         
         try {
-            UUID tenantId = getTenantIdFromAuth(authentication);
+            Long tenantId = getTenantIdFromAuth(authentication);
             productImageService.deleteProductImage(imageId, tenantId);
             
             Map<String, Object> response = new HashMap<>();
@@ -239,11 +239,11 @@ public class ProductImageController {
 
     @PutMapping("/images/{imageId}/primary")
     public ResponseEntity<ProductImage> setPrimaryImage(
-            @PathVariable UUID imageId,
+            @PathVariable Long imageId,
             Authentication authentication) {
         
         try {
-            UUID tenantId = getTenantIdFromAuth(authentication);
+            Long tenantId = getTenantIdFromAuth(authentication);
             ProductImage primaryImage = productImageService.setPrimaryImage(imageId, tenantId);
             return ResponseEntity.ok(primaryImage);
             
@@ -259,13 +259,13 @@ public class ProductImageController {
 
     @PutMapping("/{productId}/images/reorder")
     public ResponseEntity<List<ProductImage>> reorderProductImages(
-            @PathVariable UUID productId,
-            @RequestBody Map<String, List<UUID>> reorderData,
+            @PathVariable Long productId,
+            @RequestBody Map<String, List<Long>> reorderData,
             Authentication authentication) {
         
         try {
-            UUID tenantId = getTenantIdFromAuth(authentication);
-            List<UUID> imageIds = reorderData.get("imageIds");
+            Long tenantId = getTenantIdFromAuth(authentication);
+            List<Long> imageIds = reorderData.get("imageIds");
             
             if (imageIds == null || imageIds.isEmpty()) {
                 return ResponseEntity.badRequest().build();
@@ -288,11 +288,11 @@ public class ProductImageController {
 
     @DeleteMapping("/{productId}/images")
     public ResponseEntity<Map<String, Object>> deleteAllProductImages(
-            @PathVariable UUID productId,
+            @PathVariable Long productId,
             Authentication authentication) {
         
         try {
-            UUID tenantId = getTenantIdFromAuth(authentication);
+            Long tenantId = getTenantIdFromAuth(authentication);
             productImageService.deleteAllProductImages(productId, tenantId);
             
             Map<String, Object> response = new HashMap<>();
@@ -320,11 +320,11 @@ public class ProductImageController {
 
     @GetMapping("/{productId}/images/count")
     public ResponseEntity<Map<String, Object>> getImageCount(
-            @PathVariable UUID productId,
+            @PathVariable Long productId,
             Authentication authentication) {
         
         try {
-            UUID tenantId = getTenantIdFromAuth(authentication);
+            Long tenantId = getTenantIdFromAuth(authentication);
             long imageCount = productImageService.getImageCount(productId, tenantId);
             
             Map<String, Object> response = new HashMap<>();
@@ -343,9 +343,9 @@ public class ProductImageController {
         }
     }
 
-    private UUID getTenantIdFromAuth(Authentication authentication) {
+    private Long getTenantIdFromAuth(Authentication authentication) {
         // Extract tenant ID from JWT token or user details
         // This is a placeholder - implement based on your JWT structure
-        return UUID.fromString("00000000-0000-0000-0000-000000000001"); // For now, return a default tenant ID
+        return 1L; // For now, return a default tenant ID
     }
 }

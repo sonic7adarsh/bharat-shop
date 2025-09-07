@@ -12,7 +12,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.UUID;
+// import java.util.UUID; // Replaced with Long
 
 @Entity(name = "SharedOrderItem")
 @Table(name = "order_items", indexes = {
@@ -31,9 +31,9 @@ public class OrderItem {
     }
     
     public static class OrderItemBuilder {
-        private Order order;
+        private Orders order;
         private Product product;
-        private UUID variantId;
+        private Long variantId;
         private Integer quantity;
         private BigDecimal price;
         private BigDecimal discountAmount;
@@ -41,7 +41,7 @@ public class OrderItem {
         private String productSku;
         private String productImageUrl;
         
-        public OrderItemBuilder order(Order order) {
+        public OrderItemBuilder order(Orders order) {
             this.order = order;
             return this;
         }
@@ -51,7 +51,7 @@ public class OrderItem {
             return this;
         }
         
-        public OrderItemBuilder variantId(UUID variantId) {
+        public OrderItemBuilder variantId(Long variantId) {
             this.variantId = variantId;
             return this;
         }
@@ -105,16 +105,16 @@ public class OrderItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Orders.class)
     @JoinColumn(name = "orderId", nullable = false)
-    private Order order;
+    private Orders order;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "productId", nullable = false)
     private Product product;
     
     @Column(name = "variantId")
-    private UUID variantId;
+    private Long variantId;
     
     @Column(nullable = false)
     private Integer quantity;
@@ -180,7 +180,7 @@ public class OrderItem {
     }
     
     // Factory method to create OrderItem from CartItem
-    public static OrderItem fromCartItem(CartItem cartItem, Order order) {
+    public static OrderItem fromCartItem(CartItem cartItem, Orders order) {
         Product product = cartItem.getProduct();
         return OrderItem.builder()
                 .order(order)

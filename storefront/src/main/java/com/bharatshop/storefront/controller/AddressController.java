@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Optional;
+// import java.util.UUID; // Replaced with Long
 
 @RestController
 @RequestMapping("/api/addresses")

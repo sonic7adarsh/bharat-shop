@@ -9,7 +9,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
+// import java.util.UUID; // Replaced with Long
 
 @Entity
 @Table(name = "payment_gateways")
@@ -20,8 +20,8 @@ import java.util.UUID;
 public class PaymentGateway {
     
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     
     @Column(name = "tenant_id", nullable = false)
     private Long tenantId;

@@ -9,37 +9,35 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
-
 @Repository
-public interface ProductImageRepository extends JpaRepository<ProductImage, UUID> {
+public interface ProductImageRepository extends JpaRepository<ProductImage, Long> {
 
-    @Query("SELECT pi FROM ProductImage pi WHERE pi.productId = :productId AND pi.deletedAt IS NULL ORDER BY pi.sortOrder ASC")
-    List<ProductImage> findActiveByProductIdOrderBySortOrder(@Param("productId") UUID productId);
+    @Query(value = "SELECT * FROM product_images WHERE product_id = :productId AND deleted_at IS NULL ORDER BY sort_order ASC", nativeQuery = true)
+    List<ProductImage> findActiveByProductIdOrderBySortOrder(@Param("productId") Long productId);
 
-    @Query("SELECT pi FROM ProductImage pi WHERE pi.id = :id AND pi.productId = :productId AND pi.deletedAt IS NULL")
-    Optional<ProductImage> findActiveByIdAndProductId(@Param("id") UUID id, @Param("productId") UUID productId);
+    @Query(value = "SELECT * FROM product_images WHERE id = :id AND product_id = :productId AND deleted_at IS NULL", nativeQuery = true)
+    Optional<ProductImage> findActiveByIdAndProductId(@Param("id") Long id, @Param("productId") Long productId);
 
-    @Query("SELECT pi FROM ProductImage pi WHERE pi.productId = :productId AND pi.isPrimary = :isPrimary AND pi.deletedAt IS NULL")
-    List<ProductImage> findActiveByProductIdAndIsPrimary(@Param("productId") UUID productId, @Param("isPrimary") Boolean isPrimary);
+    @Query(value = "SELECT * FROM product_images WHERE product_id = :productId AND is_primary = :isPrimary AND deleted_at IS NULL", nativeQuery = true)
+    List<ProductImage> findActiveByProductIdAndIsPrimary(@Param("productId") Long productId, @Param("isPrimary") Boolean isPrimary);
 
-    @Query("SELECT pi FROM ProductImage pi WHERE pi.productId = :productId AND pi.isPrimary = true AND pi.deletedAt IS NULL")
-    Optional<ProductImage> findActivePrimaryByProductId(@Param("productId") UUID productId);
+    @Query(value = "SELECT * FROM product_images WHERE product_id = :productId AND is_primary = true AND deleted_at IS NULL", nativeQuery = true)
+    Optional<ProductImage> findActivePrimaryByProductId(@Param("productId") Long productId);
 
-    @Query("SELECT pi FROM ProductImage pi WHERE pi.productId = :productId AND pi.deletedAt IS NULL ORDER BY pi.sortOrder ASC")
-    List<ProductImage> findByProductIdOrderBySortOrder(@Param("productId") UUID productId);
-
-    @Modifying
-    @Query("UPDATE ProductImage pi SET pi.isPrimary = false WHERE pi.productId = :productId AND pi.deletedAt IS NULL")
-    void clearPrimaryImageForProduct(@Param("productId") UUID productId);
+    @Query(value = "SELECT * FROM product_images WHERE product_id = :productId AND deleted_at IS NULL ORDER BY sort_order ASC", nativeQuery = true)
+    List<ProductImage> findByProductIdOrderBySortOrder(@Param("productId") Long productId);
 
     @Modifying
-    @Query("UPDATE ProductImage pi SET pi.deletedAt = CURRENT_TIMESTAMP WHERE pi.productId = :productId")
-    void deleteByProductId(@Param("productId") UUID productId);
+    @Query(value = "UPDATE product_images SET is_primary = false WHERE product_id = :productId AND deleted_at IS NULL", nativeQuery = true)
+    void clearPrimaryImageForProduct(@Param("productId") Long productId);
 
-    @Query("SELECT COUNT(pi) FROM ProductImage pi WHERE pi.productId = :productId AND pi.deletedAt IS NULL")
-    long countByProductId(@Param("productId") UUID productId);
+    @Modifying
+    @Query(value = "UPDATE product_images SET deleted_at = CURRENT_TIMESTAMP WHERE product_id = :productId", nativeQuery = true)
+    void deleteByProductId(@Param("productId") Long productId);
 
-    @Query("SELECT MAX(pi.sortOrder) FROM ProductImage pi WHERE pi.productId = :productId AND pi.deletedAt IS NULL")
-    Integer findMaxSortOrderByProductId(@Param("productId") UUID productId);
+    @Query(value = "SELECT COUNT(*) FROM product_images WHERE product_id = :productId AND deleted_at IS NULL", nativeQuery = true)
+    long countByProductId(@Param("productId") Long productId);
+
+    @Query(value = "SELECT MAX(sort_order) FROM product_images WHERE product_id = :productId AND deleted_at IS NULL", nativeQuery = true)
+    Integer findMaxSortOrderByProductId(@Param("productId") Long productId);
 }

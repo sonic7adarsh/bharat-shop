@@ -13,7 +13,7 @@ import jakarta.persistence.LockModeType;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
+
 
 @Repository
 public interface ProductVariantRepository extends TenantAwareRepository<ProductVariant> {
@@ -21,250 +21,286 @@ public interface ProductVariantRepository extends TenantAwareRepository<ProductV
     /**
      * Find all active variants by product ID for current tenant
      */
-    @Query("SELECT pv FROM ProductVariant pv WHERE pv.productId = :productId AND pv.status = 'ACTIVE' AND pv.tenantId = :tenantId AND pv.deletedAt IS NULL ORDER BY pv.sortOrder ASC")
-    List<ProductVariant> findActiveByProductId(@Param("productId") UUID productId, @Param("tenantId") UUID tenantId);
+    @Query(value = "SELECT * FROM product_variant WHERE product_id = ?1 AND status = 'ACTIVE' AND tenant_id = ?2 AND deleted_at IS NULL ORDER BY sort_order ASC", nativeQuery = true)
+    List<ProductVariant> findActiveByProductId(Long productId, Long tenantId);
     
     /**
      * Find all active variants by product ID and tenant ID with pagination
      */
-    @Query("SELECT pv FROM ProductVariant pv WHERE pv.productId = :productId AND pv.status = 'ACTIVE' AND pv.tenantId = :tenantId AND pv.deletedAt IS NULL ORDER BY pv.sortOrder ASC")
-    Page<ProductVariant> findActiveByProductIdAndTenantId(@Param("productId") UUID productId, @Param("tenantId") UUID tenantId, Pageable pageable);
+    @Query(value = "SELECT * FROM product_variant WHERE product_id = ?1 AND status = 'ACTIVE' AND tenant_id = ?2 AND deleted_at IS NULL ORDER BY sort_order ASC", nativeQuery = true)
+    Page<ProductVariant> findActiveByProductIdAndTenantId(Long productId, Long tenantId, Pageable pageable);
     
     /**
      * Find active variant by ID and tenant ID
      */
-    @Query("SELECT pv FROM ProductVariant pv WHERE pv.id = :id AND pv.status = 'ACTIVE' AND pv.tenantId = :tenantId AND pv.deletedAt IS NULL")
-    Optional<ProductVariant> findActiveByIdAndTenantId(@Param("id") UUID id, @Param("tenantId") UUID tenantId);
+    Optional<ProductVariant> findByIdAndStatusAndTenantIdAndDeletedAtIsNull(Long id, String status, Long tenantId);
+    
+    /**
+     * Find active variant by ID and tenant ID
+     */
+    @Query(value = "SELECT * FROM product_variant WHERE id = ?1 AND status = 'ACTIVE' AND tenant_id = ?2 AND deleted_at IS NULL", nativeQuery = true)
+    Optional<ProductVariant> findActiveByIdAndTenantId(Long id, Long tenantId);
     
     /**
      * Find default variant by product ID and tenant ID
      */
-    @Query("SELECT pv FROM ProductVariant pv WHERE pv.productId = :productId AND pv.isDefault = true AND pv.tenantId = :tenantId AND pv.deletedAt IS NULL")
-    Optional<ProductVariant> findDefaultByProductIdAndTenantId(@Param("productId") UUID productId, @Param("tenantId") UUID tenantId);
+    Optional<ProductVariant> findByProductIdAndIsDefaultTrueAndTenantIdAndDeletedAtIsNull(Long productId, Long tenantId);
     
     /**
      * Find all variants by product ID for current tenant
      */
-    @Query("SELECT pv FROM ProductVariant pv WHERE pv.productId = :productId AND pv.tenantId = :tenantId AND pv.deletedAt IS NULL ORDER BY pv.sortOrder ASC")
-    List<ProductVariant> findByProductId(@Param("productId") UUID productId, @Param("tenantId") UUID tenantId);
+    @Query(value = "SELECT * FROM product_variant WHERE product_id = ?1 AND tenant_id = ?2 AND deleted_at IS NULL ORDER BY sort_order ASC", nativeQuery = true)
+    List<ProductVariant> findByProductId(Long productId, Long tenantId);
+    
+
     
     /**
-     * Find default variant by product ID for current tenant
+     * Find default variant by product ID and tenant ID (alias method)
      */
-    @Query("SELECT pv FROM ProductVariant pv WHERE pv.productId = :productId AND pv.isDefault = true AND pv.tenantId = :tenantId AND pv.deletedAt IS NULL")
-    Optional<ProductVariant> findDefaultByProductId(@Param("productId") UUID productId, @Param("tenantId") UUID tenantId);
+    default Optional<ProductVariant> findDefaultByProductIdAndTenantId(Long productId, Long tenantId) {
+        return findByProductIdAndIsDefaultTrueAndTenantIdAndDeletedAtIsNull(productId, tenantId);
+    }
     
     /**
      * Find variant by SKU for current tenant
      */
-    @Query("SELECT pv FROM ProductVariant pv WHERE pv.sku = :sku AND pv.tenantId = :tenantId AND pv.deletedAt IS NULL")
-    Optional<ProductVariant> findBySku(@Param("sku") String sku, @Param("tenantId") UUID tenantId);
+    Optional<ProductVariant> findBySkuAndTenantIdAndDeletedAtIsNull(String sku, Long tenantId);
     
     /**
      * Find variant by barcode for current tenant
      */
-    @Query("SELECT pv FROM ProductVariant pv WHERE pv.barcode = :barcode AND pv.tenantId = :tenantId AND pv.deletedAt IS NULL")
-    Optional<ProductVariant> findByBarcode(@Param("barcode") String barcode, @Param("tenantId") UUID tenantId);
+    Optional<ProductVariant> findByBarcodeAndTenantIdAndDeletedAtIsNull(String barcode, Long tenantId);
     
     /**
      * Find variants by product IDs for current tenant
      */
-    @Query("SELECT pv FROM ProductVariant pv WHERE pv.productId IN :productIds AND pv.status = 'ACTIVE' AND pv.tenantId = :tenantId AND pv.deletedAt IS NULL ORDER BY pv.productId ASC, pv.sortOrder ASC")
-    List<ProductVariant> findActiveByProductIds(@Param("productIds") List<UUID> productIds, @Param("tenantId") UUID tenantId);
+    @Query(value = "SELECT * FROM product_variant WHERE product_id IN (?1) AND status = 'ACTIVE' AND tenant_id = ?2 AND deleted_at IS NULL ORDER BY product_id ASC, sort_order ASC", nativeQuery = true)
+    List<ProductVariant> findActiveByProductIds(List<Long> productIds, Long tenantId);
     
     /**
      * Find variants by price range for current tenant
      */
-    @Query("SELECT pv FROM ProductVariant pv WHERE pv.price BETWEEN :minPrice AND :maxPrice AND pv.status = 'ACTIVE' AND pv.tenantId = :tenantId AND pv.deletedAt IS NULL ORDER BY pv.price ASC")
-    List<ProductVariant> findActiveByPriceRange(@Param("minPrice") BigDecimal minPrice, @Param("maxPrice") BigDecimal maxPrice, @Param("tenantId") UUID tenantId);
+    @Query(value = "SELECT * FROM product_variant WHERE price BETWEEN ?1 AND ?2 AND status = 'ACTIVE' AND tenant_id = ?3 AND deleted_at IS NULL ORDER BY price ASC", nativeQuery = true)
+    List<ProductVariant> findActiveByPriceRange(BigDecimal minPrice, BigDecimal maxPrice, Long tenantId);
     
     /**
      * Find variants by price range and tenant ID
      */
-    @Query("SELECT pv FROM ProductVariant pv WHERE pv.price BETWEEN :minPrice AND :maxPrice AND pv.status = 'ACTIVE' AND pv.tenantId = :tenantId AND pv.deletedAt IS NULL ORDER BY pv.price ASC")
-    List<ProductVariant> findActiveByPriceRangeAndTenantId(@Param("tenantId") UUID tenantId, @Param("minPrice") BigDecimal minPrice, @Param("maxPrice") BigDecimal maxPrice);
+    @Query(value = "SELECT * FROM product_variant WHERE price BETWEEN ?2 AND ?3 AND status = 'ACTIVE' AND tenant_id = ?1 AND deleted_at IS NULL ORDER BY price ASC", nativeQuery = true)
+    List<ProductVariant> findActiveByPriceRangeAndTenantId(Long tenantId, BigDecimal minPrice, BigDecimal maxPrice);
     
     /**
      * Find variants with low stock for current tenant
      */
-    @Query("SELECT pv FROM ProductVariant pv WHERE pv.stock <= :threshold AND pv.status = 'ACTIVE' AND pv.tenantId = :tenantId AND pv.deletedAt IS NULL ORDER BY pv.stock ASC")
-    List<ProductVariant> findActiveWithLowStock(@Param("threshold") Integer threshold, @Param("tenantId") UUID tenantId);
+    @Query(value = "SELECT * FROM product_variant WHERE stock <= ?1 AND status = 'ACTIVE' AND tenant_id = ?2 AND deleted_at IS NULL ORDER BY stock ASC", nativeQuery = true)
+    List<ProductVariant> findActiveWithLowStock(Integer threshold, Long tenantId);
     
     /**
      * Find variants with low stock by tenant ID
      */
-    @Query("SELECT pv FROM ProductVariant pv WHERE pv.stock <= :threshold AND pv.status = 'ACTIVE' AND pv.tenantId = :tenantId AND pv.deletedAt IS NULL ORDER BY pv.stock ASC")
-    List<ProductVariant> findActiveWithLowStockByTenantId(@Param("tenantId") UUID tenantId, @Param("threshold") Integer threshold);
+    @Query(value = "SELECT * FROM product_variant WHERE stock <= ?2 AND status = 'ACTIVE' AND tenant_id = ?1 AND deleted_at IS NULL ORDER BY stock ASC", nativeQuery = true)
+    List<ProductVariant> findActiveWithLowStockByTenantId(Long tenantId, Integer threshold);
     
     /**
      * Find out of stock variants for current tenant
      */
-    @Query("SELECT pv FROM ProductVariant pv WHERE pv.stock = 0 AND pv.status = 'ACTIVE' AND pv.tenantId = :tenantId AND pv.deletedAt IS NULL ORDER BY pv.updatedAt DESC")
-    List<ProductVariant> findActiveOutOfStock(@Param("tenantId") UUID tenantId);
+    @Query(value = "SELECT * FROM product_variant WHERE stock = 0 AND status = 'ACTIVE' AND tenant_id = ?1 AND deleted_at IS NULL ORDER BY updated_at DESC", nativeQuery = true)
+    List<ProductVariant> findActiveOutOfStock(Long tenantId);
     
     /**
      * Find out of stock variants by tenant ID
      */
-    @Query("SELECT pv FROM ProductVariant pv WHERE pv.stock = 0 AND pv.status = 'ACTIVE' AND pv.tenantId = :tenantId AND pv.deletedAt IS NULL ORDER BY pv.updatedAt DESC")
-    List<ProductVariant> findActiveWithZeroStockByTenantId(@Param("tenantId") UUID tenantId);
+    @Query(value = "SELECT * FROM product_variant WHERE stock = 0 AND status = 'ACTIVE' AND tenant_id = ?1 AND deleted_at IS NULL ORDER BY updated_at DESC", nativeQuery = true)
+    List<ProductVariant> findActiveWithZeroStockByTenantId(Long tenantId);
     
     /**
      * Search variants by SKU or barcode for current tenant
      */
-    @Query("SELECT pv FROM ProductVariant pv WHERE pv.status = 'ACTIVE' AND pv.tenantId = :tenantId AND pv.deletedAt IS NULL AND (LOWER(pv.sku) LIKE LOWER(CONCAT('%', :search, '%')) OR LOWER(pv.barcode) LIKE LOWER(CONCAT('%', :search, '%'))) ORDER BY pv.sku ASC")
-    List<ProductVariant> searchActiveBySku(@Param("search") String search, @Param("tenantId") UUID tenantId);
+    @Query(value = "SELECT * FROM product_variant WHERE status = 'ACTIVE' AND tenant_id = ?2 AND deleted_at IS NULL AND (LOWER(sku) LIKE LOWER(CONCAT('%', ?1, '%')) OR LOWER(barcode) LIKE LOWER(CONCAT('%', ?1, '%'))) ORDER BY sku ASC", nativeQuery = true)
+    List<ProductVariant> searchActiveBySku(String search, Long tenantId);
     
     /**
      * Check if SKU exists for current tenant (excluding current variant)
      */
-    @Query("SELECT COUNT(pv) > 0 FROM ProductVariant pv WHERE pv.sku = :sku AND pv.tenantId = :tenantId AND pv.id != :excludeId AND pv.deletedAt IS NULL")
-    boolean existsBySkuAndTenantIdAndIdNot(@Param("sku") String sku, @Param("excludeId") UUID excludeId, @Param("tenantId") UUID tenantId);
+    boolean existsBySkuAndTenantIdAndIdNotAndDeletedAtIsNull(String sku, Long tenantId, Long excludeId);
     
     /**
      * Check if SKU exists for tenant
      */
-    @Query("SELECT CASE WHEN COUNT(pv) > 0 THEN true ELSE false END FROM ProductVariant pv WHERE pv.sku = :sku AND pv.tenantId = :tenantId AND pv.deletedAt IS NULL")
-    boolean existsBySkuAndTenantId(@Param("sku") String sku, @Param("tenantId") UUID tenantId);
+    boolean existsBySkuAndTenantIdAndDeletedAtIsNull(String sku, Long tenantId);
     
     /**
      * Check if barcode exists for current tenant (excluding current variant)
      */
-    @Query("SELECT COUNT(pv) > 0 FROM ProductVariant pv WHERE pv.barcode = :barcode AND pv.tenantId = :tenantId AND pv.id != :excludeId AND pv.deletedAt IS NULL")
-    boolean existsByBarcodeAndTenantIdAndIdNot(@Param("barcode") String barcode, @Param("excludeId") UUID excludeId, @Param("tenantId") UUID tenantId);
+    boolean existsByBarcodeAndTenantIdAndIdNotAndDeletedAtIsNull(String barcode, Long tenantId, Long excludeId);
     
     /**
      * Check if barcode exists for tenant
      */
-    @Query("SELECT CASE WHEN COUNT(pv) > 0 THEN true ELSE false END FROM ProductVariant pv WHERE pv.barcode = :barcode AND pv.tenantId = :tenantId AND pv.deletedAt IS NULL")
-    boolean existsByBarcodeAndTenantId(@Param("barcode") String barcode, @Param("tenantId") UUID tenantId);
+    boolean existsByBarcodeAndTenantIdAndDeletedAtIsNull(String barcode, Long tenantId);
     
     /**
      * Count variants by product ID
      */
-    @Query("SELECT COUNT(pv) FROM ProductVariant pv WHERE pv.productId = :productId AND pv.tenantId = :tenantId AND pv.deletedAt IS NULL")
-    long countByProductId(@Param("productId") UUID productId, @Param("tenantId") UUID tenantId);
+    long countByProductIdAndTenantIdAndDeletedAtIsNull(Long productId, Long tenantId);
     
     /**
      * Count active variants by product ID
      */
-    @Query("SELECT COUNT(pv) FROM ProductVariant pv WHERE pv.productId = :productId AND pv.status = 'ACTIVE' AND pv.tenantId = :tenantId AND pv.deletedAt IS NULL")
-    long countActiveByProductId(@Param("productId") UUID productId, @Param("tenantId") UUID tenantId);
+    long countByProductIdAndStatusAndTenantIdAndDeletedAtIsNull(Long productId, String status, Long tenantId);
     
     /**
      * Get total stock by product ID
      */
-    @Query("SELECT COALESCE(SUM(pv.stock), 0) FROM ProductVariant pv WHERE pv.productId = :productId AND pv.status = 'ACTIVE' AND pv.tenantId = :tenantId AND pv.deletedAt IS NULL")
-    Integer getTotalStockByProductId(@Param("productId") UUID productId, @Param("tenantId") UUID tenantId);
+    @Query(value = "SELECT COALESCE(SUM(stock), 0) FROM product_variant WHERE product_id = ?1 AND status = 'ACTIVE' AND tenant_id = ?2 AND deleted_at IS NULL", nativeQuery = true)
+    Integer getTotalStockByProductId(Long productId, Long tenantId);
     
     /**
      * Get minimum price by product ID
      */
-    @Query("SELECT MIN(pv.price) FROM ProductVariant pv WHERE pv.productId = :productId AND pv.status = 'ACTIVE' AND pv.tenantId = :tenantId AND pv.deletedAt IS NULL")
-    BigDecimal getMinPriceByProductId(@Param("productId") UUID productId, @Param("tenantId") UUID tenantId);
+    @Query(value = "SELECT MIN(price) FROM product_variant WHERE product_id = ?1 AND status = 'ACTIVE' AND tenant_id = ?2 AND deleted_at IS NULL", nativeQuery = true)
+    BigDecimal getMinPriceByProductId(Long productId, Long tenantId);
     
     /**
      * Get maximum price by product ID
      */
-    @Query("SELECT MAX(pv.price) FROM ProductVariant pv WHERE pv.productId = :productId AND pv.status = 'ACTIVE' AND pv.tenantId = :tenantId AND pv.deletedAt IS NULL")
-    BigDecimal getMaxPriceByProductId(@Param("productId") UUID productId, @Param("tenantId") UUID tenantId);
+    @Query(value = "SELECT MAX(price) FROM product_variant WHERE product_id = ?1 AND status = 'ACTIVE' AND tenant_id = ?2 AND deleted_at IS NULL", nativeQuery = true)
+    BigDecimal getMaxPriceByProductId(Long productId, Long tenantId);
     
     /**
      * Delete all variants by product ID (soft delete)
      */
-    @Query("UPDATE ProductVariant pv SET pv.deletedAt = CURRENT_TIMESTAMP WHERE pv.productId = :productId AND pv.tenantId = :tenantId")
-    void deleteByProductId(@Param("productId") UUID productId, @Param("tenantId") UUID tenantId);
+    @Modifying
+    @Query(value = "UPDATE product_variant SET deleted_at = CURRENT_TIMESTAMP WHERE product_id = ?1 AND tenant_id = ?2", nativeQuery = true)
+    void deleteByProductId(Long productId, Long tenantId);
     
     /**
      * Find variants with pagination
      */
-    @Query("SELECT pv FROM ProductVariant pv WHERE pv.status = 'ACTIVE' AND pv.tenantId = :tenantId AND pv.deletedAt IS NULL")
-    Page<ProductVariant> findAllActive(Pageable pageable, @Param("tenantId") UUID tenantId);
+    @Query(value = "SELECT * FROM product_variant WHERE status = 'ACTIVE' AND tenant_id = ?1 AND deleted_at IS NULL", nativeQuery = true)
+    Page<ProductVariant> findAllActive(Pageable pageable, Long tenantId);
     
     /**
      * Update stock for variant
      */
-    @Query("UPDATE ProductVariant pv SET pv.stock = :stock, pv.updatedAt = CURRENT_TIMESTAMP WHERE pv.id = :id AND pv.tenantId = :tenantId")
-    void updateStock(@Param("id") UUID id, @Param("stock") Integer stock, @Param("tenantId") UUID tenantId);
+    @Modifying
+    @Query(value = "UPDATE product_variant SET stock = ?2, updated_at = CURRENT_TIMESTAMP WHERE id = ?1 AND tenant_id = ?3", nativeQuery = true)
+    void updateStock(Long id, Integer stock, Long tenantId);
     
     /**
      * Increment stock quantity
      */
     @Modifying
-    @Query("UPDATE ProductVariant pv SET pv.stock = pv.stock + :quantity, pv.updatedAt = CURRENT_TIMESTAMP WHERE pv.id = :id AND pv.tenantId = :tenantId")
-    int incrementStock(@Param("id") UUID id, @Param("tenantId") UUID tenantId, @Param("quantity") Integer quantity);
+    @Query(value = "UPDATE product_variant SET stock = stock + ?3, updated_at = CURRENT_TIMESTAMP WHERE id = ?1 AND tenant_id = ?2", nativeQuery = true)
+    int incrementStock(Long id, Long tenantId, Integer quantity);
     
     /**
      * Decrement stock quantity
      */
     @Modifying
-    @Query("UPDATE ProductVariant pv SET pv.stock = pv.stock - :quantity, pv.updatedAt = CURRENT_TIMESTAMP WHERE pv.id = :id AND pv.tenantId = :tenantId AND pv.stock >= :quantity")
-    int decrementStock(@Param("id") UUID id, @Param("tenantId") UUID tenantId, @Param("quantity") Integer quantity);
+    @Query(value = "UPDATE product_variant SET stock = stock - ?3, updated_at = CURRENT_TIMESTAMP WHERE id = ?1 AND tenant_id = ?2 AND stock >= ?3", nativeQuery = true)
+    int decrementStock(Long id, Long tenantId, Integer quantity);
     
     /**
      * Clear default variant for product
      */
-    @Query("UPDATE ProductVariant pv SET pv.isDefault = false, pv.updatedAt = CURRENT_TIMESTAMP WHERE pv.productId = :productId AND pv.tenantId = :tenantId")
-    void clearDefaultForProduct(@Param("productId") UUID productId, @Param("tenantId") UUID tenantId);
+    @Modifying
+    @Query(value = "UPDATE product_variant SET is_default = false, updated_at = CURRENT_TIMESTAMP WHERE product_id = ?1 AND tenant_id = ?2", nativeQuery = true)
+    void clearDefaultForProduct(Long productId, Long tenantId);
     
-    /**
-     * Count active variants by product ID and tenant ID
-     */
-    @Query("SELECT COUNT(pv) FROM ProductVariant pv WHERE pv.productId = :productId AND pv.status = 'ACTIVE' AND pv.tenantId = :tenantId AND pv.deletedAt IS NULL")
-    long countActiveByProductIdAndTenantId(@Param("productId") UUID productId, @Param("tenantId") UUID tenantId);
+
     
     /**
      * Count active variants by tenant ID
      */
-    @Query("SELECT COUNT(pv) FROM ProductVariant pv WHERE pv.status = 'ACTIVE' AND pv.tenantId = :tenantId AND pv.deletedAt IS NULL")
-    long countActiveByTenantId(@Param("tenantId") UUID tenantId);
+    long countByStatusAndTenantIdAndDeletedAtIsNull(String status, Long tenantId);
     
     /**
      * Get total stock by product ID and tenant ID
      */
-    @Query("SELECT COALESCE(SUM(pv.stock), 0) FROM ProductVariant pv WHERE pv.productId = :productId AND pv.status = 'ACTIVE' AND pv.tenantId = :tenantId AND pv.deletedAt IS NULL")
-    Integer getTotalStockByProductIdAndTenantId(@Param("productId") UUID productId, @Param("tenantId") UUID tenantId);
+    @Query(value = "SELECT COALESCE(SUM(stock), 0) FROM product_variant WHERE product_id = ?1 AND status = 'ACTIVE' AND tenant_id = ?2 AND deleted_at IS NULL", nativeQuery = true)
+    Integer getTotalStockByProductIdAndTenantId(Long productId, Long tenantId);
     
     /**
      * Get minimum price by product ID and tenant ID
      */
-    @Query("SELECT MIN(pv.price) FROM ProductVariant pv WHERE pv.productId = :productId AND pv.status = 'ACTIVE' AND pv.tenantId = :tenantId AND pv.deletedAt IS NULL")
-    BigDecimal getMinPriceByProductIdAndTenantId(@Param("productId") UUID productId, @Param("tenantId") UUID tenantId);
+    @Query(value = "SELECT MIN(price) FROM product_variant WHERE product_id = ?1 AND status = 'ACTIVE' AND tenant_id = ?2 AND deleted_at IS NULL", nativeQuery = true)
+    BigDecimal getMinPriceByProductIdAndTenantId(Long productId, Long tenantId);
     
     /**
      * Get maximum price by product ID and tenant ID
      */
-    @Query("SELECT MAX(pv.price) FROM ProductVariant pv WHERE pv.productId = :productId AND pv.status = 'ACTIVE' AND pv.tenantId = :tenantId AND pv.deletedAt IS NULL")
-    BigDecimal getMaxPriceByProductIdAndTenantId(@Param("productId") UUID productId, @Param("tenantId") UUID tenantId);
+    @Query(value = "SELECT MAX(price) FROM product_variant WHERE product_id = ?1 AND status = 'ACTIVE' AND tenant_id = ?2 AND deleted_at IS NULL", nativeQuery = true)
+    BigDecimal getMaxPriceByProductIdAndTenantId(Long productId, Long tenantId);
     
     /**
      * Find all active variants by product ID and tenant ID (non-pageable)
      */
-    @Query("SELECT pv FROM ProductVariant pv WHERE pv.productId = :productId AND pv.status = 'ACTIVE' AND pv.tenantId = :tenantId AND pv.deletedAt IS NULL ORDER BY pv.sortOrder ASC")
-    List<ProductVariant> findActiveByProductIdAndTenantId(@Param("productId") UUID productId, @Param("tenantId") UUID tenantId);
+    @Query(value = "SELECT * FROM product_variant WHERE product_id = ?1 AND status = 'ACTIVE' AND tenant_id = ?2 AND deleted_at IS NULL ORDER BY sort_order ASC", nativeQuery = true)
+    List<ProductVariant> findActiveByProductIdAndTenantId(Long productId, Long tenantId);
     
     /**
      * Find active variant by SKU and tenant ID
      */
-    @Query("SELECT pv FROM ProductVariant pv WHERE pv.sku = :sku AND pv.status = 'ACTIVE' AND pv.tenantId = :tenantId AND pv.deletedAt IS NULL")
-    Optional<ProductVariant> findActiveBySkuAndTenantId(@Param("sku") String sku, @Param("tenantId") UUID tenantId);
+    Optional<ProductVariant> findBySkuAndStatusAndTenantIdAndDeletedAtIsNull(String sku, String status, Long tenantId);
     
     /**
      * Find active variant by barcode and tenant ID
      */
-    @Query("SELECT pv FROM ProductVariant pv WHERE pv.barcode = :barcode AND pv.status = 'ACTIVE' AND pv.tenantId = :tenantId AND pv.deletedAt IS NULL")
-    Optional<ProductVariant> findActiveByBarcodeAndTenantId(@Param("barcode") String barcode, @Param("tenantId") UUID tenantId);
+    Optional<ProductVariant> findByBarcodeAndStatusAndTenantIdAndDeletedAtIsNull(String barcode, String status, Long tenantId);
     
     /**
      * Soft delete all variants by product ID and tenant ID
      */
     @Modifying
-    @Query("UPDATE ProductVariant pv SET pv.deletedAt = CURRENT_TIMESTAMP WHERE pv.productId = :productId AND pv.tenantId = :tenantId")
-    void softDeleteByProductIdAndTenantId(@Param("productId") UUID productId, @Param("tenantId") UUID tenantId);
+    @Query(value = "UPDATE product_variant SET deleted_at = CURRENT_TIMESTAMP WHERE product_id = ?1 AND tenant_id = ?2", nativeQuery = true)
+    void softDeleteByProductIdAndTenantId(Long productId, Long tenantId);
     
     /**
      * Find variant by ID with pessimistic lock for atomic operations
      */
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("SELECT pv FROM ProductVariant pv WHERE pv.id = :id AND pv.deletedAt IS NULL")
-    Optional<ProductVariant> findByIdWithLock(@Param("id") UUID id);
+    Optional<ProductVariant> findByIdAndDeletedAtIsNull(Long id);
+    
+    /**
+     * Find variant by ID with pessimistic lock (alias method)
+     */
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    default Optional<ProductVariant> findByIdWithLock(Long id) {
+        return findByIdAndDeletedAtIsNull(id);
+    }
+    
+    /**
+     * Count active variants by tenant ID
+     */
+    @Query(value = "SELECT COUNT(*) FROM product_variant WHERE tenant_id = ?1 AND deleted_at IS NULL", nativeQuery = true)
+    long countActiveByTenantId(Long tenantId);
+    
+    /**
+     * Count active variants by product ID and tenant ID
+     */
+    @Query(value = "SELECT COUNT(*) FROM product_variant WHERE product_id = ?1 AND status = 'ACTIVE' AND tenant_id = ?2 AND deleted_at IS NULL", nativeQuery = true)
+    long countActiveByProductIdAndTenantId(Long productId, Long tenantId);
+    
+    /**
+     * Find active variant by SKU and tenant ID
+     */
+    @Query(value = "SELECT * FROM product_variant WHERE sku = ?1 AND status = 'ACTIVE' AND tenant_id = ?2 AND deleted_at IS NULL", nativeQuery = true)
+    Optional<ProductVariant> findActiveBySkuAndTenantId(String sku, Long tenantId);
+    
+    /**
+     * Find active variant by barcode and tenant ID
+     */
+    @Query(value = "SELECT * FROM product_variant WHERE barcode = ?1 AND status = 'ACTIVE' AND tenant_id = ?2 AND deleted_at IS NULL", nativeQuery = true)
+    Optional<ProductVariant> findActiveByBarcodeAndTenantId(String barcode, Long tenantId);
+    
+    /**
+     * Check if SKU exists for tenant
+     */
+    boolean existsBySkuAndTenantId(String sku, Long tenantId);
+    
+    /**
+     * Check if barcode exists for tenant
+     */
+    boolean existsByBarcodeAndTenantId(String barcode, Long tenantId);
 }

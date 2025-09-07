@@ -14,7 +14,7 @@ import jakarta.persistence.LockModeType;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
+
 
 @Repository
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
@@ -24,66 +24,66 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
      * This ensures atomic operations when checking/updating stock
      */
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("SELECT r FROM Reservation r WHERE r.tenantId = :tenantId " +
-           "AND r.productVariantId = :productVariantId " +
-           "AND r.status = 'ACTIVE' " +
-           "AND r.expiresAt > :now")
+    @Query(value = "SELECT * FROM reservation WHERE tenant_id = ?1 " +
+           "AND product_variant_id = ?2 " +
+           "AND status = 'ACTIVE' " +
+           "AND expires_at > ?3", nativeQuery = true)
     List<Reservation> findActiveReservationsForVariantWithLock(
-        @Param("tenantId") UUID tenantId,
-        @Param("productVariantId") UUID productVariantId,
-        @Param("now") LocalDateTime now
+        Long tenantId,
+        Long productVariantId,
+        LocalDateTime now
     );
     
     /**
      * Calculate total reserved quantity for a product variant
      */
-    @Query("SELECT COALESCE(SUM(r.quantity), 0) FROM Reservation r " +
-           "WHERE r.tenantId = :tenantId " +
-           "AND r.productVariantId = :productVariantId " +
-           "AND r.status = 'ACTIVE' " +
-           "AND r.expiresAt > :now")
+    @Query(value = "SELECT COALESCE(SUM(quantity), 0) FROM reservation " +
+           "WHERE tenant_id = ?1 " +
+           "AND product_variant_id = ?2 " +
+           "AND status = 'ACTIVE' " +
+           "AND expires_at > ?3", nativeQuery = true)
     Integer getTotalReservedQuantity(
-        @Param("tenantId") UUID tenantId,
-        @Param("productVariantId") UUID productVariantId,
-        @Param("now") LocalDateTime now
+        Long tenantId,
+        Long productVariantId,
+        LocalDateTime now
     );
     
     /**
      * Find reservations by order ID
      */
-    List<Reservation> findByOrderIdAndTenantId(Long orderId, UUID tenantId);
+    List<Reservation> findByOrderIdAndTenantId(Long orderId, Long tenantId);
     
     /**
      * Find expired reservations for cleanup
      */
-    @Query("SELECT r FROM Reservation r WHERE r.status = 'ACTIVE' " +
-           "AND r.expiresAt <= :now")
-    List<Reservation> findExpiredReservations(@Param("now") LocalDateTime now);
+    @Query(value = "SELECT * FROM reservation WHERE status = 'ACTIVE' " +
+           "AND expires_at <= ?1", nativeQuery = true)
+    List<Reservation> findExpiredReservations(LocalDateTime now);
     
     /**
      * Find stale reservations (active but older than threshold)
      */
-    @Query("SELECT r FROM Reservation r WHERE r.tenantId = :tenantId " +
-           "AND r.status = 'ACTIVE' " +
-           "AND r.createdAt <= :threshold")
+    @Query(value = "SELECT * FROM reservation WHERE tenant_id = ?1 " +
+           "AND status = 'ACTIVE' " +
+           "AND created_at <= ?2", nativeQuery = true)
     List<Reservation> findStaleReservations(
-        @Param("tenantId") UUID tenantId,
-        @Param("threshold") LocalDateTime threshold
+        Long tenantId,
+        LocalDateTime threshold
     );
     
     /**
      * Bulk update expired reservations to RELEASED status
      */
     @Modifying
-    @Query("UPDATE Reservation r SET r.status = 'RELEASED', r.updatedAt = :now " +
-           "WHERE r.status = 'ACTIVE' AND r.expiresAt <= :now")
-    int releaseExpiredReservations(@Param("now") LocalDateTime now);
+    @Query(value = "UPDATE reservation SET status = 'RELEASED', updated_at = ?1 " +
+           "WHERE status = 'ACTIVE' AND expires_at <= ?1", nativeQuery = true)
+    int releaseExpiredReservations(LocalDateTime now);
     
     /**
      * Find reservations by tenant and status
      */
     List<Reservation> findByTenantIdAndStatusOrderByCreatedAtDesc(
-        UUID tenantId, 
+        Long tenantId, 
         Reservation.ReservationStatus status
     );
     
@@ -91,7 +91,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
      * Find reservations by tenant and status with pagination
      */
     Page<Reservation> findByTenantIdAndStatus(
-        UUID tenantId, 
+        Long tenantId, 
         Reservation.ReservationStatus status,
         Pageable pageable
     );
@@ -100,7 +100,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
      * Count reservations by tenant and status
      */
     long countByTenantIdAndStatus(
-        UUID tenantId, 
+        Long tenantId, 
         Reservation.ReservationStatus status
     );
     
@@ -109,35 +109,31 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
      */
     Optional<Reservation> findByIdAndTenantId(
         Long id,
-        UUID tenantId
+        Long tenantId
     );
     
     /**
      * Find reservation by ID with lock for atomic updates
      */
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("SELECT r FROM Reservation r WHERE r.id = :id AND r.tenantId = :tenantId")
-    Optional<Reservation> findByIdAndTenantIdWithLock(
-        @Param("id") Long id,
-        @Param("tenantId") UUID tenantId
-    );
+    Optional<Reservation> findByIdAndTenantIdWithLock(Long id, Long tenantId);
     
     /**
      * Find stale reservations across all tenants
      */
-    @Query("SELECT r FROM Reservation r WHERE r.status = 'ACTIVE' " +
-           "AND r.createdAt <= :threshold")
+    @Query(value = "SELECT * FROM reservation WHERE status = 'ACTIVE' " +
+           "AND created_at <= ?1", nativeQuery = true)
     List<Reservation> findStaleReservationsAllTenants(
-        @Param("threshold") LocalDateTime threshold
+        LocalDateTime threshold
     );
     
     /**
      * Count active reservations for a tenant
      */
-    @Query("SELECT COUNT(r) FROM Reservation r WHERE r.tenantId = :tenantId " +
-           "AND r.status = 'ACTIVE' AND r.expiresAt > :now")
+    @Query(value = "SELECT COUNT(*) FROM reservation WHERE tenant_id = ?1 " +
+           "AND status = 'ACTIVE' AND expires_at > ?2", nativeQuery = true)
     long countActiveReservations(
-        @Param("tenantId") UUID tenantId,
-        @Param("now") LocalDateTime now
+        Long tenantId,
+        LocalDateTime now
     );
 }

@@ -32,6 +32,9 @@
             <version>${project.version}</version>
         </dependency>
         
+        <!-- App Module -->
+
+        
         <!-- Spring Boot Starters -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -116,10 +119,7 @@
             <scope>provided</scope>
         </dependency>
         
-        <dependency>
-            <groupId>org.mapstruct</groupId>
-            <artifactId>mapstruct</artifactId>
-        </dependency>
+
         
         <!-- Monitoring -->
         <dependency>

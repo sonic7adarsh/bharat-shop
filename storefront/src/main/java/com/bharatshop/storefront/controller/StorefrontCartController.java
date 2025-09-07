@@ -4,7 +4,7 @@ import com.bharatshop.storefront.shared.ApiResponse;
 import com.bharatshop.storefront.dto.AddToCartRequest;
 import com.bharatshop.storefront.dto.CartResponse;
 import com.bharatshop.storefront.dto.UpdateCartRequest;
-import com.bharatshop.storefront.entity.Cart;
+import com.bharatshop.shared.entity.Cart;
 import com.bharatshop.storefront.service.CartService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import java.math.BigDecimal;
-import java.util.UUID;
+// import java.util.UUID; // Replaced with Long
 
 @RestController
 @RequestMapping("/store/cart")
@@ -38,11 +38,11 @@ public class StorefrontCartController {
         try {
             // Extract customer and tenant info from request headers or JWT
             Long customerId = extractCustomerId(httpRequest);
-            UUID tenantId = extractTenantId(httpRequest);
+            Long tenantId = extractTenantId(httpRequest);
             
             Cart cart = cartService.addItemToCart(
                     customerId, 
-                    tenantId, 
+                    tenantId.toString(), 
                     request.getProductId(), 
                     request.getQuantity()
             );
@@ -73,9 +73,9 @@ public class StorefrontCartController {
         
         try {
             Long customerId = extractCustomerId(httpRequest);
-            UUID tenantId = extractTenantId(httpRequest);
+            Long tenantId = extractTenantId(httpRequest);
             
-            Cart cart = cartService.getOrCreateCart(customerId, tenantId);
+            Cart cart = cartService.getOrCreateCart(customerId, tenantId.toString());
             CartResponse response = CartResponse.fromEntity(cart);
             
             return ResponseEntity.ok(
@@ -101,11 +101,11 @@ public class StorefrontCartController {
         
         try {
             Long customerId = extractCustomerId(httpRequest);
-            UUID tenantId = extractTenantId(httpRequest);
+            Long tenantId = extractTenantId(httpRequest);
             
             Cart cart = cartService.updateCartItemQuantity(
                     customerId, 
-                    tenantId, 
+                    tenantId.toString(), 
                     request.getProductId(), 
                     request.getQuantity()
             );
@@ -138,9 +138,9 @@ public class StorefrontCartController {
         
         try {
             Long customerId = extractCustomerId(httpRequest);
-            UUID tenantId = extractTenantId(httpRequest);
-            
-            Cart cart = cartService.removeItemFromCart(customerId, tenantId, productId);
+            Long tenantId = extractTenantId(httpRequest);
+
+            Cart cart = cartService.removeItemFromCart(customerId, tenantId.toString(), productId);
             CartResponse response = CartResponse.fromEntity(cart);
             
             log.info("Item removed from cart successfully for customer: {}, product: {}", 
@@ -167,9 +167,9 @@ public class StorefrontCartController {
         
         try {
             Long customerId = extractCustomerId(httpRequest);
-            UUID tenantId = extractTenantId(httpRequest);
-            
-            cartService.clearCart(customerId, tenantId);
+            Long tenantId = extractTenantId(httpRequest);
+
+            cartService.clearCart(customerId, tenantId.toString());
             
             log.info("Cart cleared successfully for customer: {}", customerId);
             
@@ -194,9 +194,9 @@ public class StorefrontCartController {
         
         try {
             Long customerId = extractCustomerId(httpRequest);
-            UUID tenantId = extractTenantId(httpRequest);
-            
-            BigDecimal total = cartService.getCartTotal(customerId, tenantId);
+            Long tenantId = extractTenantId(httpRequest);
+
+            BigDecimal total = cartService.getCartTotal(customerId, tenantId.toString());
             
             return ResponseEntity.ok(
                     ApiResponse.success(total, "Cart total retrieved successfully")
@@ -219,9 +219,9 @@ public class StorefrontCartController {
         
         try {
             Long customerId = extractCustomerId(httpRequest);
-            UUID tenantId = extractTenantId(httpRequest);
-            
-            Integer count = cartService.getCartItemCount(customerId, tenantId);
+            Long tenantId = extractTenantId(httpRequest);
+
+            Integer count = cartService.getCartItemCount(customerId, tenantId.toString());
             
             return ResponseEntity.ok(
                     ApiResponse.success(count, "Cart item count retrieved successfully")
@@ -248,12 +248,12 @@ public class StorefrontCartController {
         throw new RuntimeException("Customer ID not found in request");
     }
     
-    private UUID extractTenantId(HttpServletRequest request) {
+    private Long extractTenantId(HttpServletRequest request) {
         // TODO: Extract from JWT token or session
         // For now, using header for testing
         String tenantIdHeader = request.getHeader("X-Tenant-Id");
         if (tenantIdHeader != null) {
-            return UUID.fromString(tenantIdHeader);
+            return Long.parseLong(tenantIdHeader);
         }
         throw new RuntimeException("Tenant ID not found in request");
     }

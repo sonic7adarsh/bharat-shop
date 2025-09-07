@@ -1,6 +1,8 @@
 package com.bharatshop.storefront.dto.auth;
 
-import com.bharatshop.storefront.entity.StorefrontUser;
+import com.bharatshop.shared.entity.User;
+import com.bharatshop.shared.entity.User.UserRole;
+import com.bharatshop.shared.entity.User.UserStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -9,8 +11,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
+// import java.util.UUID; // Replaced with Long
 
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,7 +21,7 @@ import java.util.UUID;
 public class CustomerProfileResponse {
     
     // Manual getter methods
-    public UUID getId() {
+    public Long getId() {
         return id;
     }
     
@@ -30,7 +33,7 @@ public class CustomerProfileResponse {
         return phone;
     }
     
-    public StorefrontUser.StorefrontRole getRole() {
+    public UserRole getRole() {
         return role;
     }
     
@@ -82,8 +85,8 @@ public class CustomerProfileResponse {
         return updatedAt;
     }
 
-    @Schema(description = "User ID", example = "550e8400-e29b-41d4-a716-446655440000")
-    private UUID id;
+    @Schema(description = "User ID", example = "1")
+    private Long id;
 
     @Schema(description = "Email address", example = "customer@example.com")
     private String email;
@@ -92,7 +95,7 @@ public class CustomerProfileResponse {
     private String phone;
 
     @Schema(description = "User role", example = "CUSTOMER")
-    private StorefrontUser.StorefrontRole role;
+    private UserRole role;
 
     @Schema(description = "Account enabled status", example = "true")
     private Boolean enabled;
@@ -138,10 +141,10 @@ public class CustomerProfileResponse {
     }
     
     public static class CustomerProfileResponseBuilder {
-        private UUID id;
+        private Long id;
         private String email;
         private String phone;
-        private StorefrontUser.StorefrontRole role;
+        private UserRole role;
         private Boolean enabled;
         private Boolean phoneVerified;
         private Boolean emailVerified;
@@ -155,7 +158,7 @@ public class CustomerProfileResponse {
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
         
-        public CustomerProfileResponseBuilder id(UUID id) {
+        public CustomerProfileResponseBuilder id(Long id) {
             this.id = id;
             return this;
         }
@@ -170,7 +173,7 @@ public class CustomerProfileResponse {
             return this;
         }
         
-        public CustomerProfileResponseBuilder role(StorefrontUser.StorefrontRole role) {
+        public CustomerProfileResponseBuilder role(UserRole role) {
             this.role = role;
             return this;
         }

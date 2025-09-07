@@ -8,8 +8,9 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
+// import java.util.UUID; // Replaced with Long
 
 /**
  * ProductVariant entity representing individual variants of a product.
@@ -35,7 +36,7 @@ import java.util.UUID;
 public class ProductVariant extends BaseEntity {
 
     @Column(name = "product_id", nullable = false)
-    private UUID productId;
+    private Long productId;
 
     @Column(name = "sku", nullable = false, length = 100)
     private String sku;
@@ -68,7 +69,7 @@ public class ProductVariant extends BaseEntity {
     private String attributes; // JSON string for additional attributes
 
     @Column(name = "image_id")
-    private UUID imageId;
+    private Long imageId;
 
     @Column(name = "is_default", nullable = false)
     private Boolean isDefault = false;
@@ -123,7 +124,7 @@ public class ProductVariant extends BaseEntity {
     }
     
     // Manual getter and setter methods to bypass Lombok issues
-    public UUID getTenantId() {
+    public Long getTenantId() {
         return tenantId;
     }
     
@@ -135,7 +136,7 @@ public class ProductVariant extends BaseEntity {
         this.stock = stock;
     }
     
-    public UUID getId() {
+    public Long getId() {
         return id;
     }
     
@@ -145,5 +146,81 @@ public class ProductVariant extends BaseEntity {
     
     public Boolean getIsDefault() {
         return isDefault;
+    }
+    
+    public void setStatus(VariantStatus status) {
+        this.status = status;
+    }
+    
+    public void setAttributes(String attributes) {
+        this.attributes = attributes;
+    }
+    
+    public void setDimensions(String dimensions) {
+        this.dimensions = dimensions;
+    }
+    
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+    
+    public void setSalePrice(BigDecimal salePrice) {
+        this.salePrice = salePrice;
+    }
+    
+    public void setWeight(BigDecimal weight) {
+        this.weight = weight;
+    }
+    
+    public void setSku(String sku) {
+        this.sku = sku;
+    }
+    
+    public void setBarcode(String barcode) {
+        this.barcode = barcode;
+    }
+    
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+    
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+    
+    public String getAttributes() {
+        return attributes;
+    }
+    
+    public void setProductId(Long productId) {
+        this.productId = productId;
+    }
+    
+    public BigDecimal getWeight() {
+        return weight;
+    }
+    
+    public String getDimensions() {
+        return dimensions;
+    }
+    
+    public BigDecimal getPrice() {
+        return price;
+    }
+    
+    public BigDecimal getSalePrice() {
+        return salePrice;
+    }
+    
+    public String getSku() {
+        return sku;
+    }
+    
+    public String getBarcode() {
+        return barcode;
+    }
+    
+    public Long getProductId() {
+        return productId;
     }
 }

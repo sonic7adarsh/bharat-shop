@@ -1,6 +1,6 @@
 package com.bharatshop.platform.integration;
 
-import com.bharatshop.platform.service.ProductService;
+import com.bharatshop.platform.service.PlatformProductService;
 import com.bharatshop.platform.service.ProductVariantService;
 import com.bharatshop.platform.service.OptionService;
 import com.bharatshop.platform.service.OptionValueService;
@@ -41,7 +41,7 @@ class ProductControllerIntegrationTest extends BaseIntegrationTest {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private ProductService productService;
+    private PlatformProductService platformProductService;
 
     @Autowired
     private ProductVariantService productVariantService;

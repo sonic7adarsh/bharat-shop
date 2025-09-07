@@ -1,6 +1,6 @@
 package com.bharatshop.storefront.dto;
 
-import com.bharatshop.storefront.entity.Cart;
+import com.bharatshop.shared.entity.Cart;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;

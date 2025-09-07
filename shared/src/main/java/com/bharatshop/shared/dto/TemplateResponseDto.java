@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
+// import java.util.UUID; // Replaced with Long
 
 /**
  * Response DTO for Template data.
@@ -18,7 +18,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class TemplateResponseDto {
     
-    private UUID id;
+    private Long id;
     private String name;
     private String config;
     private String description;
@@ -26,7 +26,7 @@ public class TemplateResponseDto {
     private String category;
     private Integer sortOrder;
     private Boolean isActive;
-    private UUID tenantId;
+    private Long tenantId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

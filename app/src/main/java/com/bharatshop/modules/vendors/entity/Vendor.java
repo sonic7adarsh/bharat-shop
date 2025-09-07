@@ -11,13 +11,13 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
+// import java.util.UUID; // Replaced with Long
 
 /**
  * Vendor entity representing business vendors on the platform.
  */
 @Entity(name = "AppVendor")
-@Table(name = "vendors")
+@Table(name = "app_vendors")
 @EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
@@ -27,8 +27,8 @@ import java.util.UUID;
 public class Vendor {
     
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     
     @Column(nullable = false)
     private String businessName;

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Map;
+// import java.util.UUID; // Replaced with Long
 
 /**
  * REST controller for customer analytics and dashboard operations.
@@ -46,7 +47,7 @@ public class CustomerAnalyticsController {
             
             log.info("Getting customer dashboard analytics for customer: {}, tenant: {}", customerId, tenantId);
             
-            CustomerAnalyticsDto analytics = customerAnalyticsService.getCustomerAnalytics(customerId, tenantId);
+            CustomerAnalyticsDto analytics = customerAnalyticsService.getCustomerAnalytics(customerId, tenantId.toString());
             
             return ResponseEntity.ok(
                 ApiResponse.success(analytics, "Customer analytics retrieved successfully")
@@ -75,7 +76,7 @@ public class CustomerAnalyticsController {
             
             log.info("Getting order analytics for customer: {}, tenant: {}", customerId, tenantId);
             
-            CustomerAnalyticsDto analytics = customerAnalyticsService.getCustomerAnalytics(customerId, tenantId);
+            CustomerAnalyticsDto analytics = customerAnalyticsService.getCustomerAnalytics(customerId, tenantId.toString());
             
             // Return only order-related metrics
             Map<String, Object> orderStatusBreakdown = Map.of(
@@ -122,7 +123,7 @@ public class CustomerAnalyticsController {
             
             log.info("Getting spending analytics for customer: {}, tenant: {}", customerId, tenantId);
             
-            CustomerAnalyticsDto analytics = customerAnalyticsService.getCustomerAnalytics(customerId, tenantId);
+            CustomerAnalyticsDto analytics = customerAnalyticsService.getCustomerAnalytics(customerId, tenantId.toString());
             
             // Return only spending-related metrics
             Map<String, Object> spendingStats = Map.of(
@@ -159,7 +160,7 @@ public class CustomerAnalyticsController {
             
             log.info("Getting recent orders for customer: {}, tenant: {}, limit: {}", customerId, tenantId, limit);
             
-            CustomerAnalyticsDto analytics = customerAnalyticsService.getCustomerAnalytics(customerId, tenantId);
+            CustomerAnalyticsDto analytics = customerAnalyticsService.getCustomerAnalytics(customerId, tenantId.toString());
             
             // Return recent orders (limited by the limit parameter)
             Map<String, Object> recentOrdersData = Map.of(
@@ -193,7 +194,7 @@ public class CustomerAnalyticsController {
             
             log.info("Getting behavior analytics for customer: {}, tenant: {}", customerId, tenantId);
             
-            CustomerAnalyticsDto analytics = customerAnalyticsService.getCustomerAnalytics(customerId, tenantId);
+            CustomerAnalyticsDto analytics = customerAnalyticsService.getCustomerAnalytics(customerId, tenantId.toString());
             
             // Return behavior-related metrics
             Map<String, Object> behaviorStats = Map.of(

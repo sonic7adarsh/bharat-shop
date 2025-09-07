@@ -7,6 +7,8 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -15,7 +17,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
+// import java.util.UUID; // Replaced with Long
 
 /**
  * Admin controller for managing reservations
@@ -24,11 +26,11 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/admin/reservations")
 @RequiredArgsConstructor
-@Slf4j
 @Tag(name = "Admin Reservations", description = "Admin endpoints for managing product reservations")
 @PreAuthorize("hasRole('ADMIN')")
 public class AdminReservationController {
 
+    private static final Logger log = LoggerFactory.getLogger(AdminReservationController.class);
     private final ReservationService reservationService;
 
     /**
@@ -37,7 +39,7 @@ public class AdminReservationController {
     @GetMapping
     @Operation(summary = "Get active reservations", description = "Retrieve active reservations for a tenant with pagination")
     public ResponseEntity<Page<Reservation>> getActiveReservations(
-            @Parameter(description = "Tenant ID") @RequestHeader("X-Tenant-ID") UUID tenantId,
+            @Parameter(description = "Tenant ID") @RequestHeader("X-Tenant-ID") Long tenantId,
             @Parameter(description = "Page number (0-based)") @RequestParam(defaultValue = "0") int page,
             @Parameter(description = "Page size") @RequestParam(defaultValue = "20") int size) {
         
@@ -60,7 +62,7 @@ public class AdminReservationController {
     @GetMapping("/stale")
     @Operation(summary = "Get stale reservations", description = "Retrieve reservations older than specified minutes")
     public ResponseEntity<List<Reservation>> getStaleReservations(
-            @Parameter(description = "Tenant ID") @RequestHeader("X-Tenant-ID") UUID tenantId,
+            @Parameter(description = "Tenant ID") @RequestHeader("X-Tenant-ID") Long tenantId,
             @Parameter(description = "Age threshold in minutes") @RequestParam(defaultValue = "60") int olderThanMinutes) {
         
         try {
@@ -88,7 +90,7 @@ public class AdminReservationController {
     @GetMapping("/stats")
     @Operation(summary = "Get reservation statistics", description = "Get statistics about reservations for a tenant")
     public ResponseEntity<ReservationStats> getReservationStats(
-            @Parameter(description = "Tenant ID") @RequestHeader("X-Tenant-ID") UUID tenantId) {
+            @Parameter(description = "Tenant ID") @RequestHeader("X-Tenant-ID") Long tenantId) {
         
         try {
             // Get active reservations count
@@ -130,7 +132,7 @@ public class AdminReservationController {
     @DeleteMapping("/{reservationId}")
     @Operation(summary = "Release reservation", description = "Manually release a specific reservation")
     public ResponseEntity<String> releaseReservation(
-            @Parameter(description = "Tenant ID") @RequestHeader("X-Tenant-ID") UUID tenantId,
+            @Parameter(description = "Tenant ID") @RequestHeader("X-Tenant-ID") Long tenantId,
             @Parameter(description = "Reservation ID") @PathVariable Long reservationId) {
         
         try {
@@ -151,7 +153,7 @@ public class AdminReservationController {
     @DeleteMapping("/stale")
     @Operation(summary = "Release stale reservations", description = "Manually release all stale reservations older than specified minutes")
     public ResponseEntity<String> releaseStaleReservations(
-            @Parameter(description = "Tenant ID") @RequestHeader("X-Tenant-ID") UUID tenantId,
+            @Parameter(description = "Tenant ID") @RequestHeader("X-Tenant-ID") Long tenantId,
             @Parameter(description = "Age threshold in minutes") @RequestParam(defaultValue = "60") int olderThanMinutes) {
         
         try {
@@ -185,7 +187,7 @@ public class AdminReservationController {
     @PostMapping("/cleanup")
     @Operation(summary = "Cleanup expired reservations", description = "Manually trigger cleanup of expired reservations")
     public ResponseEntity<String> cleanupExpiredReservations(
-            @Parameter(description = "Tenant ID") @RequestHeader("X-Tenant-ID") UUID tenantId) {
+            @Parameter(description = "Tenant ID") @RequestHeader("X-Tenant-ID") Long tenantId) {
         
         try {
             int releasedCount = reservationService.cleanupExpiredReservations();
@@ -205,8 +207,8 @@ public class AdminReservationController {
     @GetMapping("/stock/{variantId}")
     @Operation(summary = "Get available stock", description = "Get available stock for a product variant considering active reservations")
     public ResponseEntity<StockInfo> getAvailableStock(
-            @Parameter(description = "Tenant ID") @RequestHeader("X-Tenant-ID") UUID tenantId,
-            @Parameter(description = "Product Variant ID") @PathVariable UUID variantId) {
+            @Parameter(description = "Tenant ID") @RequestHeader("X-Tenant-ID") Long tenantId,
+            @Parameter(description = "Product Variant ID") @PathVariable Long variantId) {
         
         try {
             int availableStock = reservationService.getAvailableStock(tenantId, variantId);
@@ -232,7 +234,7 @@ public class AdminReservationController {
         private Long activeReservations;
         private Long staleReservations;
         private Long veryStaleReservations;
-        private UUID tenantId;
+        private Long tenantId;
 
         public static ReservationStatsBuilder builder() {
             return new ReservationStatsBuilder();
@@ -242,7 +244,7 @@ public class AdminReservationController {
             private Long activeReservations;
             private Long staleReservations;
             private Long veryStaleReservations;
-            private UUID tenantId;
+            private Long tenantId;
 
             public ReservationStatsBuilder activeReservations(Long activeReservations) {
                 this.activeReservations = activeReservations;
@@ -259,7 +261,7 @@ public class AdminReservationController {
                 return this;
             }
 
-            public ReservationStatsBuilder tenantId(UUID tenantId) {
+            public ReservationStatsBuilder tenantId(Long tenantId) {
                 this.tenantId = tenantId;
                 return this;
             }
@@ -278,27 +280,27 @@ public class AdminReservationController {
         public Long getActiveReservations() { return activeReservations; }
         public Long getStaleReservations() { return staleReservations; }
         public Long getVeryStaleReservations() { return veryStaleReservations; }
-        public UUID getTenantId() { return tenantId; }
+        public Long getTenantId() { return tenantId; }
     }
 
     /**
      * DTO for stock information
      */
     public static class StockInfo {
-        private UUID variantId;
+        private Long variantId;
         private Integer availableStock;
-        private UUID tenantId;
+        private Long tenantId;
 
         public static StockInfoBuilder builder() {
             return new StockInfoBuilder();
         }
 
         public static class StockInfoBuilder {
-            private UUID variantId;
+            private Long variantId;
             private Integer availableStock;
-            private UUID tenantId;
+            private Long tenantId;
 
-            public StockInfoBuilder variantId(UUID variantId) {
+            public StockInfoBuilder variantId(Long variantId) {
                 this.variantId = variantId;
                 return this;
             }
@@ -308,7 +310,7 @@ public class AdminReservationController {
                 return this;
             }
 
-            public StockInfoBuilder tenantId(UUID tenantId) {
+            public StockInfoBuilder tenantId(Long tenantId) {
                 this.tenantId = tenantId;
                 return this;
             }
@@ -323,8 +325,8 @@ public class AdminReservationController {
         }
 
         // Getters
-        public UUID getVariantId() { return variantId; }
+        public Long getVariantId() { return variantId; }
         public Integer getAvailableStock() { return availableStock; }
-        public UUID getTenantId() { return tenantId; }
+        public Long getTenantId() { return tenantId; }
     }
 }

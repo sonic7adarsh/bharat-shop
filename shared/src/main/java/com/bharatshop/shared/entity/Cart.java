@@ -10,6 +10,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.List;
+// import java.util.UUID; // Replaced with Long
 
 @Entity(name = "SharedCart")
 @Table(name = "carts", indexes = {
@@ -31,7 +32,7 @@ public class Cart {
     private Long customerId;
     
     @Column(nullable = false)
-    private Long tenantId;
+    private String tenantId;
     
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<CartItem> items;

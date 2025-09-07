@@ -4,6 +4,7 @@ import com.bharatshop.shared.entity.MediaFile;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -16,68 +17,86 @@ import java.util.Optional;
 public interface MediaFileRepository extends JpaRepository<MediaFile, Long> {
     
     // Find by tenant and not deleted
-    @Query("SELECT mf FROM MediaFile mf WHERE mf.tenantId = :tenantId AND mf.deletedAt IS NULL")
-    List<MediaFile> findByTenantIdAndNotDeleted(@Param("tenantId") Long tenantId);
+    List<MediaFile> findByTenantIdAndDeletedAtIsNull(Long tenantId);
     
-    @Query("SELECT mf FROM MediaFile mf WHERE mf.tenantId = :tenantId AND mf.deletedAt IS NULL")
-    Page<MediaFile> findByTenantIdAndNotDeleted(@Param("tenantId") Long tenantId, Pageable pageable);
+    Page<MediaFile> findByTenantIdAndDeletedAtIsNull(Long tenantId, Pageable pageable);
     
     // Find by tenant, type and not deleted
-    @Query("SELECT mf FROM MediaFile mf WHERE mf.tenantId = :tenantId AND mf.type = :type AND mf.deletedAt IS NULL")
-    List<MediaFile> findByTenantIdAndTypeAndNotDeleted(@Param("tenantId") Long tenantId, @Param("type") MediaFile.MediaType type);
+    List<MediaFile> findByTenantIdAndTypeAndDeletedAtIsNull(Long tenantId, MediaFile.MediaType type);
     
-    @Query("SELECT mf FROM MediaFile mf WHERE mf.tenantId = :tenantId AND mf.type = :type AND mf.deletedAt IS NULL")
-    Page<MediaFile> findByTenantIdAndTypeAndNotDeleted(@Param("tenantId") Long tenantId, @Param("type") MediaFile.MediaType type, Pageable pageable);
+    Page<MediaFile> findByTenantIdAndTypeAndDeletedAtIsNull(Long tenantId, MediaFile.MediaType type, Pageable pageable);
     
     // Find by tenant, status and not deleted
-    @Query("SELECT mf FROM MediaFile mf WHERE mf.tenantId = :tenantId AND mf.status = :status AND mf.deletedAt IS NULL")
-    List<MediaFile> findByTenantIdAndStatusAndNotDeleted(@Param("tenantId") Long tenantId, @Param("status") MediaFile.MediaStatus status);
+    List<MediaFile> findByTenantIdAndStatusAndDeletedAtIsNull(Long tenantId, MediaFile.MediaStatus status);
     
     // Find by key and not deleted
-    @Query("SELECT mf FROM MediaFile mf WHERE mf.key = :key AND mf.deletedAt IS NULL")
-    Optional<MediaFile> findByKeyAndNotDeleted(@Param("key") String key);
+    Optional<MediaFile> findByKeyAndDeletedAtIsNull(String key);
     
     // Find by tenant and key and not deleted
-    @Query("SELECT mf FROM MediaFile mf WHERE mf.tenantId = :tenantId AND mf.key = :key AND mf.deletedAt IS NULL")
-    Optional<MediaFile> findByTenantIdAndKeyAndNotDeleted(@Param("tenantId") Long tenantId, @Param("key") String key);
+    Optional<MediaFile> findByTenantIdAndKeyAndDeletedAtIsNull(Long tenantId, String key);
     
     // Find by id and tenant and not deleted
-    @Query("SELECT mf FROM MediaFile mf WHERE mf.id = :id AND mf.tenantId = :tenantId AND mf.deletedAt IS NULL")
-    Optional<MediaFile> findByIdAndTenantIdAndNotDeleted(@Param("id") Long id, @Param("tenantId") Long tenantId);
+    Optional<MediaFile> findByIdAndTenantIdAndDeletedAtIsNull(Long id, Long tenantId);
     
     // Count by tenant and not deleted
-    @Query("SELECT COUNT(mf) FROM MediaFile mf WHERE mf.tenantId = :tenantId AND mf.deletedAt IS NULL")
-    long countByTenantIdAndNotDeleted(@Param("tenantId") Long tenantId);
+    long countByTenantIdAndDeletedAtIsNull(Long tenantId);
     
     // Count by tenant, type and not deleted
-    @Query("SELECT COUNT(mf) FROM MediaFile mf WHERE mf.tenantId = :tenantId AND mf.type = :type AND mf.deletedAt IS NULL")
-    long countByTenantIdAndTypeAndNotDeleted(@Param("tenantId") Long tenantId, @Param("type") MediaFile.MediaType type);
+    long countByTenantIdAndTypeAndDeletedAtIsNull(Long tenantId, MediaFile.MediaType type);
+    
+    // Alias methods for service compatibility
+    default Optional<MediaFile> findByIdAndTenantIdAndNotDeleted(Long id, Long tenantId) {
+        return findByIdAndTenantIdAndDeletedAtIsNull(id, tenantId);
+    }
+    
+    default Page<MediaFile> findByTenantIdAndNotDeleted(Long tenantId, Pageable pageable) {
+        return findByTenantIdAndDeletedAtIsNull(tenantId, pageable);
+    }
+    
+    default Page<MediaFile> findByTenantIdAndTypeAndNotDeleted(Long tenantId, MediaFile.MediaType type, Pageable pageable) {
+        return findByTenantIdAndTypeAndDeletedAtIsNull(tenantId, type, pageable);
+    }
+    
+    default long countByTenantIdAndNotDeleted(Long tenantId) {
+        return countByTenantIdAndDeletedAtIsNull(tenantId);
+    }
+    
+    default long countByTenantIdAndTypeAndNotDeleted(Long tenantId, MediaFile.MediaType type) {
+        return countByTenantIdAndTypeAndDeletedAtIsNull(tenantId, type);
+    }
+    
+    default List<MediaFile> findPendingUploadsOlderThan(LocalDateTime beforeDate) {
+        return findByStatusAndCreatedAtBefore(MediaFile.MediaStatus.PENDING, beforeDate);
+    }
+    
+    default Optional<MediaFile> findByKeyAndNotDeleted(String key) {
+        return findByKeyAndDeletedAtIsNull(key);
+    }
     
     // Calculate total size by tenant and not deleted
-    @Query("SELECT COALESCE(SUM(mf.size), 0) FROM MediaFile mf WHERE mf.tenantId = :tenantId AND mf.deletedAt IS NULL")
-    long calculateTotalSizeByTenantIdAndNotDeleted(@Param("tenantId") Long tenantId);
+    @Query(value = "SELECT COALESCE(SUM(size), 0) FROM media_file WHERE tenant_id = ?1 AND deleted_at IS NULL", nativeQuery = true)
+    long calculateTotalSizeByTenantIdAndNotDeleted(Long tenantId);
     
     // Find files older than specified date for cleanup
-    @Query("SELECT mf FROM MediaFile mf WHERE mf.status = :status AND mf.createdAt < :beforeDate")
-    List<MediaFile> findByStatusAndCreatedAtBefore(@Param("status") MediaFile.MediaStatus status, @Param("beforeDate") LocalDateTime beforeDate);
-    
-    // Find pending uploads older than specified time for cleanup
-    @Query("SELECT mf FROM MediaFile mf WHERE mf.status = 'PENDING' AND mf.createdAt < :beforeDate")
-    List<MediaFile> findPendingUploadsOlderThan(@Param("beforeDate") LocalDateTime beforeDate);
+    List<MediaFile> findByStatusAndCreatedAtBefore(MediaFile.MediaStatus status, LocalDateTime beforeDate);
     
     // Soft delete by setting deletedAt
-    @Query("UPDATE MediaFile mf SET mf.deletedAt = :deletedAt WHERE mf.id = :id AND mf.tenantId = :tenantId")
-    void softDeleteByIdAndTenantId(@Param("id") Long id, @Param("tenantId") Long tenantId, @Param("deletedAt") LocalDateTime deletedAt);
+    @Modifying
+    @Query(value = "UPDATE media_file SET deleted_at = ?3 WHERE id = ?1 AND tenant_id = ?2", nativeQuery = true)
+    void softDeleteByIdAndTenantId(Long id, Long tenantId, LocalDateTime deletedAt);
     
     // Soft delete by key
-    @Query("UPDATE MediaFile mf SET mf.deletedAt = :deletedAt WHERE mf.key = :key AND mf.tenantId = :tenantId")
-    void softDeleteByKeyAndTenantId(@Param("key") String key, @Param("tenantId") Long tenantId, @Param("deletedAt") LocalDateTime deletedAt);
+    @Modifying
+    @Query(value = "UPDATE media_file SET deleted_at = ?3 WHERE key = ?1 AND tenant_id = ?2", nativeQuery = true)
+    void softDeleteByKeyAndTenantId(String key, Long tenantId, LocalDateTime deletedAt);
     
     // Update status
-    @Query("UPDATE MediaFile mf SET mf.status = :status, mf.updatedAt = :updatedAt WHERE mf.id = :id")
-    void updateStatus(@Param("id") Long id, @Param("status") MediaFile.MediaStatus status, @Param("updatedAt") LocalDateTime updatedAt);
+    @Modifying
+    @Query(value = "UPDATE media_file SET status = ?2, updated_at = ?3 WHERE id = ?1", nativeQuery = true)
+    void updateStatus(Long id, MediaFile.MediaStatus status, LocalDateTime updatedAt);
     
     // Update URL after successful upload
-    @Query("UPDATE MediaFile mf SET mf.url = :url, mf.status = :status, mf.updatedAt = :updatedAt WHERE mf.key = :key")
-    void updateUrlAndStatusByKey(@Param("key") String key, @Param("url") String url, @Param("status") MediaFile.MediaStatus status, @Param("updatedAt") LocalDateTime updatedAt);
+    @Modifying
+    @Query(value = "UPDATE media_file SET url = ?2, status = ?3, updated_at = ?4 WHERE key = ?1", nativeQuery = true)
+    void updateUrlAndStatusByKey(String key, String url, MediaFile.MediaStatus status, LocalDateTime updatedAt);
 }

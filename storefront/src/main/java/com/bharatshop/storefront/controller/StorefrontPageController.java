@@ -14,7 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
-import java.util.UUID;
+// import java.util.UUID; // Replaced with Long
 
 /**
  * Public storefront API controller for CMS pages.
@@ -57,9 +57,9 @@ public class StorefrontPageController {
             // If tenant ID is provided, use tenant-aware lookup
             if (tenantIdHeader != null && !tenantIdHeader.trim().isEmpty()) {
                 try {
-                    UUID tenantId = UUID.fromString(tenantIdHeader.trim());
-                    page = pageService.getPageBySlug(slug, tenantId);
-                } catch (IllegalArgumentException e) {
+                    Long tenantId = Long.parseLong(tenantIdHeader.trim());
+                    page = pageService.getPageBySlug(slug, tenantId.toString());
+                } catch (NumberFormatException e) {
                     log.warn("Invalid tenant ID format: {}", tenantIdHeader);
                     // Fallback to non-tenant lookup
                     page = pageService.getPageBySlug(slug);
@@ -102,9 +102,9 @@ public class StorefrontPageController {
             // If tenant ID is provided, use tenant-aware lookup
             if (tenantIdHeader != null && !tenantIdHeader.trim().isEmpty()) {
                 try {
-                    UUID tenantId = UUID.fromString(tenantIdHeader.trim());
-                    pages = pageService.getAllPages(tenantId);
-                } catch (IllegalArgumentException e) {
+                    Long tenantId = Long.parseLong(tenantIdHeader.trim());
+                    pages = pageService.getAllPages(tenantId.toString());
+                } catch (NumberFormatException e) {
                     log.warn("Invalid tenant ID format: {}", tenantIdHeader);
                     return ResponseEntity.badRequest()
                             .body(ApiResponse.error("Invalid tenant ID format"));
@@ -145,10 +145,10 @@ public class StorefrontPageController {
             // Set tenant context if provided
             if (tenantIdHeader != null && !tenantIdHeader.trim().isEmpty()) {
                 try {
-                    UUID tenantId = UUID.fromString(tenantIdHeader.trim());
+                    Long tenantId = Long.parseLong(tenantIdHeader.trim());
                     // Note: You might need to set tenant context here if using TenantContext
                     // TenantContext.setCurrentTenant(tenantId);
-                } catch (IllegalArgumentException e) {
+                } catch (NumberFormatException e) {
                     log.warn("Invalid tenant ID format: {}", tenantIdHeader);
                     return ResponseEntity.badRequest()
                             .body(ApiResponse.error("Invalid tenant ID format"));

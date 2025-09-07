@@ -1,25 +1,23 @@
 package com.bharatshop.platform.service;
 
 import com.bharatshop.platform.dto.auth.*;
-import com.bharatshop.platform.entity.PlatformUser;
+import com.bharatshop.shared.entity.User;
 import com.bharatshop.platform.repository.PlatformUserRepository;
 import com.bharatshop.shared.service.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import java.util.HashSet;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -47,10 +45,13 @@ public class PlatformAuthService implements UserDetailsService {
         }
         
         // Create new vendor user
-        PlatformUser user = PlatformUser.builder()
+        Set<User.UserRole> roles = new HashSet<>();
+        roles.add(User.UserRole.VENDOR);
+
+        User user = User.builder()
                 .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .roles(Set.of(PlatformUser.PlatformRole.VENDOR))
+                .passwordHash(passwordEncoder.encode(request.getPassword()))
+                .roles(roles)
                 .enabled(true)
                 .accountNonExpired(true)
                 .accountNonLocked(true)
@@ -84,11 +85,11 @@ public class PlatformAuthService implements UserDetailsService {
         log.info("Login attempt for email: {}", request.getEmail());
         
         // Get user details
-        PlatformUser user = userRepository.findByEmail(request.getEmail())
+        User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         
         // Authenticate user manually
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
             throw new BadCredentialsException("Invalid credentials");
         }
         
@@ -131,7 +132,7 @@ public class PlatformAuthService implements UserDetailsService {
                 String newAccessToken = jwtService.generateAccessToken(userDetails);
                 String newRefreshToken = jwtService.generateRefreshToken(userDetails);
                 
-                PlatformUser user = userRepository.findByEmail(userEmail)
+                User user = userRepository.findByEmail(userEmail)
                         .orElseThrow(() -> new UsernameNotFoundException("User not found"));
                 
                 log.info("Token refreshed successfully for user: {}", userEmail);
@@ -171,7 +172,7 @@ public class PlatformAuthService implements UserDetailsService {
     public AuthResponse.UserInfo getCurrentUser(String email) {
         log.info("Getting current user info for: {}", email);
         
-        PlatformUser user = userRepository.findByEmail(email)
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         
         return AuthResponse.UserInfo.builder()
@@ -185,12 +186,12 @@ public class PlatformAuthService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        PlatformUser user = userRepository.findByEmail(email)
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
         
-        return User.builder()
+        return org.springframework.security.core.userdetails.User.builder()
                 .username(user.getEmail())
-                .password(user.getPassword())
+                .password(user.getPasswordHash())
                 .authorities(user.getRoles().stream()
                         .map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
                         .collect(Collectors.toList()))

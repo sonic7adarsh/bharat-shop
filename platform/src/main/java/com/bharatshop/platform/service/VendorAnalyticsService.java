@@ -3,7 +3,7 @@ package com.bharatshop.platform.service;
 import com.bharatshop.shared.dto.VendorAnalyticsDto;
 import com.bharatshop.shared.entity.Product;
 import com.bharatshop.shared.repository.ProductRepository;
-import com.bharatshop.shared.entity.Order;
+import com.bharatshop.shared.entity.Orders;
 import com.bharatshop.shared.repository.OrderRepository;
 import com.bharatshop.shared.repository.OrderItemRepository;
 import lombok.RequiredArgsConstructor;
@@ -45,11 +45,11 @@ public class VendorAnalyticsService {
                 .totalInactiveProducts(getTotalInactiveProducts(tenantId))
                 .ordersByStatus(getOrdersByStatus(tenantId, fromDate, toDate))
                 .totalOrders(getTotalOrders(tenantId, fromDate, toDate))
-                .pendingOrders(getOrdersByStatus(tenantId, Order.OrderStatus.PENDING, fromDate, toDate))
-                .processingOrders(getOrdersByStatus(tenantId, Order.OrderStatus.CONFIRMED, fromDate, toDate))
-                .shippedOrders(getOrdersByStatus(tenantId, Order.OrderStatus.SHIPPED, fromDate, toDate))
-                .deliveredOrders(getOrdersByStatus(tenantId, Order.OrderStatus.DELIVERED, fromDate, toDate))
-                .cancelledOrders(getOrdersByStatus(tenantId, Order.OrderStatus.CANCELLED, fromDate, toDate))
+                .pendingOrders(getOrdersByStatus(tenantId, Orders.OrderStatus.PENDING, fromDate, toDate))
+                .processingOrders(getOrdersByStatus(tenantId, Orders.OrderStatus.CONFIRMED, fromDate, toDate))
+                .shippedOrders(getOrdersByStatus(tenantId, Orders.OrderStatus.SHIPPED, fromDate, toDate))
+                .deliveredOrders(getOrdersByStatus(tenantId, Orders.OrderStatus.DELIVERED, fromDate, toDate))
+                .cancelledOrders(getOrdersByStatus(tenantId, Orders.OrderStatus.CANCELLED, fromDate, toDate))
                 .totalRevenue(getTotalRevenue(tenantId, fromDate, toDate))
                 .monthlyRevenue(getMonthlyRevenue(tenantId))
                 .previousMonthRevenue(getPreviousMonthRevenue(tenantId))
@@ -71,14 +71,14 @@ public class VendorAnalyticsService {
      * Get total products count for tenant.
      */
     private Long getTotalProducts(Long tenantId) {
-        return productRepository.countByTenantId(UUID.fromString(tenantId.toString()));
+        return productRepository.countByTenantId(tenantId);
     }
     
     /**
      * Get total active products count for tenant.
      */
     private Long getTotalActiveProducts(Long tenantId) {
-        return productRepository.countByTenantIdAndStatus(UUID.fromString(tenantId.toString()), Product.ProductStatus.ACTIVE);
+        return productRepository.countByTenantIdAndStatus(tenantId, Product.ProductStatus.ACTIVE);
     }
     
     /**
@@ -95,7 +95,7 @@ public class VendorAnalyticsService {
      */
     private Map<String, Long> getOrdersByStatus(Long tenantId, LocalDateTime fromDate, LocalDateTime toDate) {
         Map<String, Long> ordersByStatus = new HashMap<>();
-        for (Order.OrderStatus status : Order.OrderStatus.values()) {
+        for (Orders.OrderStatus status : Orders.OrderStatus.values()) {
             ordersByStatus.put(status.name(), orderRepository.countByTenantIdAndStatus(tenantId, status));
         }
         return ordersByStatus;
@@ -111,7 +111,7 @@ public class VendorAnalyticsService {
     /**
      * Get orders count by specific status.
      */
-    private Long getOrdersByStatus(Long tenantId, Order.OrderStatus status, LocalDateTime fromDate, LocalDateTime toDate) {
+    private Long getOrdersByStatus(Long tenantId, Orders.OrderStatus status, LocalDateTime fromDate, LocalDateTime toDate) {
         return orderRepository.countByTenantIdAndStatus(tenantId, status);
     }
     
@@ -215,7 +215,7 @@ public class VendorAnalyticsService {
      */
     private VendorAnalyticsDto.TopProductData mapToTopProductData(Object[] result) {
         return VendorAnalyticsDto.TopProductData.builder()
-                .productId((UUID) result[0])
+                .productId((Long) result[0])
                 .productName((String) result[1])
                 .productSku((String) result[2])
                 .revenue((BigDecimal) result[3])

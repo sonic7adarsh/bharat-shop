@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.UUID;
+// import java.util.UUID; // Replaced with Long
 
 @Data
 @Builder
@@ -15,7 +15,7 @@ import java.util.UUID;
 public class SubscriptionRequestDto {
 
     @NotNull(message = "Plan ID is required")
-    private UUID planId;
+    private Long planId;
 
     private Boolean autoRenew = true;
     
@@ -28,7 +28,7 @@ public class SubscriptionRequestDto {
     private String cancellationReason;
     
     // Manual getters to fix compilation issues
-    public UUID getPlanId() {
+    public Long getPlanId() {
         return this.planId;
     }
     

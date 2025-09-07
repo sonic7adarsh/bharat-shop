@@ -15,7 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.UUID;
+// import java.util.UUID; // Replaced with Long
 
 @RestController
 @RequestMapping("/api/v1/platform/tenants")
@@ -36,7 +36,7 @@ public class TenantController {
     @GetMapping("/{id}")
     @Operation(summary = "Get tenant by ID", description = "Retrieve a specific tenant by its ID")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<TenantResponseDto>> getTenantById(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<TenantResponseDto>> getTenantById(@PathVariable Long id) {
         TenantResponseDto tenant = tenantService.getTenantById(id);
         return ResponseEntity.ok(ApiResponse.success(tenant));
     }
@@ -54,7 +54,7 @@ public class TenantController {
     @Operation(summary = "Update tenant", description = "Update an existing tenant")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<TenantResponseDto>> updateTenant(
-            @PathVariable UUID id, 
+            @PathVariable Long id, 
             @Valid @RequestBody TenantCreateDto updateDto) {
         TenantResponseDto tenant = tenantService.updateTenant(id, updateDto);
         return ResponseEntity.ok(ApiResponse.success(tenant, "Tenant updated successfully"));
@@ -63,7 +63,7 @@ public class TenantController {
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete tenant", description = "Delete a tenant from the platform")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<Void>> deleteTenant(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<Void>> deleteTenant(@PathVariable Long id) {
         tenantService.deleteTenant(id);
         return ResponseEntity.ok(ApiResponse.success(null, "Tenant deleted successfully"));
     }

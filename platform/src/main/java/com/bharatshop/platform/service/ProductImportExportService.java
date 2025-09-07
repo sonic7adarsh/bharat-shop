@@ -2,6 +2,7 @@ package com.bharatshop.platform.service;
 
 import com.bharatshop.shared.entity.Product;
 import com.bharatshop.shared.repository.ProductRepository;
+import com.bharatshop.platform.service.PlatformProductService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
 public class ProductImportExportService {
 
     private final ProductRepository productRepository;
-    private final ProductService productService;
+    private final PlatformProductService platformProductService;
     private final ObjectMapper objectMapper;
 
     private static final String CSV_HEADER = "name,slug,description,price,stock,status,attributes";
@@ -33,7 +34,7 @@ public class ProductImportExportService {
     /**
      * Export products to CSV format
      */
-    public String exportProductsToCSV(UUID tenantId) {
+    public String exportProductsToCSV(Long tenantId) {
         List<Product> products = productRepository.findByTenantIdAndDeletedAtIsNull(tenantId);
         
         StringBuilder csvContent = new StringBuilder();
@@ -49,7 +50,7 @@ public class ProductImportExportService {
     /**
      * Export products to CSV file as byte array
      */
-    public byte[] exportProductsToCSVFile(UUID tenantId) {
+    public byte[] exportProductsToCSVFile(Long tenantId) {
         String csvContent = exportProductsToCSV(tenantId);
         return csvContent.getBytes(StandardCharsets.UTF_8);
     }
@@ -57,7 +58,7 @@ public class ProductImportExportService {
     /**
      * Import products from CSV file
      */
-    public ImportResult importProductsFromCSV(MultipartFile file, UUID tenantId) {
+    public ImportResult importProductsFromCSV(MultipartFile file, Long tenantId) {
         ImportResult result = new ImportResult();
         
         try (BufferedReader reader = new BufferedReader(
@@ -81,7 +82,7 @@ public class ProductImportExportService {
                 
                 try {
                     Product product = csvRowToProduct(line, tenantId);
-                    Product savedProduct = productService.createProduct(product, tenantId);
+                    Product savedProduct = platformProductService.createProduct(product, tenantId);
                     result.addSuccess(savedProduct.getName());
                 } catch (Exception e) {
                     result.addError("Line " + lineNumber + ": " + e.getMessage());
@@ -100,7 +101,7 @@ public class ProductImportExportService {
     /**
      * Import products from CSV string content
      */
-    public ImportResult importProductsFromCSVContent(String csvContent, UUID tenantId) {
+    public ImportResult importProductsFromCSVContent(String csvContent, Long tenantId) {
         ImportResult result = new ImportResult();
         
         String[] lines = csvContent.split("\n");
@@ -119,7 +120,7 @@ public class ProductImportExportService {
             
             try {
                 Product product = csvRowToProduct(line, tenantId);
-                Product savedProduct = productService.createProduct(product, tenantId);
+                Product savedProduct = platformProductService.createProduct(product, tenantId);
                 result.addSuccess(savedProduct.getName());
             } catch (Exception e) {
                 result.addError("Line " + (i + 1) + ": " + e.getMessage());
@@ -166,7 +167,7 @@ public class ProductImportExportService {
         return row.toString();
     }
 
-    private Product csvRowToProduct(String csvRow, UUID tenantId) {
+    private Product csvRowToProduct(String csvRow, Long tenantId) {
         String[] values = parseCsvRow(csvRow);
         
         if (values.length < 7) {

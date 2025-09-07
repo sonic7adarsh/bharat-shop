@@ -21,8 +21,10 @@ public interface CartRepository extends JpaRepository<Cart, Long> {
     /**
      * Find cart with items by customer ID and tenant ID
      */
-    @Query("SELECT c FROM SharedCart c LEFT JOIN FETCH c.items ci LEFT JOIN FETCH ci.product " +
-           "WHERE c.customerId = :customerId AND c.tenantId = :tenantId")
+    @Query(value = "SELECT c.* FROM carts c " +
+           "LEFT JOIN cart_items ci ON c.id = ci.cart_id " +
+           "LEFT JOIN products p ON ci.product_id = p.id " +
+           "WHERE c.customer_id = :customerId AND c.tenant_id = :tenantId", nativeQuery = true)
     Optional<Cart> findByCustomerIdAndTenantIdWithItems(@Param("customerId") Long customerId, 
                                                         @Param("tenantId") Long tenantId);
     
@@ -34,48 +36,49 @@ public interface CartRepository extends JpaRepository<Cart, Long> {
     /**
      * Find carts by tenant ID with pagination
      */
-    @Query("SELECT c FROM SharedCart c WHERE c.tenantId = :tenantId ORDER BY c.updatedAt DESC")
+    @Query(value = "SELECT * FROM carts WHERE tenant_id = :tenantId ORDER BY updated_at DESC", nativeQuery = true)
     List<Cart> findByTenantIdOrderByUpdatedAtDesc(@Param("tenantId") Long tenantId);
     
     /**
      * Find abandoned carts (not updated for specified days)
      */
-    @Query("SELECT c FROM SharedCart c WHERE c.tenantId = :tenantId " +
-           "AND c.updatedAt < :cutoffDate " +
-           "AND SIZE(c.items) > 0")
+    @Query(value = "SELECT c.* FROM carts c " +
+           "WHERE c.tenant_id = :tenantId " +
+           "AND c.updated_at < :cutoffDate " +
+           "AND EXISTS (SELECT 1 FROM cart_items ci WHERE ci.cart_id = c.id)", nativeQuery = true)
     List<Cart> findAbandonedCarts(@Param("tenantId") Long tenantId, 
                                   @Param("cutoffDate") LocalDateTime cutoffDate);
     
     /**
      * Count total items in cart
      */
-    @Query("SELECT COALESCE(SUM(ci.quantity), 0) FROM SharedCart c " +
-           "JOIN c.items ci " +
-           "WHERE c.customerId = :customerId AND c.tenantId = :tenantId")
+    @Query(value = "SELECT COALESCE(SUM(ci.quantity), 0) FROM carts c " +
+           "JOIN cart_items ci ON c.id = ci.cart_id " +
+           "WHERE c.customer_id = :customerId AND c.tenant_id = :tenantId", nativeQuery = true)
     Integer countItemsInCart(@Param("customerId") Long customerId, 
                             @Param("tenantId") Long tenantId);
     
     /**
      * Check if cart exists and is not empty
      */
-    @Query("SELECT CASE WHEN COUNT(c) > 0 THEN true ELSE false END FROM SharedCart c " +
-           "WHERE c.customerId = :customerId AND c.tenantId = :tenantId " +
-           "AND SIZE(c.items) > 0")
+    @Query(value = "SELECT CASE WHEN COUNT(c.id) > 0 THEN true ELSE false END FROM carts c " +
+           "WHERE c.customer_id = :customerId AND c.tenant_id = :tenantId " +
+           "AND EXISTS (SELECT 1 FROM cart_items ci WHERE ci.cart_id = c.id)", nativeQuery = true)
     boolean existsNonEmptyCartByCustomerIdAndTenantId(@Param("customerId") Long customerId, 
                                                      @Param("tenantId") Long tenantId);
     
     /**
      * Delete empty carts for a tenant
      */
-    @Query("DELETE FROM SharedCart c WHERE c.tenantId = :tenantId AND SIZE(c.items) = 0")
+    @Query(value = "DELETE FROM carts WHERE tenant_id = :tenantId AND id NOT IN (SELECT DISTINCT cart_id FROM cart_items WHERE cart_id IS NOT NULL)", nativeQuery = true)
     void deleteEmptyCartsByTenantId(@Param("tenantId") Long tenantId);
     
     /**
      * Find carts created within date range
      */
-    @Query("SELECT c FROM SharedCart c WHERE c.tenantId = :tenantId " +
-           "AND c.createdAt BETWEEN :startDate AND :endDate " +
-           "ORDER BY c.createdAt DESC")
+    @Query(value = "SELECT * FROM carts WHERE tenant_id = :tenantId " +
+           "AND created_at BETWEEN :startDate AND :endDate " +
+           "ORDER BY created_at DESC", nativeQuery = true)
     List<Cart> findCartsByTenantIdAndDateRange(@Param("tenantId") Long tenantId,
                                               @Param("startDate") LocalDateTime startDate,
                                               @Param("endDate") LocalDateTime endDate);
@@ -83,9 +86,9 @@ public interface CartRepository extends JpaRepository<Cart, Long> {
     /**
      * Get cart statistics for a tenant
      */
-    @Query("SELECT COUNT(c), " +
-           "COUNT(CASE WHEN SIZE(c.items) > 0 THEN 1 END), " +
-           "AVG(SIZE(c.items)) " +
-           "FROM SharedCart c WHERE c.tenantId = :tenantId")
+    @Query(value = "SELECT COUNT(c.id), " +
+           "COUNT(CASE WHEN EXISTS(SELECT 1 FROM cart_items ci WHERE ci.cart_id = c.id) THEN 1 END), " +
+           "AVG((SELECT COUNT(*) FROM cart_items ci WHERE ci.cart_id = c.id)) " +
+           "FROM carts c WHERE c.tenant_id = :tenantId", nativeQuery = true)
     Object[] getCartStatsByTenantId(@Param("tenantId") Long tenantId);
 }

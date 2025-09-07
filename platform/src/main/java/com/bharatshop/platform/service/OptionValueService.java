@@ -5,7 +5,8 @@ import com.bharatshop.shared.entity.OptionValue;
 import com.bharatshop.shared.mapper.OptionValueMapper;
 import com.bharatshop.shared.repository.OptionValueRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -19,45 +20,45 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
-@Transactional
 public class OptionValueService {
+
+    private static final Logger log = LoggerFactory.getLogger(OptionValueService.class);
 
     private final OptionValueRepository optionValueRepository;
     private final OptionValueMapper optionValueMapper;
 
     @Transactional(readOnly = true)
-    public List<OptionValueDto> getOptionValuesByOption(UUID optionId, UUID tenantId) {
+    public List<OptionValueDto> getOptionValuesByOption(Long optionId, Long tenantId) {
         List<OptionValue> optionValues = optionValueRepository.findActiveByOptionIdAndTenantId(optionId, tenantId);
         return optionValueMapper.toDtoList(optionValues);
     }
 
     @Transactional(readOnly = true)
-    public Page<OptionValueDto> getOptionValuesByOption(UUID optionId, UUID tenantId, Pageable pageable) {
+    public Page<OptionValueDto> getOptionValuesByOption(Long optionId, Long tenantId, Pageable pageable) {
         Page<OptionValue> optionValues = optionValueRepository.findActiveByOptionIdAndTenantId(optionId, tenantId, pageable);
         return optionValues.map(optionValueMapper::toDto);
     }
 
     @Transactional(readOnly = true)
-    public Optional<OptionValueDto> getOptionValueById(UUID id, UUID tenantId) {
+    public Optional<OptionValueDto> getOptionValueById(Long id, Long tenantId) {
         return optionValueRepository.findActiveByIdAndTenantId(id, tenantId)
                 .map(optionValueMapper::toDto);
     }
 
     @Transactional(readOnly = true)
-    public Optional<OptionValueDto> getOptionValueByValue(UUID optionId, String value, UUID tenantId) {
+    public Optional<OptionValueDto> getOptionValueByValue(Long optionId, String value, Long tenantId) {
         return optionValueRepository.findActiveByOptionIdAndValueAndTenantId(optionId, value, tenantId)
                 .map(optionValueMapper::toDto);
     }
 
     @Transactional(readOnly = true)
-    public List<OptionValueDto> getOptionValuesByIds(List<UUID> ids, UUID tenantId) {
+    public List<OptionValueDto> getOptionValuesByIds(List<Long> ids, Long tenantId) {
         List<OptionValue> optionValues = optionValueRepository.findActiveByIdsAndTenantId(ids, tenantId);
         return optionValueMapper.toDtoList(optionValues);
     }
 
     @Transactional(readOnly = true)
-    public Page<OptionValueDto> searchOptionValues(UUID optionId, String keyword, UUID tenantId, Pageable pageable) {
+    public Page<OptionValueDto> searchOptionValues(Long optionId, String keyword, Long tenantId, Pageable pageable) {
         if (!StringUtils.hasText(keyword)) {
             return getOptionValuesByOption(optionId, tenantId, pageable);
         }
@@ -65,7 +66,7 @@ public class OptionValueService {
         return optionValues.map(optionValueMapper::toDto);
     }
 
-    public OptionValueDto createOptionValue(OptionValueDto optionValueDto, UUID tenantId) {
+    public OptionValueDto createOptionValue(OptionValueDto optionValueDto, Long tenantId) {
         validateOptionValue(optionValueDto);
         
         // Check if option value already exists for this option
@@ -92,7 +93,7 @@ public class OptionValueService {
         return optionValueMapper.toDto(savedOptionValue);
     }
 
-    public OptionValueDto updateOptionValue(UUID id, OptionValueDto optionValueDto, UUID tenantId) {
+    public OptionValueDto updateOptionValue(Long id, OptionValueDto optionValueDto, Long tenantId) {
         OptionValue existingOptionValue = optionValueRepository.findActiveByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new RuntimeException("Option value not found with id: " + id));
 
@@ -112,7 +113,7 @@ public class OptionValueService {
         return optionValueMapper.toDto(savedOptionValue);
     }
 
-    public void deleteOptionValue(UUID id, UUID tenantId) {
+    public void deleteOptionValue(Long id, Long tenantId) {
         OptionValue optionValue = optionValueRepository.findActiveByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new RuntimeException("Option value not found with id: " + id));
         
@@ -123,12 +124,12 @@ public class OptionValueService {
         optionValueRepository.save(optionValue);
     }
 
-    public void deleteOptionValuesByOption(UUID optionId, UUID tenantId) {
+    public void deleteOptionValuesByOption(Long optionId, Long tenantId) {
         log.info("Soft deleting all option values for option: {} and tenant: {}", optionId, tenantId);
         optionValueRepository.softDeleteByOptionIdAndTenantId(optionId, tenantId);
     }
 
-    public OptionValueDto updateOptionValueStatus(UUID id, boolean isActive, UUID tenantId) {
+    public OptionValueDto updateOptionValueStatus(Long id, boolean isActive, Long tenantId) {
         OptionValue optionValue = optionValueRepository.findActiveByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new RuntimeException("Option value not found with id: " + id));
         
@@ -141,12 +142,12 @@ public class OptionValueService {
     }
 
     @Transactional(readOnly = true)
-    public long getOptionValueCount(UUID optionId, UUID tenantId) {
+    public long getOptionValueCount(Long optionId, Long tenantId) {
         return optionValueRepository.countActiveByOptionIdAndTenantId(optionId, tenantId);
     }
 
     @Transactional(readOnly = true)
-    public long getTotalOptionValueCount(UUID tenantId) {
+    public long getTotalOptionValueCount(Long tenantId) {
         return optionValueRepository.countActiveByTenantId(tenantId);
     }
 

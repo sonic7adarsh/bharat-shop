@@ -10,109 +10,101 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 /**
  * Repository interface for Wishlist entity operations.
  * Provides methods for managing customer wishlists with tenant isolation.
  */
 @Repository
-public interface WishlistRepository extends JpaRepository<Wishlist, UUID> {
+public interface WishlistRepository extends JpaRepository<Wishlist, Long> {
     
     /**
      * Find all active wishlist items for a customer in a specific tenant
      */
-    @Query("SELECT w FROM Wishlist w WHERE w.customerId = :customerId AND w.tenantId = :tenantId " +
-           "AND w.isActive = true AND w.deletedAt IS NULL ORDER BY w.createdAt DESC")
+    @Query(value = "SELECT * FROM wishlists w WHERE w.customer_id = :customerId AND w.tenant_id = :tenantId " +
+           "AND w.is_active = true AND w.deleted_at IS NULL ORDER BY w.created_at DESC", nativeQuery = true)
     List<Wishlist> findActiveByCustomerIdAndTenantId(@Param("customerId") Long customerId, 
-                                                    @Param("tenantId") UUID tenantId);
+                                                    @Param("tenantId") Long tenantId);
     
     /**
      * Find active wishlist items for a customer with pagination
      */
-    @Query("SELECT w FROM Wishlist w WHERE w.customerId = :customerId AND w.tenantId = :tenantId " +
-           "AND w.isActive = true AND w.deletedAt IS NULL ORDER BY w.createdAt DESC")
+    @Query(value = "SELECT * FROM wishlists w WHERE w.customer_id = :customerId AND w.tenant_id = :tenantId " +
+           "AND w.is_active = true AND w.deleted_at IS NULL ORDER BY w.created_at DESC", nativeQuery = true)
     Page<Wishlist> findActiveByCustomerIdAndTenantId(@Param("customerId") Long customerId, 
-                                                    @Param("tenantId") UUID tenantId, 
+                                                    @Param("tenantId") Long tenantId, 
                                                     Pageable pageable);
     
     /**
      * Find wishlist item by customer, product and tenant
      */
-    @Query("SELECT w FROM Wishlist w WHERE w.customerId = :customerId AND w.productId = :productId " +
-           "AND w.tenantId = :tenantId AND w.isActive = true AND w.deletedAt IS NULL")
-    Optional<Wishlist> findByCustomerIdAndProductIdAndTenantId(@Param("customerId") Long customerId,
-                                                              @Param("productId") Long productId,
-                                                              @Param("tenantId") UUID tenantId);
+    Optional<Wishlist> findByCustomerIdAndProductIdAndTenantIdAndIsActiveTrueAndDeletedAtIsNull(Long customerId,
+                                                              Long productId,
+                                                              Long tenantId);
     
     /**
      * Check if a product is in customer's wishlist
      */
-    @Query("SELECT CASE WHEN COUNT(w) > 0 THEN true ELSE false END FROM Wishlist w " +
-           "WHERE w.customerId = :customerId AND w.productId = :productId " +
-           "AND w.tenantId = :tenantId AND w.isActive = true AND w.deletedAt IS NULL")
-    boolean existsByCustomerIdAndProductIdAndTenantId(@Param("customerId") Long customerId,
-                                                      @Param("productId") Long productId,
-                                                      @Param("tenantId") UUID tenantId);
+    boolean existsByCustomerIdAndProductIdAndTenantIdAndIsActiveTrueAndDeletedAtIsNull(Long customerId,
+                                                      Long productId,
+                                                      Long tenantId);
     
     /**
      * Count active wishlist items for a customer
      */
-    @Query("SELECT COUNT(w) FROM Wishlist w WHERE w.customerId = :customerId AND w.tenantId = :tenantId " +
-           "AND w.isActive = true AND w.deletedAt IS NULL")
-    Long countActiveByCustomerIdAndTenantId(@Param("customerId") Long customerId, 
-                                           @Param("tenantId") UUID tenantId);
+    Long countByCustomerIdAndTenantIdAndIsActiveTrueAndDeletedAtIsNull(Long customerId, 
+                                           Long tenantId);
     
     /**
      * Find wishlist items by priority for a customer
      */
-    @Query("SELECT w FROM Wishlist w WHERE w.customerId = :customerId AND w.tenantId = :tenantId " +
-           "AND w.priority = :priority AND w.isActive = true AND w.deletedAt IS NULL " +
-           "ORDER BY w.createdAt DESC")
+    @Query(value = "SELECT * FROM wishlists w WHERE w.customer_id = :customerId AND w.tenant_id = :tenantId " +
+           "AND w.priority = :priority AND w.is_active = true AND w.deleted_at IS NULL " +
+           "ORDER BY w.created_at DESC", nativeQuery = true)
     List<Wishlist> findByCustomerIdAndTenantIdAndPriority(@Param("customerId") Long customerId,
-                                                         @Param("tenantId") UUID tenantId,
+                                                         @Param("tenantId") Long tenantId,
                                                          @Param("priority") Integer priority);
     
     /**
      * Find wishlist items with price alerts enabled
      */
-    @Query("SELECT w FROM Wishlist w WHERE w.customerId = :customerId AND w.tenantId = :tenantId " +
-           "AND w.priceAlertEnabled = true AND w.isActive = true AND w.deletedAt IS NULL " +
-           "ORDER BY w.createdAt DESC")
+    @Query(value = "SELECT * FROM wishlists w WHERE w.customer_id = :customerId AND w.tenant_id = :tenantId " +
+           "AND w.price_alert_enabled = true AND w.is_active = true AND w.deleted_at IS NULL " +
+           "ORDER BY w.created_at DESC", nativeQuery = true)
     List<Wishlist> findWithPriceAlertsEnabledByCustomerIdAndTenantId(@Param("customerId") Long customerId,
-                                                                   @Param("tenantId") UUID tenantId);
+                                                                   @Param("tenantId") Long tenantId);
     
     /**
      * Find wishlist items with stock alerts enabled
      */
-    @Query("SELECT w FROM Wishlist w WHERE w.customerId = :customerId AND w.tenantId = :tenantId " +
-           "AND w.stockAlertEnabled = true AND w.isActive = true AND w.deletedAt IS NULL " +
-           "ORDER BY w.createdAt DESC")
+    @Query(value = "SELECT * FROM wishlists w WHERE w.customer_id = :customerId AND w.tenant_id = :tenantId " +
+           "AND w.stock_alert_enabled = true AND w.is_active = true AND w.deleted_at IS NULL " +
+           "ORDER BY w.created_at DESC", nativeQuery = true)
     List<Wishlist> findWithStockAlertsEnabledByCustomerIdAndTenantId(@Param("customerId") Long customerId,
-                                                                   @Param("tenantId") UUID tenantId);
+                                                                   @Param("tenantId") Long tenantId);
     
     /**
      * Find all wishlist items for a specific product across all customers in a tenant
      * (useful for analytics and notifications)
      */
-    @Query("SELECT w FROM Wishlist w WHERE w.productId = :productId AND w.tenantId = :tenantId " +
-           "AND w.isActive = true AND w.deletedAt IS NULL ORDER BY w.createdAt DESC")
+    @Query(value = "SELECT * FROM wishlists w WHERE w.product_id = :productId AND w.tenant_id = :tenantId " +
+           "AND w.is_active = true AND w.deleted_at IS NULL ORDER BY w.created_at DESC", nativeQuery = true)
     List<Wishlist> findByProductIdAndTenantId(@Param("productId") Long productId,
-                                             @Param("tenantId") UUID tenantId);
+                                             @Param("tenantId") Long tenantId);
     
     /**
      * Find most popular products in wishlists for a tenant
      */
-    @Query("SELECT w.productId, COUNT(w) as wishlistCount FROM Wishlist w " +
-           "WHERE w.tenantId = :tenantId AND w.isActive = true AND w.deletedAt IS NULL " +
-           "GROUP BY w.productId ORDER BY wishlistCount DESC")
-    List<Object[]> findMostWishlistedProductsByTenantId(@Param("tenantId") UUID tenantId);
+    @Query(value = "SELECT w.product_id, COUNT(w) as wishlistCount FROM wishlists w " +
+           "WHERE w.tenant_id = :tenantId AND w.is_active = true AND w.deleted_at IS NULL " +
+           "GROUP BY w.product_id ORDER BY wishlistCount DESC", nativeQuery = true)
+    List<Object[]> findMostWishlistedProductsByTenantId(@Param("tenantId") Long tenantId);
     
     /**
      * Delete all wishlist items for a customer (for GDPR compliance)
      */
-    @Query("UPDATE Wishlist w SET w.deletedAt = CURRENT_TIMESTAMP, w.isActive = false " +
-           "WHERE w.customerId = :customerId AND w.tenantId = :tenantId")
+    @Query(value = "UPDATE wishlists SET deleted_at = CURRENT_TIMESTAMP, is_active = false " +
+           "WHERE customer_id = :customerId AND tenant_id = :tenantId", nativeQuery = true)
     void softDeleteAllByCustomerIdAndTenantId(@Param("customerId") Long customerId,
-                                             @Param("tenantId") UUID tenantId);
+                                             @Param("tenantId") Long tenantId);
 }

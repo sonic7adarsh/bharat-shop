@@ -1,6 +1,6 @@
 package com.bharatshop.storefront.controller;
 
-import com.bharatshop.storefront.service.VendorService;
+import com.bharatshop.storefront.service.StorefrontVendorService;
 import com.bharatshop.shared.entity.Vendor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
+// import java.util.UUID; // Replaced with Long
 
 /**
  * REST controller for storefront vendor queries.
@@ -24,7 +24,7 @@ public class StorefrontVendorController {
     
     private static final Logger log = LoggerFactory.getLogger(StorefrontVendorController.class);
     
-    private final VendorService vendorService;
+    private final StorefrontVendorService vendorService;
     
     /**
      * Get vendor settings by domain
@@ -77,7 +77,7 @@ public class StorefrontVendorController {
      * Alternative endpoint for retrieving vendor settings when domain is not available
      */
     @GetMapping("/settings/{vendorId}")
-    public ResponseEntity<?> getVendorSettingsById(@PathVariable UUID vendorId) {
+    public ResponseEntity<?> getVendorSettingsById(@PathVariable Long vendorId) {
         try {
             Optional<Vendor> vendor = vendorService.getVendorById(vendorId);
             

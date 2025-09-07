@@ -12,29 +12,29 @@ import java.util.Optional;
 @Repository
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
     
-    @Query("SELECT p FROM Payment p WHERE p.tenantId = :tenantId")
+    @Query(value = "SELECT * FROM payments WHERE tenant_id = :tenantId ORDER BY created_at DESC", nativeQuery = true)
     List<Payment> findByTenantIdOrderByCreatedAtDesc(@Param("tenantId") Long tenantId);
     
-    @Query("SELECT p FROM Payment p WHERE p.tenantId = :tenantId AND p.orderId = :orderId")
+    @Query(value = "SELECT * FROM payments WHERE tenant_id = :tenantId AND order_id = :orderId", nativeQuery = true)
     List<Payment> findByTenantIdAndOrderId(@Param("tenantId") Long tenantId, @Param("orderId") Long orderId);
     
-    @Query("SELECT p FROM Payment p WHERE p.tenantId = :tenantId AND p.orderId = :orderId AND p.status = :status")
+    @Query(value = "SELECT * FROM payments WHERE tenant_id = :tenantId AND order_id = :orderId AND status = :status", nativeQuery = true)
     List<Payment> findByTenantIdAndOrderIdAndStatus(
         @Param("tenantId") Long tenantId, 
         @Param("orderId") Long orderId, 
         @Param("status") Payment.PaymentStatus status
     );
     
-    @Query("SELECT p FROM Payment p WHERE p.razorpayOrderId = :razorpayOrderId")
+    @Query(value = "SELECT * FROM payments WHERE razorpay_order_id = :razorpayOrderId", nativeQuery = true)
     Optional<Payment> findByRazorpayOrderId(@Param("razorpayOrderId") String razorpayOrderId);
     
-    @Query("SELECT p FROM Payment p WHERE p.razorpayPaymentId = :razorpayPaymentId")
+    @Query(value = "SELECT * FROM payments WHERE razorpay_payment_id = :razorpayPaymentId", nativeQuery = true)
     Optional<Payment> findByRazorpayPaymentId(@Param("razorpayPaymentId") String razorpayPaymentId);
     
-    @Query("SELECT p FROM Payment p WHERE p.tenantId = :tenantId AND p.status = :status")
+    @Query(value = "SELECT * FROM payments WHERE tenant_id = :tenantId AND status = :status", nativeQuery = true)
     List<Payment> findByTenantIdAndStatus(@Param("tenantId") Long tenantId, @Param("status") Payment.PaymentStatus status);
     
-    @Query("SELECT p FROM Payment p WHERE p.tenantId = :tenantId AND p.orderId = :orderId ORDER BY p.createdAt DESC")
+    @Query(value = "SELECT * FROM payments WHERE tenant_id = :tenantId AND order_id = :orderId ORDER BY created_at DESC", nativeQuery = true)
     List<Payment> findByTenantIdAndOrderIdOrderByCreatedAtDesc(
         @Param("tenantId") Long tenantId, 
         @Param("orderId") Long orderId

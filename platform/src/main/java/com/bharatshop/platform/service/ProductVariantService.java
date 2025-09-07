@@ -35,8 +35,10 @@ public class ProductVariantService {
     private final ProductVariantOptionValueMapper productVariantOptionValueMapper;
     private final ProductVariantOptionValueService variantOptionValueService;
 
+
+
     @Transactional(readOnly = true)
-    public List<ProductVariantDto> getVariantsByProduct(UUID productId, UUID tenantId) {
+    public List<ProductVariantDto> getVariantsByProduct(Long productId, Long tenantId) {
         List<ProductVariant> variants = productVariantRepository.findActiveByProductIdAndTenantId(productId, tenantId);
         return variants.stream()
                 .map(productVariantMapper::toDtoWithComputedFields)
@@ -44,37 +46,37 @@ public class ProductVariantService {
     }
 
     @Transactional(readOnly = true)
-    public Page<ProductVariantDto> getVariantsByProduct(UUID productId, UUID tenantId, Pageable pageable) {
+    public Page<ProductVariantDto> getVariantsByProduct(Long productId, Long tenantId, Pageable pageable) {
         Page<ProductVariant> variants = productVariantRepository.findActiveByProductIdAndTenantId(productId, tenantId, pageable);
         return variants.map(productVariantMapper::toDtoWithComputedFields);
     }
 
     @Transactional(readOnly = true)
-    public Optional<ProductVariantDto> getVariantById(UUID id, UUID tenantId) {
+    public Optional<ProductVariantDto> getVariantById(Long id, Long tenantId) {
         return productVariantRepository.findActiveByIdAndTenantId(id, tenantId)
                 .map(productVariantMapper::toDtoWithComputedFields);
     }
 
     @Transactional(readOnly = true)
-    public Optional<ProductVariantDto> getDefaultVariant(UUID productId, UUID tenantId) {
+    public Optional<ProductVariantDto> getDefaultVariant(Long productId, Long tenantId) {
         return productVariantRepository.findDefaultByProductIdAndTenantId(productId, tenantId)
                 .map(productVariantMapper::toDtoWithComputedFields);
     }
 
     @Transactional(readOnly = true)
-    public Optional<ProductVariantDto> getVariantBySku(String sku, UUID tenantId) {
+    public Optional<ProductVariantDto> getVariantBySku(String sku, Long tenantId) {
         return productVariantRepository.findActiveBySkuAndTenantId(sku, tenantId)
                 .map(productVariantMapper::toDtoWithComputedFields);
     }
 
     @Transactional(readOnly = true)
-    public Optional<ProductVariantDto> getVariantByBarcode(String barcode, UUID tenantId) {
+    public Optional<ProductVariantDto> getVariantByBarcode(String barcode, Long tenantId) {
         return productVariantRepository.findActiveByBarcodeAndTenantId(barcode, tenantId)
                 .map(productVariantMapper::toDtoWithComputedFields);
     }
 
     @Transactional(readOnly = true)
-    public List<ProductVariantDto> getVariantsByPriceRange(UUID tenantId, BigDecimal minPrice, BigDecimal maxPrice) {
+    public List<ProductVariantDto> getVariantsByPriceRange(Long tenantId, BigDecimal minPrice, BigDecimal maxPrice) {
         List<ProductVariant> variants = productVariantRepository.findActiveByPriceRangeAndTenantId(tenantId, minPrice, maxPrice);
         return variants.stream()
                 .map(productVariantMapper::toDtoWithComputedFields)
@@ -82,7 +84,7 @@ public class ProductVariantService {
     }
 
     @Transactional(readOnly = true)
-    public List<ProductVariantDto> getLowStockVariants(UUID tenantId, Integer threshold) {
+    public List<ProductVariantDto> getLowStockVariants(Long tenantId, Integer threshold) {
         List<ProductVariant> variants = productVariantRepository.findActiveWithLowStockByTenantId(tenantId, threshold != null ? threshold : 5);
         return variants.stream()
                 .map(productVariantMapper::toDtoWithComputedFields)
@@ -90,18 +92,18 @@ public class ProductVariantService {
     }
 
     @Transactional(readOnly = true)
-    public List<ProductVariantDto> getOutOfStockVariants(UUID tenantId) {
+    public List<ProductVariantDto> getOutOfStockVariants(Long tenantId) {
         List<ProductVariant> variants = productVariantRepository.findActiveWithZeroStockByTenantId(tenantId);
         return variants.stream()
                 .map(productVariantMapper::toDtoWithComputedFields)
                 .toList();
     }
 
-    public ProductVariantDto createVariant(ProductVariantDto variantDto, UUID tenantId) {
+    public ProductVariantDto createVariant(ProductVariantDto variantDto, Long tenantId) {
         return createVariant(variantDto, null, tenantId);
     }
     
-    public ProductVariantDto createVariant(ProductVariantDto variantDto, Map<UUID, UUID> optionValueMap, UUID tenantId) {
+    public ProductVariantDto createVariant(ProductVariantDto variantDto, Map<Long, Long> optionValueMap, Long tenantId) {
         validateVariant(variantDto);
         
         // Check if SKU already exists
@@ -118,7 +120,7 @@ public class ProductVariantService {
         
         // Validate option value combination uniqueness if provided
         if (optionValueMap != null && !optionValueMap.isEmpty()) {
-            Optional<UUID> existingVariantId = variantOptionValueService.findVariantByOptionValues(variantDto.getProductId(), optionValueMap, tenantId);
+            Optional<Long> existingVariantId = variantOptionValueService.findVariantByOptionValues(variantDto.getProductId(), optionValueMap, tenantId);
             if (existingVariantId.isPresent()) {
                 throw new IllegalArgumentException("A variant with this option combination already exists");
             }
@@ -160,11 +162,11 @@ public class ProductVariantService {
         return productVariantMapper.toDtoWithComputedFields(savedVariant);
     }
 
-    public ProductVariantDto updateVariant(UUID id, ProductVariantDto variantDto, UUID tenantId) {
+    public ProductVariantDto updateVariant(Long id, ProductVariantDto variantDto, Long tenantId) {
         return updateVariant(id, variantDto, null, tenantId);
     }
     
-    public ProductVariantDto updateVariant(UUID id, ProductVariantDto variantDto, Map<UUID, UUID> optionValueMap, UUID tenantId) {
+    public ProductVariantDto updateVariant(Long id, ProductVariantDto variantDto, Map<Long, Long> optionValueMap, Long tenantId) {
         ProductVariant existingVariant = productVariantRepository.findActiveByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new RuntimeException("Variant not found with id: " + id));
 
@@ -186,7 +188,8 @@ public class ProductVariantService {
         
         // Validate option value combination uniqueness if provided
         if (optionValueMap != null && !optionValueMap.isEmpty()) {
-            if (!variantOptionValueService.isVariantCombinationUnique(id, optionValueMap, tenantId)) {
+            Optional<Long> existingVariantId = variantOptionValueService.findVariantByOptionValues(existingVariant.getProductId(), optionValueMap, tenantId);
+            if (existingVariantId.isPresent() && !existingVariantId.get().equals(id)) {
                 throw new IllegalArgumentException("A variant with this option combination already exists");
             }
         }
@@ -210,7 +213,7 @@ public class ProductVariantService {
         return productVariantMapper.toDtoWithComputedFields(savedVariant);
     }
 
-    public void deleteVariant(UUID id, UUID tenantId) {
+    public void deleteVariant(Long id, Long tenantId) {
         ProductVariant variant = productVariantRepository.findActiveByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new RuntimeException("Variant not found with id: " + id));
         
@@ -239,15 +242,15 @@ public class ProductVariantService {
         productVariantRepository.save(variant);
     }
 
-    public void deleteVariantsByProduct(UUID productId, UUID tenantId) {
+    public void deleteVariantsByProduct(Long productId, Long tenantId) {
         // Get all variant IDs for this product
-        List<UUID> variantIds = productVariantRepository.findActiveByProductIdAndTenantId(productId, tenantId)
+        List<Long> variantIds = productVariantRepository.findActiveByProductIdAndTenantId(productId, tenantId)
                 .stream()
                 .map(ProductVariant::getId)
                 .toList();
         
         // Remove all option values for these variants
-        for (UUID variantId : variantIds) {
+        for (Long variantId : variantIds) {
             variantOptionValueService.removeAllOptionValuesFromVariant(variantId, tenantId);
         }
         
@@ -255,7 +258,7 @@ public class ProductVariantService {
         productVariantRepository.softDeleteByProductIdAndTenantId(productId, tenantId);
     }
 
-    public ProductVariantDto updateVariantStock(UUID id, Integer stock, UUID tenantId) {
+    public ProductVariantDto updateVariantStock(Long id, Integer stock, Long tenantId) {
         ProductVariant variant = productVariantRepository.findActiveByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new RuntimeException("Variant not found with id: " + id));
         
@@ -271,7 +274,7 @@ public class ProductVariantService {
         return productVariantMapper.toDtoWithComputedFields(savedVariant);
     }
 
-    public ProductVariantDto incrementStock(UUID id, Integer quantity, UUID tenantId) {
+    public ProductVariantDto incrementStock(Long id, Integer quantity, Long tenantId) {
         if (quantity <= 0) {
             throw new IllegalArgumentException("Quantity must be positive");
         }
@@ -288,7 +291,7 @@ public class ProductVariantService {
         return productVariantMapper.toDtoWithComputedFields(variant);
     }
 
-    public ProductVariantDto decrementStock(UUID id, Integer quantity, UUID tenantId) {
+    public ProductVariantDto decrementStock(Long id, Integer quantity, Long tenantId) {
         if (quantity <= 0) {
             throw new IllegalArgumentException("Quantity must be positive");
         }
@@ -305,7 +308,7 @@ public class ProductVariantService {
         return productVariantMapper.toDtoWithComputedFields(variant);
     }
 
-    public ProductVariantDto setAsDefault(UUID id, UUID tenantId) {
+    public ProductVariantDto setAsDefault(Long id, Long tenantId) {
         ProductVariant variant = productVariantRepository.findActiveByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new RuntimeException("Variant not found with id: " + id));
         
@@ -320,11 +323,11 @@ public class ProductVariantService {
         return productVariantMapper.toDtoWithComputedFields(savedVariant);
     }
 
-    public ProductVariantDto setDefaultVariant(UUID variantId, UUID tenantId) {
+    public ProductVariantDto setDefaultVariant(Long variantId, Long tenantId) {
         return setAsDefault(variantId, tenantId);
     }
 
-    public ProductVariantDto updateStock(UUID variantId, Integer stock, UUID tenantId) {
+    public ProductVariantDto updateStock(Long variantId, Integer stock, Long tenantId) {
         ProductVariant variant = productVariantRepository.findActiveByIdAndTenantId(variantId, tenantId)
                 .orElseThrow(() -> new RuntimeException("Variant not found with id: " + variantId));
         
@@ -337,59 +340,59 @@ public class ProductVariantService {
     }
 
     @Transactional(readOnly = true)
-    public long getVariantCount(UUID productId, UUID tenantId) {
+    public long getVariantCount(Long productId, Long tenantId) {
         return productVariantRepository.countActiveByProductIdAndTenantId(productId, tenantId);
     }
 
     @Transactional(readOnly = true)
-    public long getTotalVariantCount(UUID tenantId) {
+    public long getTotalVariantCount(Long tenantId) {
         return productVariantRepository.countActiveByTenantId(tenantId);
     }
 
     @Transactional(readOnly = true)
-    public Integer getTotalStock(UUID productId, UUID tenantId) {
+    public Integer getTotalStock(Long productId, Long tenantId) {
         return productVariantRepository.getTotalStockByProductIdAndTenantId(productId, tenantId);
     }
 
     @Transactional(readOnly = true)
-    public BigDecimal getMinPrice(UUID productId, UUID tenantId) {
+    public BigDecimal getMinPrice(Long productId, Long tenantId) {
         return productVariantRepository.getMinPriceByProductIdAndTenantId(productId, tenantId);
     }
 
     @Transactional(readOnly = true)
-    public BigDecimal getMaxPrice(UUID productId, UUID tenantId) {
+    public BigDecimal getMaxPrice(Long productId, Long tenantId) {
         return productVariantRepository.getMaxPriceByProductIdAndTenantId(productId, tenantId);
     }
 
     @Transactional(readOnly = true)
-    public boolean isSkuUnique(String sku, UUID tenantId) {
+    public boolean isSkuUnique(String sku, Long tenantId) {
         return !productVariantRepository.existsBySkuAndTenantId(sku, tenantId);
     }
 
     @Transactional(readOnly = true)
-    public boolean isBarcodeUnique(String barcode, UUID tenantId) {
+    public boolean isBarcodeUnique(String barcode, Long tenantId) {
         return !productVariantRepository.existsByBarcodeAndTenantId(barcode, tenantId);
     }
 
     @Transactional(readOnly = true)
-    public List<ProductVariantOptionValueDto> getVariantOptionValues(UUID variantId, UUID tenantId) {
+    public List<ProductVariantOptionValueDto> getVariantOptionValues(Long variantId, Long tenantId) {
         return variantOptionValueService.getVariantOptionValues(variantId, tenantId);
     }
 
     @Transactional(readOnly = true)
-    public Optional<UUID> findVariantByOptionValues(UUID productId, Map<UUID, UUID> optionValueMap, UUID tenantId) {
+    public Optional<Long> findVariantByOptionValues(Long productId, Map<Long, Long> optionValueMap, Long tenantId) {
         return variantOptionValueService.findVariantByOptionValues(productId, optionValueMap, tenantId);
     }
 
-    public List<ProductVariantOptionValueDto> setVariantOptionValues(UUID variantId, Map<UUID, UUID> optionValueMap, UUID tenantId) {
+    public List<ProductVariantOptionValueDto> setVariantOptionValues(Long variantId, Map<Long, Long> optionValueMap, Long tenantId) {
         return variantOptionValueService.setVariantOptionValues(variantId, optionValueMap, tenantId);
     }
 
-    public ProductVariantOptionValueDto addOptionValueToVariant(UUID variantId, UUID optionId, UUID optionValueId, UUID tenantId) {
+    public ProductVariantOptionValueDto addOptionValueToVariant(Long variantId, Long optionId, Long optionValueId, Long tenantId) {
         return variantOptionValueService.addOptionValueToVariant(variantId, optionId, optionValueId, tenantId);
     }
 
-    public void removeOptionValueFromVariant(UUID variantId, UUID optionId, UUID tenantId) {
+    public void removeOptionValueFromVariant(Long variantId, Long optionId, Long tenantId) {
         variantOptionValueService.removeOptionValueFromVariant(variantId, optionId, tenantId);
     }
 

@@ -15,7 +15,7 @@ import org.springframework.util.StringUtils;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
+
 
 @Service
 @RequiredArgsConstructor
@@ -27,53 +27,53 @@ public class OptionService {
     private final OptionMapper optionMapper;
 
     @Transactional(readOnly = true)
-    public List<OptionDto> getAllOptionsByTenant(UUID tenantId) {
+    public List<OptionDto> getAllOptionsByTenant(Long tenantId) {
         List<Option> options = optionRepository.findAllActiveByTenantId(tenantId);
         return optionMapper.toDtoList(options);
     }
 
     @Transactional(readOnly = true)
-    public Page<OptionDto> getAllOptionsByTenant(UUID tenantId, Pageable pageable) {
+    public Page<OptionDto> getAllOptionsByTenant(Long tenantId, Pageable pageable) {
         Page<Option> options = optionRepository.findAllActiveByTenantId(tenantId, pageable);
         return options.map(optionMapper::toDto);
     }
 
     @Transactional(readOnly = true)
-    public Page<OptionDto> getAllOptions(UUID tenantId, Pageable pageable) {
+    public Page<OptionDto> getAllOptions(Long tenantId, Pageable pageable) {
         return getAllOptionsByTenant(tenantId, pageable);
     }
 
     @Transactional(readOnly = true)
-    public Optional<OptionDto> getOptionById(UUID id, UUID tenantId) {
+    public Optional<OptionDto> getOptionById(Long id, Long tenantId) {
         return optionRepository.findActiveByIdAndTenantId(id, tenantId)
                 .map(optionMapper::toDto);
     }
 
     @Transactional(readOnly = true)
-    public Optional<OptionDto> getOptionByName(String name, UUID tenantId) {
+    public Optional<OptionDto> getOptionByName(String name, Long tenantId) {
         return optionRepository.findActiveByNameAndTenantId(name, tenantId)
                 .map(optionMapper::toDto);
     }
 
     @Transactional(readOnly = true)
-    public List<OptionDto> getOptionsByType(UUID tenantId, Option.OptionType type) {
-        List<Option> options = optionRepository.findActiveByTenantIdAndType(tenantId, type);
+    public List<OptionDto> getOptionsByType(Long tenantId, Option.OptionType type) {
+        List<Option> options = optionRepository.findActiveByTenantIdAndType(tenantId, type.name());
         return optionMapper.toDtoList(options);
     }
 
     @Transactional(readOnly = true)
-    public Page<OptionDto> searchOptions(UUID tenantId, String keyword, Pageable pageable) {
+    public Page<OptionDto> searchOptions(Long tenantId, String keyword, Pageable pageable) {
         if (!StringUtils.hasText(keyword)) {
             return getAllOptionsByTenant(tenantId, pageable);
         }
-        Page<Option> options = optionRepository.searchActiveByTenantIdAndKeyword(tenantId, keyword.trim(), pageable);
+        Page<Option> options = optionRepository.searchActiveByTenantIdAndKeywordWithPagination(tenantId, keyword.trim(), pageable);
         return options.map(optionMapper::toDto);
     }
 
-    public OptionDto createOption(OptionDto optionDto, UUID tenantId) {
+    public OptionDto createOption(OptionDto optionDto, Long tenantId) {
         validateOption(optionDto);
         
-        // Check if option name already exists
+        // Check if name already exists for this tenant
         if (optionRepository.existsByNameAndTenantId(optionDto.getName(), tenantId)) {
             throw new IllegalArgumentException("Option with name '" + optionDto.getName() + "' already exists");
         }
@@ -97,7 +97,7 @@ public class OptionService {
         return optionMapper.toDto(savedOption);
     }
 
-    public OptionDto updateOption(UUID id, OptionDto optionDto, UUID tenantId) {
+    public OptionDto updateOption(Long id, OptionDto optionDto, Long tenantId) {
         Option existingOption = optionRepository.findActiveByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new RuntimeException("Option not found with id: " + id));
 
@@ -117,7 +117,7 @@ public class OptionService {
         return optionMapper.toDto(savedOption);
     }
 
-    public void deleteOption(UUID id, UUID tenantId) {
+    public void deleteOption(Long id, Long tenantId) {
         Option option = optionRepository.findActiveByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new RuntimeException("Option not found with id: " + id));
         
@@ -128,7 +128,7 @@ public class OptionService {
         optionRepository.save(option);
     }
 
-    public OptionDto updateOptionStatus(UUID id, boolean isActive, UUID tenantId) {
+    public OptionDto updateOptionStatus(Long id, boolean isActive, Long tenantId) {
         Option option = optionRepository.findActiveByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new RuntimeException("Option not found with id: " + id));
         
@@ -141,13 +141,13 @@ public class OptionService {
     }
 
     @Transactional(readOnly = true)
-    public long getOptionCount(UUID tenantId) {
+    public long getOptionCount(Long tenantId) {
         return optionRepository.countActiveByTenantId(tenantId);
     }
 
     @Transactional(readOnly = true)
-    public long getOptionCountByType(UUID tenantId, Option.OptionType type) {
-        return optionRepository.countActiveByTenantIdAndType(tenantId, type);
+    public long getOptionCountByType(Long tenantId, Option.OptionType type) {
+        return optionRepository.countActiveByTenantIdAndType(tenantId, type.name());
     }
 
     private void validateOption(OptionDto optionDto) {

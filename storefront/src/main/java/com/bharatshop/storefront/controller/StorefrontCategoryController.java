@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+// import java.util.UUID; // Replaced with Long
 
 /**
  * Public storefront API controller for customer-facing category operations.
@@ -33,14 +34,14 @@ public class StorefrontCategoryController {
      */
     @GetMapping("/categories")
     @Operation(summary = "Get categories", description = "Retrieve all available product categories")
-    public ResponseEntity<ApiResponse<List<String>>> getCategories(
+    public ResponseEntity<ApiResponse<List<Long>>> getCategories(
             @Parameter(description = "Tenant domain header for multi-tenancy")
             @RequestHeader(value = "X-Tenant-Domain", required = false) String tenantDomain) {
         
         try {
             log.info("Fetching all categories for tenant: {}", tenantDomain);
             
-            List<String> categories = storefrontProductService.getCustomerCategories();
+            List<Long> categories = storefrontProductService.getCustomerCategories();
             
             return ResponseEntity.ok(ApiResponse.success(categories));
             

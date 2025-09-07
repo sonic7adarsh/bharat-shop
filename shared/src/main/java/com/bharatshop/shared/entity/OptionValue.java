@@ -7,7 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-import java.util.UUID;
+// import java.util.UUID; // Replaced with Long
 
 /**
  * OptionValue entity representing individual values for product options
@@ -31,7 +31,7 @@ import java.util.UUID;
 public class OptionValue extends BaseEntity {
 
     @Column(name = "option_id", nullable = false)
-    private UUID optionId;
+    private Long optionId;
 
     @Column(name = "`value`", nullable = false, length = 100)
     private String value;
@@ -64,5 +64,45 @@ public class OptionValue extends BaseEntity {
     
     public String getColorCode() {
         return colorCode;
+    }
+    
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
+    }
+    
+    public void setColorCode(String colorCode) {
+        this.colorCode = colorCode;
+    }
+    
+    public void setSortOrder(Integer sortOrder) {
+        this.sortOrder = sortOrder;
+    }
+    
+    public void setDisplayValue(String displayValue) {
+        this.displayValue = displayValue;
+    }
+    
+    public Boolean getIsActive() {
+        return isActive;
+    }
+    
+    public void setValue(String value) {
+        this.value = value;
+    }
+    
+    public Integer getSortOrder() {
+        return sortOrder;
+    }
+    
+    public void setOptionId(Long optionId) {
+        this.optionId = optionId;
+    }
+    
+    public Long getOptionId() {
+        return optionId;
+    }
+    
+    public Long getId() {
+        return id;
     }
 }

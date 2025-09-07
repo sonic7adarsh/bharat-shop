@@ -1,38 +1,49 @@
 package com.bharatshop.storefront.repository;
 
-import com.bharatshop.storefront.entity.StorefrontUser;
-import com.bharatshop.shared.repository.TenantAwareRepository;
+import com.bharatshop.shared.entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
-import java.util.UUID;
 
-@Repository
-public interface StorefrontUserRepository extends TenantAwareRepository<StorefrontUser> {
+@Repository("storefrontUserRepository")
+public interface StorefrontUserRepository extends JpaRepository<User, Long> {
 
-    @Query("SELECT u FROM StorefrontUser u WHERE u.email = :email AND u.tenantId = :tenantId AND u.deletedAt IS NULL")
-    Optional<StorefrontUser> findByEmailAndTenantId(@Param("email") String email, @Param("tenantId") UUID tenantId);
+    @Query(value = "SELECT * FROM users WHERE email = :email AND tenant_id = :tenantId AND deleted_at IS NULL", nativeQuery = true)
+    Optional<User> findByEmailAndTenantId(@Param("email") String email, @Param("tenantId") Long tenantId);
 
-    @Query("SELECT u FROM StorefrontUser u WHERE u.email = :email AND u.deletedAt IS NULL")
-    Optional<StorefrontUser> findByEmail(@Param("email") String email);
+    @Query(value = "SELECT * FROM users WHERE email = :email AND deleted_at IS NULL", nativeQuery = true)
+    Optional<User> findByEmail(@Param("email") String email);
 
-    @Query("SELECT u FROM StorefrontUser u WHERE u.phone = :phone AND u.tenantId = :tenantId AND u.deletedAt IS NULL")
-    Optional<StorefrontUser> findByPhoneAndTenantId(@Param("phone") String phone, @Param("tenantId") UUID tenantId);
+    @Query(value = "SELECT * FROM users WHERE phone = :phone AND tenant_id = :tenantId AND deleted_at IS NULL", nativeQuery = true)
+    Optional<User> findByPhoneAndTenantId(@Param("phone") String phone, @Param("tenantId") Long tenantId);
 
-    @Query("SELECT u FROM StorefrontUser u WHERE u.phone = :phone AND u.deletedAt IS NULL")
-    Optional<StorefrontUser> findByPhone(@Param("phone") String phone);
+    @Query(value = "SELECT * FROM users WHERE phone = :phone AND deleted_at IS NULL", nativeQuery = true)
+    Optional<User> findByPhone(@Param("phone") String phone);
 
-    @Query("SELECT COUNT(u) > 0 FROM StorefrontUser u WHERE u.email = :email AND u.tenantId = :tenantId AND u.deletedAt IS NULL")
-    boolean existsByEmailAndTenantId(@Param("email") String email, @Param("tenantId") UUID tenantId);
+    @Query(value = "SELECT COUNT(*) > 0 FROM users WHERE email = :email AND tenant_id = :tenantId AND deleted_at IS NULL", nativeQuery = true)
+    boolean existsByEmailAndTenantId(@Param("email") String email, @Param("tenantId") Long tenantId);
 
-    @Query("SELECT COUNT(u) > 0 FROM StorefrontUser u WHERE u.email = :email AND u.deletedAt IS NULL")
+    @Query(value = "SELECT COUNT(*) > 0 FROM users WHERE email = :email AND deleted_at IS NULL", nativeQuery = true)
     boolean existsByEmail(@Param("email") String email);
 
-    @Query("SELECT COUNT(u) > 0 FROM StorefrontUser u WHERE u.phone = :phone AND u.tenantId = :tenantId AND u.deletedAt IS NULL")
-    boolean existsByPhoneAndTenantId(@Param("phone") String phone, @Param("tenantId") UUID tenantId);
+    @Query(value = "SELECT COUNT(*) > 0 FROM users WHERE phone = :phone AND tenant_id = :tenantId AND deleted_at IS NULL", nativeQuery = true)
+    boolean existsByPhoneAndTenantId(@Param("phone") String phone, @Param("tenantId") Long tenantId);
 
-    @Query("SELECT COUNT(u) > 0 FROM StorefrontUser u WHERE u.phone = :phone AND u.deletedAt IS NULL")
+    @Query(value = "SELECT COUNT(*) > 0 FROM users WHERE phone = :phone AND deleted_at IS NULL", nativeQuery = true)
     boolean existsByPhone(@Param("phone") String phone);
+
+    @Query(value = "SELECT * FROM users WHERE email = :email AND deleted_at IS NULL", nativeQuery = true)
+    Optional<User> findByEmailAndDeletedAtIsNull(@Param("email") String email);
+
+    @Query(value = "SELECT * FROM users WHERE phone = :phone AND deleted_at IS NULL", nativeQuery = true)
+    Optional<User> findByPhoneAndDeletedAtIsNull(@Param("phone") String phone);
+
+    @Query(value = "SELECT COUNT(*) > 0 FROM users WHERE email = :email AND deleted_at IS NULL", nativeQuery = true)
+    boolean existsByEmailAndDeletedAtIsNull(@Param("email") String email);
+
+    @Query(value = "SELECT COUNT(*) > 0 FROM users WHERE phone = :phone AND deleted_at IS NULL", nativeQuery = true)
+    boolean existsByPhoneAndDeletedAtIsNull(@Param("phone") String phone);
 }

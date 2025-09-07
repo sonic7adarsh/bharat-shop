@@ -39,7 +39,7 @@ public class PlanService {
      * Get plan by ID
      */
     @Transactional(readOnly = true)
-    public Optional<Plan> getPlanById(UUID id) {
+    public Optional<Plan> getPlanById(Long id) {
         log.debug("Fetching plan by ID: {}", id);
         return planRepository.findActiveById(id);
     }
@@ -128,7 +128,7 @@ public class PlanService {
     /**
      * Update an existing plan
      */
-    public Plan updatePlan(UUID id, Plan planUpdates) {
+    public Plan updatePlan(Long id, Plan planUpdates) {
         log.info("Updating plan with ID: {}", id);
         
         Plan existingPlan = planRepository.findActiveById(id)
@@ -159,7 +159,7 @@ public class PlanService {
     /**
      * Deactivate a plan (soft delete)
      */
-    public void deactivatePlan(UUID id) {
+    public void deactivatePlan(Long id) {
         log.info("Deactivating plan with ID: {}", id);
         
         Plan plan = planRepository.findActiveById(id)
@@ -175,7 +175,7 @@ public class PlanService {
     /**
      * Delete a plan (hard delete)
      */
-    public void deletePlan(UUID id) {
+    public void deletePlan(Long id) {
         log.info("Deleting plan with ID: {}", id);
         
         Plan plan = planRepository.findById(id)
@@ -210,7 +210,7 @@ public class PlanService {
      * Validate if plan supports required features
      */
     @Transactional(readOnly = true)
-    public boolean validatePlanFeatures(UUID planId, Integer requiredProducts, Long requiredStorage) {
+    public boolean validatePlanFeatures(Long planId, Integer requiredProducts, Long requiredStorage) {
         log.debug("Validating plan features for plan ID: {}", planId);
         
         Optional<Plan> planOpt = planRepository.findActiveById(planId);
@@ -241,7 +241,7 @@ public class PlanService {
      * Check if plan has specific feature
      */
     @Transactional(readOnly = true)
-    public boolean planHasFeature(UUID planId, String featureName) {
+    public boolean planHasFeature(Long planId, String featureName) {
         log.debug("Checking if plan {} has feature: {}", planId, featureName);
         
         Optional<Plan> planOpt = planRepository.findActiveById(planId);

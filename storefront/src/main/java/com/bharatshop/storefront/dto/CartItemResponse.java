@@ -1,6 +1,6 @@
 package com.bharatshop.storefront.dto;
 
-import com.bharatshop.storefront.entity.CartItem;
+import com.bharatshop.shared.entity.CartItem;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -89,14 +89,14 @@ public class CartItemResponse {
     public static CartItemResponse fromEntity(CartItem cartItem) {
         return CartItemResponse.builder()
                 .id(cartItem.getId())
-                .productId(cartItem.getProduct().getId().getMostSignificantBits())
+                .productId(cartItem.getProduct().getId())
                 .productName(cartItem.getProduct().getName())
                 .productSku(cartItem.getProduct().getSlug())
                 .productImageUrl(cartItem.getProduct().getDescription())
                 .quantity(cartItem.getQuantity())
                 .unitPrice(cartItem.getUnitPrice())
                 .totalPrice(cartItem.getTotalPrice())
-                .availableStock(cartItem.getProduct().getStockQuantity())
+                .availableStock(cartItem.getProduct().getStock())
                 .addedAt(cartItem.getCreatedAt())
                 .build();
     }

@@ -7,13 +7,13 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"com.bharatshop.storefront", "com.bharatshop.shared"})
 @EnableTransactionManagement
 @EnableCaching
-@EnableJpaRepositories(basePackages = "com.bharatshop.storefront.repository")
+@EnableJpaRepositories(basePackages = {"com.bharatshop.storefront.repository", "com.bharatshop.shared.repository"})
 @EntityScan(basePackages = {
-    "com.bharatshop.storefront.entity",
-    "com.bharatshop.storefront.model"
+    "com.bharatshop.shared.entity",
+    "com.bharatshop.storefront.entity"
 })
 public class StorefrontApplication {
 

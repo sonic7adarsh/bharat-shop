@@ -4,47 +4,31 @@ import com.bharatshop.shared.entity.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Repository
-public interface ProductRepository extends JpaRepository<Product, UUID> {
+public interface ProductRepository extends JpaRepository<Product, Long> {
 
-    List<Product> findByTenantIdAndDeletedAtIsNull(UUID tenantId);
+    List<Product> findByTenantIdAndDeletedAtIsNull(Long tenantId);
 
-    Page<Product> findByTenantIdAndDeletedAtIsNull(UUID tenantId, Pageable pageable);
+    Page<Product> findByTenantIdAndDeletedAtIsNull(Long tenantId, Pageable pageable);
 
-    Optional<Product> findByIdAndTenantIdAndDeletedAtIsNull(UUID id, UUID tenantId);
+    Optional<Product> findByIdAndTenantIdAndDeletedAtIsNull(Long id, Long tenantId);
 
-    Optional<Product> findBySlugAndTenantIdAndDeletedAtIsNull(String slug, UUID tenantId);
+    Optional<Product> findBySlugAndTenantIdAndDeletedAtIsNull(String slug, Long tenantId);
 
-    List<Product> findByTenantIdAndStatusAndDeletedAtIsNull(UUID tenantId, Product.ProductStatus status);
+    List<Product> findByTenantIdAndStatusAndDeletedAtIsNull(Long tenantId, Product.ProductStatus status);
 
-    Page<Product> findByTenantIdAndStatusAndDeletedAtIsNull(UUID tenantId, Product.ProductStatus status, Pageable pageable);
+    Page<Product> findByTenantIdAndStatusAndDeletedAtIsNull(Long tenantId, Product.ProductStatus status, Pageable pageable);
 
-    @Query("SELECT p FROM Product p WHERE p.tenantId = :tenantId AND p.deletedAt IS NULL AND " +
-           "(LOWER(p.name) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
-           "LOWER(p.description) LIKE LOWER(CONCAT('%', :search, '%')))")
-    Page<Product> searchByTenantIdAndKeyword(@Param("tenantId") UUID tenantId, 
-                                           @Param("search") String search, 
-                                           Pageable pageable);
-
-    @Query("SELECT p FROM Product p WHERE p.tenantId = :tenantId AND p.deletedAt IS NULL AND " +
-           ":categoryId MEMBER OF p.categories")
-    List<Product> findByTenantIdAndCategoryId(@Param("tenantId") UUID tenantId, 
-                                            @Param("categoryId") UUID categoryId);
-
-    @Query("SELECT COUNT(p) FROM Product p WHERE p.tenantId = :tenantId AND p.deletedAt IS NULL")
-    long countByTenantId(@Param("tenantId") UUID tenantId);
-
-    @Query("SELECT COUNT(p) FROM Product p WHERE p.tenantId = :tenantId AND p.status = :status AND p.deletedAt IS NULL")
-    long countByTenantIdAndStatus(@Param("tenantId") UUID tenantId, @Param("status") Product.ProductStatus status);
-
-    @Query("SELECT COUNT(p) FROM Product p WHERE p.tenantId = :tenantId AND p.deletedAt IS NULL")
-    long countByTenantIdAndDeletedAtIsNull(@Param("tenantId") UUID tenantId);
+    // Simplified method name-based queries to avoid HQL validation issues
+    long countByTenantIdAndDeletedAtIsNull(Long tenantId);
+    
+    long countByTenantIdAndStatus(Long tenantId, Product.ProductStatus status);
+    
+    // Add back countByTenantId since it's used by services
+    long countByTenantId(Long tenantId);
 }

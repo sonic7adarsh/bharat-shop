@@ -10,7 +10,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Repository
 public interface TenantRepository extends TenantAwareRepository<Tenant> {
@@ -27,9 +26,9 @@ public interface TenantRepository extends TenantAwareRepository<Tenant> {
     
     Page<Tenant> findByActiveTrue(Pageable pageable);
     
-    @Query("SELECT t FROM Tenant t WHERE t.active = true AND (t.name LIKE %:search% OR t.code LIKE %:search%)")
+    @Query(value = "SELECT * FROM tenants WHERE active = true AND (name LIKE CONCAT('%', :search, '%') OR code LIKE CONCAT('%', :search, '%'))", nativeQuery = true)
     Page<Tenant> findActiveTenantsWithSearch(@Param("search") String search, Pageable pageable);
     
-    @Query("SELECT COUNT(t) FROM Tenant t WHERE t.active = true")
+    @Query(value = "SELECT COUNT(*) FROM tenants WHERE active = true", nativeQuery = true)
     long countActiveTenants();
 }

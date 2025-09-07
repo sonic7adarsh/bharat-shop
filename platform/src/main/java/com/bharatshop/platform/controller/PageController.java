@@ -10,7 +10,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,7 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
+// import java.util.UUID; // Replaced with Long
 
 /**
  * Controller for managing pages in the platform.
@@ -28,9 +29,10 @@ import java.util.UUID;
  */
 @RestController
 @RequestMapping("/api/platform/pages")
-@Slf4j
 @Tag(name = "Page Management", description = "APIs for page customization and management")
 public class PageController {
+
+    private static final Logger log = LoggerFactory.getLogger(PageController.class);
     
     private final PageService pageService;
     private final FeatureFlagService featureFlagService;
@@ -82,7 +84,7 @@ public class PageController {
     @Operation(summary = "Get page by ID", description = "Retrieve a specific page by its ID")
     public ResponseEntity<ApiResponse<PageResponseDto>> getPageById(
             @Parameter(description = "Page ID")
-            @PathVariable UUID id) {
+            @PathVariable Long id) {
         
         try {
             return pageService.getPageById(id)
@@ -107,7 +109,7 @@ public class PageController {
             @PathVariable com.bharatshop.shared.enums.PageType pageType) {
         
         try {
-            UUID tenantId = UUID.fromString(TenantContext.getCurrentTenant());
+            Long tenantId = Long.parseLong(TenantContext.getCurrentTenant());
             List<PageResponseDto> pages = pageService.getPagesByType(pageType, tenantId.toString());
             return ResponseEntity.ok(ApiResponse.success(pages));
             
@@ -129,7 +131,7 @@ public class PageController {
             @Valid @RequestBody PageRequestDto pageRequest) {
         
         try {
-            UUID tenantId = UUID.fromString(TenantContext.getCurrentTenant());
+            Long tenantId = Long.parseLong(TenantContext.getCurrentTenant());
             
             // Enforce advanced features access for page creation
             featureFlagService.enforceFeatureAccess(tenantId, "advancedFeatures");
@@ -158,13 +160,13 @@ public class PageController {
     @Operation(summary = "Update page", description = "Update an existing page")
     public ResponseEntity<ApiResponse<PageResponseDto>> updatePage(
             @Parameter(description = "Page ID")
-            @PathVariable UUID id,
+            @PathVariable Long id,
             
             @Parameter(description = "Updated page data")
             @Valid @RequestBody PageRequestDto pageRequest) {
         
         try {
-            UUID tenantId = UUID.fromString(TenantContext.getCurrentTenant());
+            Long tenantId = Long.parseLong(TenantContext.getCurrentTenant());
             
             // Enforce advanced features access for page updates
             featureFlagService.enforceFeatureAccess(tenantId, "advancedFeatures");
@@ -192,7 +194,7 @@ public class PageController {
     @Operation(summary = "Update page layout", description = "Update page layout configuration for template customization")
     public ResponseEntity<ApiResponse<PageResponseDto>> updatePageLayout(
             @Parameter(description = "Page ID")
-            @PathVariable UUID id,
+            @PathVariable Long id,
             
             @Parameter(description = "Layout JSON configuration")
             @RequestBody Map<String, Object> request) {
@@ -222,7 +224,7 @@ public class PageController {
     @Operation(summary = "Update page SEO", description = "Update page SEO configuration")
     public ResponseEntity<ApiResponse<PageResponseDto>> updatePageSeo(
             @Parameter(description = "Page ID")
-            @PathVariable UUID id,
+            @PathVariable Long id,
             
             @Parameter(description = "SEO JSON configuration")
             @RequestBody Map<String, Object> request) {
@@ -252,7 +254,7 @@ public class PageController {
     @Operation(summary = "Toggle page publish status", description = "Publish or unpublish a page")
     public ResponseEntity<ApiResponse<PageResponseDto>> togglePagePublishStatus(
             @Parameter(description = "Page ID")
-            @PathVariable UUID id) {
+            @PathVariable Long id) {
         
         try {
             PageResponseDto page = pageService.togglePagePublishStatus(id);
@@ -277,7 +279,7 @@ public class PageController {
     @Operation(summary = "Delete page", description = "Soft delete a page")
     public ResponseEntity<ApiResponse<Void>> deletePage(
             @Parameter(description = "Page ID")
-            @PathVariable UUID id) {
+            @PathVariable Long id) {
         
         try {
             pageService.deletePage(id);

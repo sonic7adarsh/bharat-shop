@@ -1,6 +1,5 @@
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\repository\PageRepository.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\scheduler\ReservationCleanupScheduler.java
-C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\entity\Order.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\dto\media\MediaFileResponse.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\entity\MediaFile.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\dto\media\StorageUsageResponse.java
@@ -22,6 +21,7 @@ C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\filter\JwtAuthenticationFilter.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\entity\Wishlist.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\entity\PaymentGateway.java
+C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\repository\SharedStorefrontUserRepository.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\repository\CartItemRepository.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\service\ReservationService.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\controller\MediaController.java
@@ -34,6 +34,7 @@ C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\dto\media\PresignUploadRequest.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\entity\Page.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\util\FileUploadValidator.java
+C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\entity\Orders.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\repository\TemplateRepository.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\dto\CustomerDto.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\repository\WishlistRepository.java
@@ -52,6 +53,7 @@ C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\config\RazorpayConfig.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\repository\ProductOptionRepository.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\service\PlanService.java
+C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\entity\User.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\dto\OptionDto.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\entity\Payment.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\filter\SessionAuthenticationFilter.java

@@ -9,17 +9,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
+// import java.util.UUID; // Replaced with Long
 
 /**
  * Service class for vendor operations.
  * Handles business logic for vendor management, domain validation, and template setup.
  */
-@Service
+@Service("platformVendorService")
 @RequiredArgsConstructor
 @Slf4j
 @Transactional
-public class VendorService {
+public class PlatformVendorService {
     
     private final VendorRepository vendorRepository;
     
@@ -27,7 +27,7 @@ public class VendorService {
      * Get vendor by ID for current tenant
      */
     @Transactional(readOnly = true)
-    public Optional<Vendor> getVendorById(UUID vendorId) {
+    public Optional<Vendor> getVendorById(Long vendorId) {
         return vendorRepository.findByIdAndTenantId(vendorId, getCurrentTenantId());
     }
     
@@ -50,7 +50,7 @@ public class VendorService {
     /**
      * Update vendor information
      */
-    public Vendor updateVendor(UUID vendorId, Vendor updatedVendor) {
+    public Vendor updateVendor(Long vendorId, Vendor updatedVendor) {
         Optional<Vendor> existingVendor = getVendorById(vendorId);
         
         if (existingVendor.isEmpty()) {
@@ -100,7 +100,7 @@ public class VendorService {
     /**
      * Setup vendor with template configuration
      */
-    public Vendor setupVendorTemplate(UUID vendorId, String templateConfig) {
+    public Vendor setupVendorTemplate(Long vendorId, String templateConfig) {
         Optional<Vendor> existingVendor = getVendorById(vendorId);
         
         if (existingVendor.isEmpty()) {
@@ -119,13 +119,13 @@ public class VendorService {
      */
     @Transactional(readOnly = true)
     public List<Vendor> getVendorsByStatus(Vendor.VendorStatus status) {
-        return vendorRepository.findByStatus(status);
+        return vendorRepository.findByStatus(status.name());
     }
     
     /**
      * Activate vendor
      */
-    public Vendor activateVendor(UUID vendorId) {
+    public Vendor activateVendor(Long vendorId) {
         Optional<Vendor> existingVendor = getVendorById(vendorId);
         
         if (existingVendor.isEmpty()) {
@@ -143,7 +143,7 @@ public class VendorService {
     /**
      * Deactivate vendor
      */
-    public Vendor deactivateVendor(UUID vendorId) {
+    public Vendor deactivateVendor(Long vendorId) {
         Optional<Vendor> existingVendor = getVendorById(vendorId);
         
         if (existingVendor.isEmpty()) {
@@ -161,9 +161,9 @@ public class VendorService {
     /**
      * Get current tenant ID (placeholder - should be implemented based on your tenant context)
      */
-    private UUID getCurrentTenantId() {
+    private Long getCurrentTenantId() {
         // This should be implemented based on your tenant context mechanism
-        // For now, returning a placeholder UUID
-        return UUID.fromString("00000000-0000-0000-0000-000000000001");
+        // For now, returning a placeholder ID
+        return 1L;
     }
 }

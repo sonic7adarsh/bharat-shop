@@ -19,8 +19,8 @@ import java.util.UUID;
 @AllArgsConstructor
 public class PageResponseDto {
     
-    private UUID id;
-    private UUID tenantId;
+    private Long id;
+    private Long tenantId;
     private String title;
     private String slug;
     private String content;
@@ -45,11 +45,11 @@ public class PageResponseDto {
     private LocalDateTime updatedAt;
     
     // Manual setters for fields that Lombok might not be generating
-    public void setId(UUID id) {
+    public void setId(Long id) {
         this.id = id;
     }
     
-    public void setTenantId(UUID tenantId) {
+    public void setTenantId(Long tenantId) {
         this.tenantId = tenantId;
     }
     

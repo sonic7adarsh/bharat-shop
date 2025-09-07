@@ -17,7 +17,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Random;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,7 +45,7 @@ public class ProductImageService {
     /**
      * Get all images for a product
      */
-    public List<ProductImage> getProductImages(UUID productId, UUID tenantId) {
+    public List<ProductImage> getProductImages(Long productId, Long tenantId) {
         // Verify product belongs to tenant
         Optional<Product> product = productRepository.findByIdAndTenantIdAndDeletedAtIsNull(productId, tenantId);
         if (product.isEmpty()) {
@@ -53,7 +58,7 @@ public class ProductImageService {
     /**
      * Get primary image for a product
      */
-    public Optional<ProductImage> getPrimaryImage(UUID productId, UUID tenantId) {
+    public Optional<ProductImage> getPrimaryImage(Long productId, Long tenantId) {
         // Verify product belongs to tenant
         Optional<Product> product = productRepository.findByIdAndTenantIdAndDeletedAtIsNull(productId, tenantId);
         if (product.isEmpty()) {
@@ -68,8 +73,8 @@ public class ProductImageService {
      */
     @Transactional
     public ProductImage uploadProductImage(
-            UUID productId, 
-            UUID tenantId, 
+            Long productId, 
+            Long tenantId, 
             MultipartFile file, 
             String altText, 
             Boolean isPrimary) throws IOException {
@@ -132,8 +137,8 @@ public class ProductImageService {
      */
     @Transactional
     public ProductImage updateProductImage(
-            UUID imageId, 
-            UUID tenantId, 
+            Long imageId, 
+            Long tenantId, 
             String altText, 
             Boolean isPrimary, 
             Integer sortOrder) {
@@ -176,7 +181,7 @@ public class ProductImageService {
      * Delete product image
      */
     @Transactional
-    public void deleteProductImage(UUID imageId, UUID tenantId) {
+    public void deleteProductImage(Long imageId, Long tenantId) {
         Optional<ProductImage> imageOpt = productImageRepository.findById(imageId);
         if (imageOpt.isEmpty()) {
             throw new RuntimeException("Product image not found");
@@ -213,7 +218,7 @@ public class ProductImageService {
      * Set primary image for a product
      */
     @Transactional
-    public ProductImage setPrimaryImage(UUID imageId, UUID tenantId) {
+    public ProductImage setPrimaryImage(Long imageId, Long tenantId) {
         Optional<ProductImage> imageOpt = productImageRepository.findById(imageId);
         if (imageOpt.isEmpty()) {
             throw new RuntimeException("Product image not found");
@@ -223,7 +228,7 @@ public class ProductImageService {
         
         // Verify product belongs to tenant
         Optional<Product> product = productRepository.findByIdAndTenantIdAndDeletedAtIsNull(
-                productImage.getProductId(), tenantId);
+            productImage.getProductId(), tenantId);
         if (product.isEmpty()) {
             throw new RuntimeException("Product not found or access denied");
         }
@@ -239,7 +244,7 @@ public class ProductImageService {
      * Reorder product images
      */
     @Transactional
-    public List<ProductImage> reorderProductImages(UUID productId, UUID tenantId, List<UUID> imageIds) {
+    public List<ProductImage> reorderProductImages(Long productId, Long tenantId, List<Long> imageIds) {
         // Verify product belongs to tenant
         Optional<Product> product = productRepository.findByIdAndTenantIdAndDeletedAtIsNull(productId, tenantId);
         if (product.isEmpty()) {
@@ -248,13 +253,13 @@ public class ProductImageService {
         
         // Get all images for the product
         List<ProductImage> images = productImageRepository.findActiveByProductIdOrderBySortOrder(productId);
-        Map<UUID, ProductImage> imageMap = images.stream()
-                .collect(Collectors.toMap(ProductImage::getId, img -> img));
+        Map<Long, ProductImage> imageMap = images.stream()
+                .collect(Collectors.toMap(img -> img.getId(), img -> img));
         
         // Update sort orders based on the provided order
         List<ProductImage> reorderedImages = new ArrayList<>();
         for (int i = 0; i < imageIds.size(); i++) {
-            UUID imageId = imageIds.get(i);
+            Long imageId = imageIds.get(i);
             ProductImage image = imageMap.get(imageId);
             if (image != null) {
                 image.setSortOrder(i + 1);
@@ -269,7 +274,7 @@ public class ProductImageService {
      * Delete all images for a product
      */
     @Transactional
-    public void deleteAllProductImages(UUID productId, UUID tenantId) {
+    public void deleteAllProductImages(Long productId, Long tenantId) {
         // Verify product belongs to tenant
         Optional<Product> product = productRepository.findByIdAndTenantIdAndDeletedAtIsNull(productId, tenantId);
         if (product.isEmpty()) {
@@ -301,7 +306,7 @@ public class ProductImageService {
     /**
      * Get image count for a product
      */
-    public long getImageCount(UUID productId, UUID tenantId) {
+    public long getImageCount(Long productId, Long tenantId) {
         // Verify product belongs to tenant
         Optional<Product> product = productRepository.findByIdAndTenantIdAndDeletedAtIsNull(productId, tenantId);
         if (product.isEmpty()) {
@@ -314,7 +319,7 @@ public class ProductImageService {
     /**
      * Calculate current storage usage for a tenant
      */
-    private long getCurrentStorageUsage(UUID tenantId) {
+    private long getCurrentStorageUsage(Long tenantId) {
         // Get all products for the tenant
         List<Product> products = productRepository.findByTenantIdAndDeletedAtIsNull(tenantId);
         
@@ -376,7 +381,7 @@ public class ProductImageService {
 
     private String generateUniqueFilename(String productId, String extension) {
         String timestamp = String.valueOf(System.currentTimeMillis());
-        String random = UUID.randomUUID().toString().substring(0, 8);
+        String random = String.valueOf(new Random().nextInt(100000000));
         return String.format("product_%s_%s_%s.%s", productId, timestamp, random, extension);
     }
 }

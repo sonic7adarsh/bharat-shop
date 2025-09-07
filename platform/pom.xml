@@ -114,12 +114,7 @@
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
         </dependency>
-        
-        <dependency>
-            <groupId>org.mapstruct</groupId>
-            <artifactId>mapstruct</artifactId>
-        </dependency>
-        
+                
         <!-- Monitoring -->
         <dependency>
             <groupId>io.micrometer</groupId>

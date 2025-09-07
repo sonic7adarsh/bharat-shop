@@ -8,20 +8,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
-import java.util.UUID;
+
 
 /**
  * Storefront vendor service for read-only vendor operations.
  * Provides vendor information for storefront queries.
  */
-@Service
+@Service("storefrontVendorService")
 @RequiredArgsConstructor
 @Slf4j
 @Transactional(readOnly = true)
-public class VendorService {
+public class StorefrontVendorService {
     
     // Manual log field to bypass Lombok issues
-    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(VendorService.class);
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(StorefrontVendorService.class);
     
     private final VendorRepository vendorRepository;
     
@@ -38,7 +38,7 @@ public class VendorService {
      * Get vendor by ID
      * Alternative method for retrieving vendor information
      */
-    public Optional<Vendor> getVendorById(UUID vendorId) {
+    public Optional<Vendor> getVendorById(Long vendorId) {
         log.debug("Getting vendor by ID: {}", vendorId);
         return vendorRepository.findById(vendorId)
             .filter(vendor -> !vendor.isDeleted() && vendor.getIsActive());

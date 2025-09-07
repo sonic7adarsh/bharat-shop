@@ -22,19 +22,19 @@ import java.util.UUID;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProductOptionDto {
     
-    private UUID id;
-    
+    private Long id;
+
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createdAt;
-    
+
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime updatedAt;
-    
+
     @NotNull(message = "Product ID is required")
-    private UUID productId;
-    
+    private Long productId;
+
     @NotNull(message = "Option ID is required")
-    private UUID optionId;
+    private Long optionId;
     
     private Boolean isRequired = false;
     
@@ -49,4 +49,40 @@ public class ProductOptionDto {
     
     // For product details (when needed)
     private ProductDto product;
+    
+    public Integer getSortOrder() {
+        return sortOrder;
+    }
+    
+    public Boolean getIsRequired() {
+        return isRequired;
+    }
+    
+    public Long getOptionId() {
+        return optionId;
+    }
+    
+    public Long getProductId() {
+        return productId;
+    }
+    
+    public void setSortOrder(Integer sortOrder) {
+        this.sortOrder = sortOrder;
+    }
+    
+    public void setOptionId(Long optionId) {
+        this.optionId = optionId;
+    }
+    
+    public void setIsRequired(Boolean isRequired) {
+        this.isRequired = isRequired;
+    }
+    
+    public void setId(Long id) {
+        this.id = id;
+    }
+    
+    public void setProductId(Long productId) {
+        this.productId = productId;
+    }
 }

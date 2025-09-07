@@ -6,6 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+
+
 /**
  * Scheduled job to automatically clean up expired reservations
  * Runs every 5 minutes to release expired reservations and prevent stock leakage
@@ -61,7 +63,7 @@ public class ReservationCleanupScheduler {
                 int releasedCount = 0;
                 for (var reservation : staleReservations) {
                     try {
-                        reservationService.releaseReservation(reservation.getId(), reservation.getTenantId());
+                        reservationService.releaseReservation(reservation.getTenantId(), reservation.getId());
                         releasedCount++;
                     } catch (Exception e) {
                         log.error("Failed to release stale reservation {}", reservation.getId(), e);

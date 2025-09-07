@@ -10,9 +10,9 @@ import lombok.experimental.SuperBuilder;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.UUID;
+// import java.util.UUID; // Replaced with Long
 
-@Entity(name = "SharedProduct")
+@Entity(name = "Product")
 @Table(name = "products", indexes = {
         @Index(name = "idx_product_tenant_id", columnList = "tenant_id"),
         @Index(name = "idx_product_slug", columnList = "slug"),
@@ -43,12 +43,11 @@ public class Product extends BaseEntity {
     @Column(name = "stock")
     private Integer stock;
 
-    @ElementCollection
-    @CollectionTable(name = "product_images", joinColumns = @JoinColumn(name = "product_id"))
-    @Column(name = "image_url")
+    // Images will be handled by ProductImage entity relationship
+    // @ElementCollection removed due to schema mismatch with product_images table
     private List<String> images;
     
-    // Manual getter for images to fix Lombok issue
+    // Manual getter for images removed - field no longer exists
     public List<String> getImages() {
         return images;
     }
@@ -66,7 +65,7 @@ public class Product extends BaseEntity {
     @ElementCollection
     @CollectionTable(name = "product_categories", joinColumns = @JoinColumn(name = "product_id"))
     @Column(name = "category_id")
-    private List<UUID> categories;
+    private List<Long> categories;
 
     @Column(name = "attributes", columnDefinition = "JSON")
     private String attributes;

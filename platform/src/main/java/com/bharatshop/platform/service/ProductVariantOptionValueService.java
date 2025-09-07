@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,7 +27,7 @@ public class ProductVariantOptionValueService {
     private final ProductVariantOptionValueMapper variantOptionValueMapper;
 
     @Transactional(readOnly = true)
-    public List<ProductVariantOptionValueDto> getVariantOptionValues(UUID variantId, UUID tenantId) {
+    public List<ProductVariantOptionValueDto> getVariantOptionValues(Long variantId, Long tenantId) {
         List<ProductVariantOptionValue> variantOptionValues = variantOptionValueRepository.findByVariantIdAndTenantId(variantId, tenantId);
         return variantOptionValues.stream()
                 .map(variantOptionValueMapper::toDtoWithComputedFields)
@@ -36,19 +35,19 @@ public class ProductVariantOptionValueService {
     }
 
     @Transactional(readOnly = true)
-    public Page<ProductVariantOptionValueDto> getVariantOptionValues(UUID variantId, UUID tenantId, Pageable pageable) {
+    public Page<ProductVariantOptionValueDto> getVariantOptionValues(Long variantId, Long tenantId, Pageable pageable) {
         Page<ProductVariantOptionValue> variantOptionValues = variantOptionValueRepository.findByVariantIdAndTenantId(variantId, tenantId, pageable);
         return variantOptionValues.map(variantOptionValueMapper::toDtoWithComputedFields);
     }
 
     @Transactional(readOnly = true)
-    public Optional<ProductVariantOptionValueDto> getVariantOptionValue(UUID variantId, UUID optionId, UUID tenantId) {
+    public Optional<ProductVariantOptionValueDto> getVariantOptionValue(Long variantId, Long optionId, Long tenantId) {
         return variantOptionValueRepository.findByVariantIdAndOptionIdAndTenantId(variantId, optionId, tenantId)
                 .map(variantOptionValueMapper::toDtoWithComputedFields);
     }
 
     @Transactional(readOnly = true)
-    public List<ProductVariantOptionValueDto> getVariantOptionValuesByOption(UUID optionId, UUID tenantId) {
+    public List<ProductVariantOptionValueDto> getVariantOptionValuesByOption(Long optionId, Long tenantId) {
         List<ProductVariantOptionValue> variantOptionValues = variantOptionValueRepository.findByOptionIdAndTenantId(optionId, tenantId);
         return variantOptionValues.stream()
                 .map(variantOptionValueMapper::toDtoWithComputedFields)
@@ -56,7 +55,7 @@ public class ProductVariantOptionValueService {
     }
 
     @Transactional(readOnly = true)
-    public List<ProductVariantOptionValueDto> getVariantOptionValuesByOptionValue(UUID optionValueId, UUID tenantId) {
+    public List<ProductVariantOptionValueDto> getVariantOptionValuesByOptionValue(Long optionValueId, Long tenantId) {
         List<ProductVariantOptionValue> variantOptionValues = variantOptionValueRepository.findByOptionValueIdAndTenantId(optionValueId, tenantId);
         return variantOptionValues.stream()
                 .map(variantOptionValueMapper::toDtoWithComputedFields)
@@ -64,7 +63,7 @@ public class ProductVariantOptionValueService {
     }
 
     @Transactional(readOnly = true)
-    public List<ProductVariantOptionValueDto> getVariantOptionValuesByVariants(List<UUID> variantIds, UUID tenantId) {
+    public List<ProductVariantOptionValueDto> getVariantOptionValuesByVariants(List<Long> variantIds, Long tenantId) {
         List<ProductVariantOptionValue> variantOptionValues = variantOptionValueRepository.findByVariantIdsAndTenantId(variantIds, tenantId);
         return variantOptionValues.stream()
                 .map(variantOptionValueMapper::toDtoWithComputedFields)
@@ -72,14 +71,14 @@ public class ProductVariantOptionValueService {
     }
 
     @Transactional(readOnly = true)
-    public Map<UUID, List<ProductVariantOptionValueDto>> getVariantOptionValuesGroupedByVariant(List<UUID> variantIds, UUID tenantId) {
+    public Map<Long, List<ProductVariantOptionValueDto>> getVariantOptionValuesGroupedByVariant(List<Long> variantIds, Long tenantId) {
         List<ProductVariantOptionValue> variantOptionValues = variantOptionValueRepository.findByVariantIdsAndTenantId(variantIds, tenantId);
         return variantOptionValues.stream()
                 .map(variantOptionValueMapper::toDtoWithComputedFields)
                 .collect(Collectors.groupingBy(ProductVariantOptionValueDto::getVariantId));
     }
 
-    public ProductVariantOptionValueDto addOptionValueToVariant(UUID variantId, UUID optionId, UUID optionValueId, UUID tenantId) {
+    public ProductVariantOptionValueDto addOptionValueToVariant(Long variantId, Long optionId, Long optionValueId, Long tenantId) {
         // Check if this option is already assigned to this variant
         if (variantOptionValueRepository.existsByVariantIdAndOptionIdAndTenantId(variantId, optionId, tenantId)) {
             throw new IllegalArgumentException("Option is already assigned to this variant");
@@ -98,7 +97,7 @@ public class ProductVariantOptionValueService {
         return variantOptionValueMapper.toDtoWithComputedFields(savedVariantOptionValue);
     }
 
-    public ProductVariantOptionValueDto updateVariantOptionValue(UUID variantId, UUID optionId, UUID optionValueId, UUID tenantId) {
+    public ProductVariantOptionValueDto updateVariantOptionValue(Long variantId, Long optionId, Long optionValueId, Long tenantId) {
         ProductVariantOptionValue existingVariantOptionValue = variantOptionValueRepository.findByVariantIdAndOptionIdAndTenantId(variantId, optionId, tenantId)
                 .orElseThrow(() -> new RuntimeException("Variant option value not found"));
 
@@ -110,7 +109,7 @@ public class ProductVariantOptionValueService {
         return variantOptionValueMapper.toDtoWithComputedFields(savedVariantOptionValue);
     }
 
-    public void removeOptionValueFromVariant(UUID variantId, UUID optionId, UUID tenantId) {
+    public void removeOptionValueFromVariant(Long variantId, Long optionId, Long tenantId) {
         ProductVariantOptionValue variantOptionValue = variantOptionValueRepository.findByVariantIdAndOptionIdAndTenantId(variantId, optionId, tenantId)
                 .orElseThrow(() -> new RuntimeException("Variant option value not found"));
         
@@ -118,22 +117,22 @@ public class ProductVariantOptionValueService {
         variantOptionValueRepository.delete(variantOptionValue);
     }
 
-    public void removeAllOptionValuesFromVariant(UUID variantId, UUID tenantId) {
+    public void removeAllOptionValuesFromVariant(Long variantId, Long tenantId) {
         log.info("Removing all option values from variant: {} for tenant: {}", variantId, tenantId);
         variantOptionValueRepository.deleteByVariantIdAndTenantId(variantId, tenantId);
     }
 
-    public void removeVariantsFromOptionValue(UUID optionValueId, UUID tenantId) {
+    public void removeVariantsFromOptionValue(Long optionValueId, Long tenantId) {
         log.info("Removing all variants from option value: {} for tenant: {}", optionValueId, tenantId);
         variantOptionValueRepository.deleteByOptionValueIdAndTenantId(optionValueId, tenantId);
     }
 
-    public void removeVariantsFromOption(UUID optionId, UUID tenantId) {
+    public void removeVariantsFromOption(Long optionId, Long tenantId) {
         log.info("Removing all variants from option: {} for tenant: {}", optionId, tenantId);
         variantOptionValueRepository.deleteByOptionIdAndTenantId(optionId, tenantId);
     }
 
-    public List<ProductVariantOptionValueDto> setVariantOptionValues(UUID variantId, Map<UUID, UUID> optionValueMap, UUID tenantId) {
+    public List<ProductVariantOptionValueDto> setVariantOptionValues(Long variantId, Map<Long, Long> optionValueMap, Long tenantId) {
         // Remove existing option values for this variant
         removeAllOptionValuesFromVariant(variantId, tenantId);
         
@@ -159,37 +158,37 @@ public class ProductVariantOptionValueService {
     }
 
     @Transactional(readOnly = true)
-    public long getVariantOptionValueCount(UUID variantId, UUID tenantId) {
+    public long getVariantOptionValueCount(Long variantId, Long tenantId) {
         return variantOptionValueRepository.countByVariantIdAndTenantId(variantId, tenantId);
     }
 
     @Transactional(readOnly = true)
-    public long getOptionVariantCount(UUID optionId, UUID tenantId) {
+    public long getOptionVariantCount(Long optionId, Long tenantId) {
         return variantOptionValueRepository.countByOptionIdAndTenantId(optionId, tenantId);
     }
 
     @Transactional(readOnly = true)
-    public long getOptionValueVariantCount(UUID optionValueId, UUID tenantId) {
+    public long getOptionValueVariantCount(Long optionValueId, Long tenantId) {
         return variantOptionValueRepository.countByOptionValueIdAndTenantId(optionValueId, tenantId);
     }
 
     @Transactional(readOnly = true)
-    public List<UUID> getVariantIdsByOption(UUID optionId, UUID tenantId) {
+    public List<Long> getVariantIdsByOption(Long optionId, Long tenantId) {
         return variantOptionValueRepository.findVariantIdsByOptionIdAndTenantId(optionId, tenantId);
     }
 
     @Transactional(readOnly = true)
-    public List<UUID> getVariantIdsByOptionValue(UUID optionValueId, UUID tenantId) {
+    public List<Long> getVariantIdsByOptionValue(Long optionValueId, Long tenantId) {
         return variantOptionValueRepository.findVariantIdsByOptionValueIdAndTenantId(optionValueId, tenantId);
     }
 
     @Transactional(readOnly = true)
-    public boolean hasOptionValue(UUID variantId, UUID optionId, UUID tenantId) {
+    public boolean hasOptionValue(Long variantId, Long optionId, Long tenantId) {
         return variantOptionValueRepository.existsByVariantIdAndOptionIdAndTenantId(variantId, optionId, tenantId);
     }
 
     @Transactional(readOnly = true)
-    public Optional<UUID> findVariantByOptionValues(UUID productId, Map<UUID, UUID> optionValueMap, UUID tenantId) {
+    public Optional<Long> findVariantByOptionValues(Long productId, Map<Long, Long> optionValueMap, Long tenantId) {
         if (optionValueMap.isEmpty()) {
             return Optional.empty();
         }
@@ -198,12 +197,12 @@ public class ProductVariantOptionValueService {
     }
 
     @Transactional(readOnly = true)
-    public boolean isVariantCombinationUnique(UUID variantId, Map<UUID, UUID> optionValueMap, UUID tenantId) {
+    public boolean isVariantCombinationUnique(Long variantId, Map<Long, Long> optionValueMap, Long tenantId) {
         if (optionValueMap.isEmpty()) {
             return true;
         }
         
-        Optional<UUID> existingVariantId = variantOptionValueRepository.findVariantByOptionValues(null, optionValueMap.values(), optionValueMap.size(), tenantId);
+        Optional<Long> existingVariantId = variantOptionValueRepository.findVariantByOptionValues(null, optionValueMap.values(), optionValueMap.size(), tenantId);
         return existingVariantId.isEmpty() || existingVariantId.get().equals(variantId);
     }
 }

@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
  * Service for managing pages in the platform.
  * Provides CRUD operations and business logic for page management.
  */
-@Service("sharedPageService")
+@Service
 @RequiredArgsConstructor
 @Slf4j
 @Transactional
@@ -48,7 +48,7 @@ public class PageService {
      * Get page by ID
      */
     @Transactional(readOnly = true)
-    public Optional<PageResponseDto> getPageById(UUID id) {
+    public Optional<PageResponseDto> getPageById(Long id) {
         log.debug("Fetching page with ID: {}", id);
         
         return pageRepository.findById(id)
@@ -63,7 +63,7 @@ public class PageService {
     public List<PageResponseDto> getPagesByType(PageType pageType, String tenantId) {
         log.debug("Fetching pages of type: {}", pageType);
         
-        List<Page> pages = pageRepository.findActiveByPageType(pageType, tenantId);
+        List<Page> pages = pageRepository.findActiveByPageType(pageType, Long.parseLong(tenantId));
         return pages.stream().map(this::mapToResponseDto).collect(Collectors.toList());
     }
     
@@ -74,7 +74,7 @@ public class PageService {
         log.debug("Creating new page with title: {}", pageRequest.getTitle());
         
         // Check if slug already exists
-        if (pageRepository.existsBySlug(pageRequest.getSlug(), tenantId)) {
+        if (pageRepository.existsBySlugAndTenantIdAndDeletedAtIsNull(pageRequest.getSlug(), Long.parseLong(tenantId))) {
             throw new IllegalArgumentException("Page with slug '" + pageRequest.getSlug() + "' already exists");
         }
         
@@ -86,7 +86,7 @@ public class PageService {
     /**
      * Update existing page
      */
-    public PageResponseDto updatePage(UUID id, PageRequestDto pageRequest, String tenantId) {
+    public PageResponseDto updatePage(Long id, PageRequestDto pageRequest, String tenantId) {
         log.debug("Updating page with ID: {}", id);
         
         Page existingPage = pageRepository.findById(id)
@@ -95,7 +95,7 @@ public class PageService {
         
         // Check if slug already exists (excluding current page)
         if (!existingPage.getSlug().equals(pageRequest.getSlug()) && 
-            pageRepository.existsBySlugExcludingId(pageRequest.getSlug(), id, tenantId)) {
+            pageRepository.existsBySlugAndTenantIdAndIdNotAndDeletedAtIsNull(pageRequest.getSlug(), Long.parseLong(tenantId), id)) {
             throw new IllegalArgumentException("Page with slug '" + pageRequest.getSlug() + "' already exists");
         }
         
@@ -107,7 +107,7 @@ public class PageService {
     /**
      * Update page layout
      */
-    public PageResponseDto updatePageLayout(UUID id, String layout) {
+    public PageResponseDto updatePageLayout(Long id, String layout) {
         log.debug("Updating layout for page with id: {}", id);
         
         Page page = pageRepository.findById(id)
@@ -124,7 +124,7 @@ public class PageService {
     /**
      * Update page SEO
      */
-    public PageResponseDto updatePageSeo(UUID id, String seoJson) {
+    public PageResponseDto updatePageSeo(Long id, String seoJson) {
         log.debug("Updating SEO for page with id: {}", id);
         
         Page page = pageRepository.findById(id)
@@ -141,7 +141,7 @@ public class PageService {
     /**
      * Toggle page publish status
      */
-    public PageResponseDto togglePagePublishStatus(UUID id) {
+    public PageResponseDto togglePagePublishStatus(Long id) {
         log.debug("Toggling publish status for page with id: {}", id);
         
         Page page = pageRepository.findById(id)
@@ -158,7 +158,7 @@ public class PageService {
     /**
      * Delete page (soft delete)
      */
-    public void deletePage(UUID id) {
+    public void deletePage(Long id) {
         log.debug("Deleting page with id: {}", id);
         
         Page page = pageRepository.findById(id)

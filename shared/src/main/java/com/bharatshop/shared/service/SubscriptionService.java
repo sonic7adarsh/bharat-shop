@@ -46,7 +46,7 @@ public class SubscriptionService {
      * Get active subscription for vendor
      */
     @Transactional(readOnly = true)
-    public Optional<Subscription> getActiveSubscription(UUID vendorId) {
+    public Optional<Subscription> getActiveSubscription(Long vendorId) {
         log.debug("Fetching active subscription for vendor: {}", vendorId);
         return subscriptionRepository.findActiveByVendorId(vendorId, LocalDateTime.now());
     }
@@ -55,7 +55,7 @@ public class SubscriptionService {
      * Get current subscription for vendor (active or expired)
      */
     @Transactional(readOnly = true)
-    public Optional<Subscription> getCurrentSubscription(UUID vendorId) {
+    public Optional<Subscription> getCurrentSubscription(Long vendorId) {
         log.debug("Fetching current subscription for vendor: {}", vendorId);
         return subscriptionRepository.findCurrentByVendorId(vendorId);
     }
@@ -64,7 +64,7 @@ public class SubscriptionService {
      * Get all subscriptions for vendor
      */
     @Transactional(readOnly = true)
-    public List<Subscription> getVendorSubscriptions(UUID vendorId) {
+    public List<Subscription> getVendorSubscriptions(Long vendorId) {
         log.debug("Fetching all subscriptions for vendor: {}", vendorId);
         return subscriptionRepository.findAllByVendorId(vendorId);
     }
@@ -72,7 +72,7 @@ public class SubscriptionService {
     /**
      * Create Razorpay order for subscription
      */
-    public RazorpayOrderResponseDto createSubscriptionOrder(UUID vendorId, UUID planId) {
+    public RazorpayOrderResponseDto createSubscriptionOrder(Long vendorId, Long planId) {
         log.info("Creating subscription order for vendor: {} and plan: {}", vendorId, planId);
         
         // Get plan details
@@ -159,7 +159,7 @@ public class SubscriptionService {
     /**
      * Cancel subscription
      */
-    public void cancelSubscription(UUID subscriptionId, String reason) {
+    public void cancelSubscription(Long subscriptionId, String reason) {
         log.info("Cancelling subscription: {}", subscriptionId);
         
         Subscription subscription = subscriptionRepository.findById(subscriptionId)
@@ -233,7 +233,7 @@ public class SubscriptionService {
      * Check if vendor has active subscription
      */
     @Transactional(readOnly = true)
-    public boolean hasActiveSubscription(UUID vendorId) {
+    public boolean hasActiveSubscription(Long vendorId) {
         return subscriptionRepository.hasActiveSubscription(vendorId, LocalDateTime.now());
     }
 
@@ -241,7 +241,7 @@ public class SubscriptionService {
      * Get subscription feature limits
      */
     @Transactional(readOnly = true)
-    public Map<String, Object> getSubscriptionLimits(UUID vendorId) {
+    public Map<String, Object> getSubscriptionLimits(Long vendorId) {
         Optional<Subscription> subscriptionOpt = getActiveSubscription(vendorId);
         
         Map<String, Object> limits = new HashMap<>();
@@ -344,7 +344,7 @@ public class SubscriptionService {
 
     // Additional service methods
     
-    public Page<SubscriptionResponseDto> getSubscriptionHistory(UUID vendorId, Pageable pageable) {
+    public Page<SubscriptionResponseDto> getSubscriptionHistory(Long vendorId, Pageable pageable) {
         List<Subscription> subscriptions = subscriptionRepository.findAllByVendorId(vendorId);
         
         // Convert to DTOs
@@ -360,13 +360,13 @@ public class SubscriptionService {
         return new PageImpl<>(pageContent, pageable, dtos.size());
     }
     
-    public JsonNode getCurrentFeatures(UUID vendorId) {
+    public JsonNode getCurrentFeatures(Long vendorId) {
         Optional<Subscription> activeSubscription = subscriptionRepository.findActiveByVendorId(vendorId, LocalDateTime.now());
         return activeSubscription.map(subscription -> subscription.getPlan().getFeatures())
                 .orElse(null);
     }
     
-    public boolean hasFeature(UUID vendorId, String featureName) {
+    public boolean hasFeature(Long vendorId, String featureName) {
         Optional<Subscription> activeSubscription = subscriptionRepository.findActiveByVendorId(vendorId, LocalDateTime.now());
         if (activeSubscription.isEmpty()) {
             return false;

@@ -9,7 +9,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
+// import java.util.UUID; // Replaced with Long
 
 @Entity
 @Table(name = "reservations", indexes = {
@@ -30,10 +30,10 @@ public class Reservation {
     private Long id;
     
     @Column(nullable = false)
-    private UUID tenantId;
+    private Long tenantId;
     
     @Column(nullable = false)
-    private UUID productVariantId;
+    private Long productVariantId;
     
     @Column(nullable = false)
     private Integer quantity;
@@ -46,7 +46,6 @@ public class Reservation {
     
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    @Builder.Default
     private ReservationStatus status = ReservationStatus.ACTIVE;
     
     @CreationTimestamp
@@ -89,7 +88,7 @@ public class Reservation {
         return id;
     }
     
-    public UUID getTenantId() {
+    public Long getTenantId() {
         return tenantId;
     }
     
@@ -97,7 +96,7 @@ public class Reservation {
         this.orderId = orderId;
     }
     
-    public UUID getProductVariantId() {
+    public Long getProductVariantId() {
         return productVariantId;
     }
     
@@ -112,19 +111,19 @@ public class Reservation {
     
     // Manual ReservationBuilder class
     public static class ReservationBuilder {
-        private UUID tenantId;
-        private UUID productVariantId;
+        private Long tenantId;
+        private Long productVariantId;
         private Integer quantity;
         private Long orderId;
         private LocalDateTime expiresAt;
         private ReservationStatus status = ReservationStatus.ACTIVE;
         
-        public ReservationBuilder tenantId(UUID tenantId) {
+        public ReservationBuilder tenantId(Long tenantId) {
             this.tenantId = tenantId;
             return this;
         }
         
-        public ReservationBuilder productVariantId(UUID productVariantId) {
+        public ReservationBuilder productVariantId(Long productVariantId) {
             this.productVariantId = productVariantId;
             return this;
         }

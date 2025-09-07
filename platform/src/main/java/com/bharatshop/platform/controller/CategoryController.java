@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
+// import java.util.UUID; // Replaced with Long
 
 @RestController
 @RequestMapping("/api/platform/categories")
@@ -38,7 +38,7 @@ public class CategoryController {
             @RequestParam(required = false) Long parentId,
             Authentication authentication) {
         
-        UUID tenantId = getTenantIdFromAuth(authentication);
+        Long tenantId = getTenantIdFromAuth(authentication);
         
         Sort sort = sortDir.equalsIgnoreCase("desc") ? 
                 Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
@@ -69,21 +69,21 @@ public class CategoryController {
 
     @GetMapping("/tree")
     public ResponseEntity<List<Category>> getCategoryTree(Authentication authentication) {
-        UUID tenantId = getTenantIdFromAuth(authentication);
+        Long tenantId = getTenantIdFromAuth(authentication);
         List<Category> categoryTree = categoryService.getCategoryTree(tenantId);
         return ResponseEntity.ok(categoryTree);
     }
 
     @GetMapping("/root")
     public ResponseEntity<List<Category>> getRootCategories(Authentication authentication) {
-        UUID tenantId = getTenantIdFromAuth(authentication);
+        Long tenantId = getTenantIdFromAuth(authentication);
         List<Category> rootCategories = categoryService.getRootCategories(tenantId);
         return ResponseEntity.ok(rootCategories);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Category> getCategoryById(@PathVariable UUID id, Authentication authentication) {
-        UUID tenantId = getTenantIdFromAuth(authentication);
+    public ResponseEntity<Category> getCategoryById(@PathVariable Long id, Authentication authentication) {
+        Long tenantId = getTenantIdFromAuth(authentication);
         
         Optional<Category> category = categoryService.getCategoryById(id, tenantId);
         return category.map(ResponseEntity::ok)
@@ -92,7 +92,7 @@ public class CategoryController {
 
     @GetMapping("/slug/{slug}")
     public ResponseEntity<Category> getCategoryBySlug(@PathVariable String slug, Authentication authentication) {
-        UUID tenantId = getTenantIdFromAuth(authentication);
+        Long tenantId = getTenantIdFromAuth(authentication);
         
         Optional<Category> category = categoryService.getCategoryBySlug(slug, tenantId);
         return category.map(ResponseEntity::ok)
@@ -101,10 +101,10 @@ public class CategoryController {
 
     @GetMapping("/{id}/children")
     public ResponseEntity<List<Category>> getCategoryChildren(
-            @PathVariable UUID id, 
+            @PathVariable Long id, 
             Authentication authentication) {
         
-        UUID tenantId = getTenantIdFromAuth(authentication);
+        Long tenantId = getTenantIdFromAuth(authentication);
         List<Category> children = categoryService.getDirectChildren(tenantId, id);
         return ResponseEntity.ok(children);
     }
@@ -112,7 +112,7 @@ public class CategoryController {
     @PostMapping
     public ResponseEntity<Category> createCategory(@RequestBody Category category, Authentication authentication) {
         try {
-            UUID tenantId = getTenantIdFromAuth(authentication);
+            Long tenantId = getTenantIdFromAuth(authentication);
             Category createdCategory = categoryService.createCategory(category, tenantId);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdCategory);
         } catch (IllegalArgumentException e) {
@@ -124,12 +124,12 @@ public class CategoryController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Category> updateCategory(
-            @PathVariable UUID id, 
+            @PathVariable Long id, 
             @RequestBody Category category, 
             Authentication authentication) {
         
         try {
-            UUID tenantId = getTenantIdFromAuth(authentication);
+            Long tenantId = getTenantIdFromAuth(authentication);
             Category updatedCategory = categoryService.updateCategory(id, category, tenantId);
             return ResponseEntity.ok(updatedCategory);
         } catch (RuntimeException e) {
@@ -146,9 +146,9 @@ public class CategoryController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCategory(@PathVariable UUID id, Authentication authentication) {
+    public ResponseEntity<Void> deleteCategory(@PathVariable Long id, Authentication authentication) {
         try {
-            UUID tenantId = getTenantIdFromAuth(authentication);
+            Long tenantId = getTenantIdFromAuth(authentication);
             categoryService.deleteCategory(id, tenantId);
             return ResponseEntity.noContent().build();
         } catch (RuntimeException e) {
@@ -166,12 +166,12 @@ public class CategoryController {
 
     @PatchMapping("/{id}/status")
     public ResponseEntity<Category> updateCategoryStatus(
-            @PathVariable UUID id, 
+            @PathVariable Long id, 
             @RequestBody Map<String, Boolean> statusUpdate, 
             Authentication authentication) {
         
         try {
-            UUID tenantId = getTenantIdFromAuth(authentication);
+            Long tenantId = getTenantIdFromAuth(authentication);
             Boolean isActive = statusUpdate.get("isActive");
             
             if (isActive == null) {
@@ -196,7 +196,7 @@ public class CategoryController {
             Authentication authentication) {
         
         try {
-            UUID tenantId = getTenantIdFromAuth(authentication);
+            Long tenantId = getTenantIdFromAuth(authentication);
             List<Category> reorderedCategories = categoryService.reorderCategories(tenantId, reorderData);
             return ResponseEntity.ok(reorderedCategories);
         } catch (RuntimeException e) {
@@ -208,7 +208,7 @@ public class CategoryController {
 
     @GetMapping("/stats")
     public ResponseEntity<Map<String, Object>> getCategoryStats(Authentication authentication) {
-        UUID tenantId = getTenantIdFromAuth(authentication);
+        Long tenantId = getTenantIdFromAuth(authentication);
         
         // Enforce analytics feature access
         featureFlagService.enforceFeatureAccess(tenantId, "analytics");
@@ -221,9 +221,9 @@ public class CategoryController {
         return ResponseEntity.ok(stats);
     }
 
-    private UUID getTenantIdFromAuth(Authentication authentication) {
+    private Long getTenantIdFromAuth(Authentication authentication) {
         // Extract tenant ID from JWT token or user details
         // This is a placeholder - implement based on your JWT structure
-        return UUID.fromString("00000000-0000-0000-0000-000000000001"); // For now, return a default tenant ID
+        return 1L; // For now, return a default tenant ID
     }
 }

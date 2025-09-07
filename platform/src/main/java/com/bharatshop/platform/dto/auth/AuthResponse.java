@@ -1,6 +1,6 @@
 package com.bharatshop.platform.dto.auth;
 
-import com.bharatshop.platform.entity.PlatformUser;
+import com.bharatshop.shared.entity.User;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.Set;
-import java.util.UUID;
+// import java.util.UUID; // Replaced with Long
 
 @Data
 @Builder
@@ -42,13 +42,13 @@ public class AuthResponse {
     @Schema(description = "User information")
     public static class UserInfo {
         @Schema(description = "User ID", example = "550e8400-e29b-41d4-a716-446655440000")
-        private UUID id;
+        private Long id;
 
         @Schema(description = "Email address", example = "user@example.com")
         private String email;
 
         @Schema(description = "User roles", example = "[\"VENDOR\"]")
-        private Set<PlatformUser.PlatformRole> roles;
+        private Set<User.UserRole> roles;
 
         @Schema(description = "Account enabled status", example = "true")
         private Boolean enabled;
@@ -63,13 +63,13 @@ public class AuthResponse {
         }
         
         public static class UserInfoBuilder {
-            private UUID id;
+            private Long id;
             private String email;
-            private Set<PlatformUser.PlatformRole> roles;
+            private Set<User.UserRole> roles;
             private Boolean enabled;
             private LocalDateTime createdAt;
             
-            public UserInfoBuilder id(UUID id) {
+            public UserInfoBuilder id(Long id) {
                 this.id = id;
                 return this;
             }
@@ -79,7 +79,7 @@ public class AuthResponse {
                 return this;
             }
             
-            public UserInfoBuilder roles(Set<PlatformUser.PlatformRole> roles) {
+            public UserInfoBuilder roles(Set<User.UserRole> roles) {
                 this.roles = roles;
                 return this;
             }

@@ -23,7 +23,7 @@ import java.util.UUID;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class OptionDto {
     
-    private UUID id;
+    private Long id;
     
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createdAt;
@@ -56,4 +56,57 @@ public class OptionDto {
     
     // For product count using this option
     private Long productCount;
+    
+    // Manual getters for compilation (Lombok not processing properly)
+    public String getName() {
+        return name;
+    }
+    
+    public String getDisplayName() {
+        return displayName;
+    }
+    
+    public Option.OptionType getType() {
+        return type;
+    }
+    
+    public Boolean getIsRequired() {
+        return isRequired;
+    }
+    
+    public Integer getSortOrder() {
+        return sortOrder;
+    }
+    
+    public Boolean getIsActive() {
+        return isActive;
+    }
+    
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
+    }
+    
+    public void setSortOrder(Integer sortOrder) {
+        this.sortOrder = sortOrder;
+    }
+    
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+    
+    public void setType(Option.OptionType type) {
+        this.type = type;
+    }
+    
+    public void setIsRequired(Boolean isRequired) {
+        this.isRequired = isRequired;
+    }
+    
+    public void setId(Long id) {
+        this.id = id;
+    }
 }

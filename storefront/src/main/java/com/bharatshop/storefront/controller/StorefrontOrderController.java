@@ -4,7 +4,7 @@ import com.bharatshop.storefront.shared.ApiResponse;
 import com.bharatshop.storefront.dto.CheckoutRequest;
 import com.bharatshop.storefront.dto.OrderResponse;
 import com.bharatshop.storefront.dto.PaymentRequest;
-import com.bharatshop.storefront.entity.Order;
+import com.bharatshop.shared.entity.Orders;
 
 import com.bharatshop.storefront.service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +21,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Optional;
+// import java.util.UUID; // Replaced with Long
 import java.util.stream.Collectors;
 
 @RestController
@@ -45,9 +46,9 @@ public class StorefrontOrderController {
             Long customerId = extractCustomerId(httpRequest);
             Long tenantId = extractTenantId(httpRequest);
             
-            Order order = orderService.createOrderFromCart(
+            Orders order = orderService.createOrderFromCart(
                     customerId, 
-                    tenantId, 
+                    tenantId.toString(), 
                     request.getAddressId(), 
                     request.getNotes()
             );
@@ -83,7 +84,7 @@ public class StorefrontOrderController {
             Long tenantId = extractTenantId(httpRequest);
             
             // Verify that the order belongs to the customer
-            Optional<Order> existingOrder = orderService.getOrderById(id, customerId, tenantId);
+            Optional<Orders> existingOrder = orderService.getOrderById(id, customerId, tenantId.toString());
             
             if (existingOrder.isEmpty()) {
                 return ResponseEntity.badRequest().body(
@@ -121,8 +122,8 @@ public class StorefrontOrderController {
             Long tenantId = extractTenantId(httpRequest);
             
             // Verify that the order belongs to the customer
-            Optional<Order> existingOrder = orderService.getOrderById(
-                    request.getOrderId(), customerId, tenantId);
+            Optional<Orders> existingOrder = orderService.getOrderById(
+                    request.getOrderId(), customerId, tenantId.toString());
             
             if (existingOrder.isEmpty()) {
                 return ResponseEntity.badRequest().body(
@@ -130,7 +131,7 @@ public class StorefrontOrderController {
                 );
             }
             
-            Order order = orderService.processPayment(
+            Orders order = orderService.processPayment(
                     request.getOrderId(),
                     request.getRazorpayOrderId(),
                     request.getRazorpayPaymentId(),
@@ -162,7 +163,7 @@ public class StorefrontOrderController {
     public ResponseEntity<ApiResponse<Page<OrderResponse>>> getOrders(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(required = false) Order.OrderStatus status,
+            @RequestParam(required = false) Orders.OrderStatus status,
             HttpServletRequest httpRequest) {
         
         try {
@@ -170,17 +171,17 @@ public class StorefrontOrderController {
             Long tenantId = extractTenantId(httpRequest);
             
             Pageable pageable = PageRequest.of(page, size);
-            Page<Order> orders;
+            Page<Orders> orders;
             
             if (status != null) {
-                List<Order> orderList = orderService.getCustomerOrdersByStatus(customerId, tenantId, status);
+                List<Orders> orderList = orderService.getCustomerOrdersByStatus(customerId, tenantId.toString(), status);
                 // Convert List to Page for consistent response
                 int start = (int) pageable.getOffset();
                 int end = Math.min((start + pageable.getPageSize()), orderList.size());
-                List<Order> pageContent = orderList.subList(start, end);
+                List<Orders> pageContent = orderList.subList(start, end);
                 orders = new PageImpl<>(pageContent, pageable, orderList.size());
             } else {
-                orders = orderService.getCustomerOrders(customerId, tenantId, pageable);
+                orders = orderService.getCustomerOrders(customerId, tenantId.toString(), pageable);
             }
             
             Page<OrderResponse> response = orders.map(OrderResponse::fromEntity);
@@ -210,7 +211,7 @@ public class StorefrontOrderController {
             Long customerId = extractCustomerId(httpRequest);
             Long tenantId = extractTenantId(httpRequest);
             
-            Optional<Order> order = orderService.getOrderById(id, customerId, tenantId);
+            Optional<Orders> order = orderService.getOrderById(id, customerId, tenantId.toString());
             
             if (order.isEmpty()) {
                 return ResponseEntity.notFound().build();
@@ -246,7 +247,7 @@ public class StorefrontOrderController {
             
             String cancellationReason = reason != null ? reason : "Cancelled by customer";
             
-            Order order = orderService.cancelOrder(id, customerId, tenantId, cancellationReason);
+            Orders order = orderService.cancelOrder(id, customerId, tenantId.toString(), cancellationReason);
             OrderResponse response = OrderResponse.fromEntity(order);
             
             log.info("Order cancelled: {} by customer: {}", order.getOrderNumber(), customerId);
@@ -276,7 +277,7 @@ public class StorefrontOrderController {
             Long customerId = extractCustomerId(httpRequest);
             Long tenantId = extractTenantId(httpRequest);
             
-            List<Order> orders = orderService.getRecentOrders(customerId, tenantId, limit);
+            List<Orders> orders = orderService.getRecentOrders(customerId, tenantId.toString(), limit);
             List<OrderResponse> response = orders.stream()
                     .map(OrderResponse::fromEntity)
                     .collect(Collectors.toList());
@@ -305,7 +306,7 @@ public class StorefrontOrderController {
             Long customerId = extractCustomerId(httpRequest);
             Long tenantId = extractTenantId(httpRequest);
             
-            OrderService.OrderStatistics statistics = orderService.getCustomerOrderStatistics(customerId, tenantId);
+            OrderService.OrderStatistics statistics = orderService.getCustomerOrderStatistics(customerId, tenantId.toString());
             
             return ResponseEntity.ok(
                     ApiResponse.success(statistics, "Order statistics retrieved successfully")
@@ -331,7 +332,7 @@ public class StorefrontOrderController {
             Long customerId = extractCustomerId(httpRequest);
             Long tenantId = extractTenantId(httpRequest);
             
-            boolean hasCompleted = orderService.hasCompletedOrders(customerId, tenantId);
+            boolean hasCompleted = orderService.hasCompletedOrders(customerId, tenantId.toString());
             
             return ResponseEntity.ok(
                     ApiResponse.success(hasCompleted, "Completed orders check retrieved successfully")

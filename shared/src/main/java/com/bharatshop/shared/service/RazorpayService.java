@@ -33,7 +33,7 @@ public class RazorpayService {
     private final RazorpayClient razorpayClient;
     private final RazorpayConfig razorpayConfig;
 
-    public RazorpayOrderResponseDto createOrder(Plan plan, UUID subscriptionId, String customerEmail, String customerName, String customerPhone) {
+    public RazorpayOrderResponseDto createOrder(Plan plan, Long subscriptionId, String customerEmail, String customerName, String customerPhone) {
         try {
             JSONObject orderRequest = new JSONObject();
             // Convert price to paise (multiply by 100)
@@ -41,10 +41,10 @@ public class RazorpayService {
             
             orderRequest.put("amount", amountInPaise);
             orderRequest.put("currency", "INR");
-            orderRequest.put("receipt", "sub_" + subscriptionId.toString());
+            orderRequest.put("receipt", "sub_" + subscriptionId);
             
             JSONObject notes = new JSONObject();
-            notes.put("subscription_id", subscriptionId.toString());
+            notes.put("subscription_id", subscriptionId);
             notes.put("plan_id", plan.getId().toString());
             notes.put("plan_name", plan.getName());
             orderRequest.put("notes", notes);

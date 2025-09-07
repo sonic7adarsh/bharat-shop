@@ -1,13 +1,11 @@
 package com.bharatshop.storefront.dto;
 
-import com.bharatshop.storefront.model.Page;
+import com.bharatshop.shared.enums.PageType;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
+// import java.util.UUID; // Replaced with Long
 
 /**
  * Response DTO for CMS Page data in storefront APIs.
@@ -17,7 +15,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class PageResponseDto {
     
-    private UUID id;
+    private Long id;
     private String title;
     private String slug;
     private String content;
@@ -25,7 +23,7 @@ public class PageResponseDto {
     private String metaTitle;
     private String metaDescription;
     private String metaKeywords;
-    private Page.PageType pageType;
+    private PageType pageType;
     private String template;
     private String layout;
     private String seo;
@@ -34,7 +32,7 @@ public class PageResponseDto {
     private LocalDateTime updatedAt;
     
     // Manual getter methods
-    public UUID getId() {
+    public Long getId() {
         return id;
     }
     
@@ -66,7 +64,7 @@ public class PageResponseDto {
         return metaKeywords;
     }
     
-    public Page.PageType getPageType() {
+    public PageType getPageType() {
         return pageType;
     }
     
@@ -100,7 +98,7 @@ public class PageResponseDto {
     }
     
     public static class PageResponseDtoBuilder {
-        private UUID id;
+        private Long id;
         private String title;
         private String slug;
         private String content;
@@ -108,7 +106,7 @@ public class PageResponseDto {
         private String metaTitle;
         private String metaDescription;
         private String metaKeywords;
-        private Page.PageType pageType;
+        private PageType pageType;
         private String template;
         private String layout;
         private String seo;
@@ -116,7 +114,7 @@ public class PageResponseDto {
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
         
-        public PageResponseDtoBuilder id(UUID id) {
+        public PageResponseDtoBuilder id(Long id) {
             this.id = id;
             return this;
         }
@@ -156,7 +154,7 @@ public class PageResponseDto {
             return this;
         }
         
-        public PageResponseDtoBuilder pageType(Page.PageType pageType) {
+        public PageResponseDtoBuilder pageType(PageType pageType) {
             this.pageType = pageType;
             return this;
         }

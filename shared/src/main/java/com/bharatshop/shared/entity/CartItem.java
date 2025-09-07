@@ -10,7 +10,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.UUID;
+// import java.util.UUID; // Replaced with Long
 
 @Entity(name = "SharedCartItem")
 @Table(name = "cart_items", indexes = {
@@ -38,7 +38,7 @@ public class CartItem {
     private Product product;
     
     @Column(name = "variantId")
-    private UUID variantId;
+    private Long variantId;
     
     @Column(nullable = false)
     private Integer quantity;
@@ -64,7 +64,7 @@ public class CartItem {
         return unitPrice;
     }
     
-    public UUID getVariantId() {
+    public Long getVariantId() {
         return variantId;
     }
     

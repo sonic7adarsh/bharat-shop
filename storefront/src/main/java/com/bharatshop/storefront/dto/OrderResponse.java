@@ -1,6 +1,6 @@
 package com.bharatshop.storefront.dto;
 
-import com.bharatshop.storefront.entity.Order;
+import com.bharatshop.shared.entity.Orders;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -19,8 +19,8 @@ public class OrderResponse {
     private Long id;
     private String orderNumber;
     private Long customerId;
-    private Order.OrderStatus status;
-    private Order.PaymentStatus paymentStatus;
+    private Orders.OrderStatus status;
+    private Orders.PaymentStatus paymentStatus;
     private BigDecimal totalAmount;
     private BigDecimal discountAmount;
     private BigDecimal taxAmount;
@@ -69,8 +69,8 @@ public class OrderResponse {
         private Long id;
         private String orderNumber;
         private Long customerId;
-        private Order.OrderStatus status;
-        private Order.PaymentStatus paymentStatus;
+        private Orders.OrderStatus status;
+        private Orders.PaymentStatus paymentStatus;
         private BigDecimal totalAmount;
         private BigDecimal discountAmount;
         private BigDecimal taxAmount;
@@ -110,8 +110,8 @@ public class OrderResponse {
         public OrderResponseBuilder id(Long id) { this.id = id; return this; }
         public OrderResponseBuilder orderNumber(String orderNumber) { this.orderNumber = orderNumber; return this; }
         public OrderResponseBuilder customerId(Long customerId) { this.customerId = customerId; return this; }
-        public OrderResponseBuilder status(Order.OrderStatus status) { this.status = status; return this; }
-        public OrderResponseBuilder paymentStatus(Order.PaymentStatus paymentStatus) { this.paymentStatus = paymentStatus; return this; }
+        public OrderResponseBuilder status(Orders.OrderStatus status) { this.status = status; return this; }
+        public OrderResponseBuilder paymentStatus(Orders.PaymentStatus paymentStatus) { this.paymentStatus = paymentStatus; return this; }
         public OrderResponseBuilder totalAmount(BigDecimal totalAmount) { this.totalAmount = totalAmount; return this; }
         public OrderResponseBuilder discountAmount(BigDecimal discountAmount) { this.discountAmount = discountAmount; return this; }
         public OrderResponseBuilder taxAmount(BigDecimal taxAmount) { this.taxAmount = taxAmount; return this; }
@@ -194,7 +194,7 @@ public class OrderResponse {
         }
     }
     
-    public static OrderResponse fromEntity(Order order) {
+    public static OrderResponse fromEntity(Orders order) {
         List<OrderItemResponse> itemResponses = order.getItems() != null ? 
                 order.getItems().stream()
                         .map(OrderItemResponse::fromEntity)

@@ -10,7 +10,8 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,7 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
+
 
 /**
  * Controller for managing templates in the platform.
@@ -29,9 +30,10 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/platform/templates")
 @RequiredArgsConstructor
-@Slf4j
 @Tag(name = "Template Management", description = "APIs for template management and selection")
 public class TemplateController {
+
+    private static final Logger log = LoggerFactory.getLogger(TemplateController.class);
     
     private final TemplateService templateService;
     private final FeatureFlagService featureFlagService;
@@ -78,7 +80,7 @@ public class TemplateController {
     @Operation(summary = "Get template by ID", description = "Retrieve a specific template by its ID")
     public ResponseEntity<ApiResponse<Template>> getTemplateById(
             @Parameter(description = "Template ID")
-            @PathVariable UUID id) {
+            @PathVariable Long id) {
         
         try {
             return templateService.getTemplateById(id)
@@ -164,7 +166,7 @@ public class TemplateController {
             @Valid @RequestBody Template template) {
         
         try {
-            UUID tenantId = UUID.fromString(TenantContext.getCurrentTenant());
+            Long tenantId = Long.parseLong(TenantContext.getCurrentTenant());
             
             // Enforce advanced features access for template creation
             featureFlagService.enforceFeatureAccess(tenantId, "advancedFeatures");
@@ -193,13 +195,13 @@ public class TemplateController {
     @Operation(summary = "Update template", description = "Update an existing template")
     public ResponseEntity<ApiResponse<Template>> updateTemplate(
             @Parameter(description = "Template ID")
-            @PathVariable UUID id,
+            @PathVariable Long id,
             
             @Parameter(description = "Updated template data")
             @Valid @RequestBody Template template) {
         
         try {
-            UUID tenantId = UUID.fromString(TenantContext.getCurrentTenant());
+            Long tenantId = Long.parseLong(TenantContext.getCurrentTenant());
             
             // Enforce advanced features access for template updates
             featureFlagService.enforceFeatureAccess(tenantId, "advancedFeatures");
@@ -227,7 +229,7 @@ public class TemplateController {
     @Operation(summary = "Toggle template status", description = "Activate or deactivate a template")
     public ResponseEntity<ApiResponse<Template>> toggleTemplateStatus(
             @Parameter(description = "Template ID")
-            @PathVariable UUID id) {
+            @PathVariable Long id) {
         
         try {
             Template template = templateService.toggleTemplateStatus(id);
@@ -252,7 +254,7 @@ public class TemplateController {
     @Operation(summary = "Delete template", description = "Soft delete a template")
     public ResponseEntity<ApiResponse<Void>> deleteTemplate(
             @Parameter(description = "Template ID")
-            @PathVariable UUID id) {
+            @PathVariable Long id) {
         
         try {
             templateService.deleteTemplate(id);

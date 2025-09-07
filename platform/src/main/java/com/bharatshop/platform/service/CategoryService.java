@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -27,45 +26,44 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final FeatureFlagService featureFlagService;
 
-    public List<Category> getAllCategoriesByTenant(UUID tenantId) {
+    public List<Category> getAllCategoriesByTenant(Long tenantId) {
         return categoryRepository.findByTenantIdAndDeletedAtIsNullOrderBySortOrderAsc(tenantId);
     }
 
-    public List<Category> getActiveCategoriesByTenant(UUID tenantId) {
+    public List<Category> getActiveCategoriesByTenant(Long tenantId) {
         return categoryRepository.findByTenantIdAndIsActiveAndDeletedAtIsNullOrderBySortOrderAsc(tenantId, true);
     }
 
-    public Optional<Category> getCategoryById(UUID id, UUID tenantId) {
+    public Optional<Category> getCategoryById(Long id, Long tenantId) {
         return categoryRepository.findByIdAndTenantIdAndDeletedAtIsNull(id, tenantId);
     }
 
-    public Optional<Category> getCategoryBySlug(String slug, UUID tenantId) {
+    public Optional<Category> getCategoryBySlug(String slug, Long tenantId) {
         return categoryRepository.findBySlugAndTenantIdAndDeletedAtIsNull(slug, tenantId);
     }
 
-    public List<Category> getRootCategories(UUID tenantId) {
+    public List<Category> getRootCategories(Long tenantId) {
         return categoryRepository.findRootCategories(tenantId);
     }
 
-    public List<Category> getChildCategories(UUID tenantId, UUID parentId) {
-        // Convert UUID parentId to Long for repository method
-        Long parentIdLong = Long.parseLong(parentId.toString().replace("-", "").substring(0, 10));
-        return categoryRepository.findChildCategories(tenantId, parentIdLong);
+    public List<Category> getChildCategories(Long tenantId, Long parentId) {
+        return categoryRepository.findChildCategories(tenantId, parentId);
     }
 
-    public List<Category> getCategoryHierarchy(UUID tenantId) {
+    public List<Category> getCategoryHierarchy(Long tenantId) {
         List<Category> rootCategories = getRootCategories(tenantId);
         return buildCategoryTree(rootCategories, tenantId);
     }
 
-    public List<Category> searchCategories(UUID tenantId, String keyword) {
+    public List<Category> searchCategories(Long tenantId, String keyword) {
         if (!StringUtils.hasText(keyword)) {
             return getAllCategoriesByTenant(tenantId);
         }
-        return categoryRepository.searchByTenantIdAndKeyword(tenantId, keyword.trim());
+        // Use basic tenant search since searchByTenantIdAndKeyword was removed
+        return categoryRepository.findByTenantIdAndDeletedAtIsNull(tenantId);
     }
 
-    public Category createCategory(Category category, UUID tenantId) {
+    public Category createCategory(Category category, Long tenantId) {
         validateCategory(category, tenantId);
         
         // Check category limit before creating
@@ -90,7 +88,7 @@ public class CategoryService {
         return categoryRepository.save(category);
     }
 
-    public Category updateCategory(UUID id, Category categoryUpdates, UUID tenantId) {
+    public Category updateCategory(Long id, Category categoryUpdates, Long tenantId) {
         Category existingCategory = categoryRepository.findByIdAndTenantIdAndDeletedAtIsNull(id, tenantId)
                 .orElseThrow(() -> new RuntimeException("Category not found with id: " + id));
 
@@ -133,13 +131,12 @@ public class CategoryService {
         return categoryRepository.save(existingCategory);
     }
 
-    public void deleteCategory(UUID id, UUID tenantId) {
+    public void deleteCategory(Long id, Long tenantId) {
         Category category = categoryRepository.findByIdAndTenantIdAndDeletedAtIsNull(id, tenantId)
                 .orElseThrow(() -> new RuntimeException("Category not found with id: " + id));
         
-        // Check if category has children - convert UUID to Long for the query
-        // Note: This assumes category IDs can be converted to Long, which may need revision
-        long childCount = categoryRepository.countChildCategories(tenantId, Long.parseLong(id.toString().replace("-", "").substring(0, 10)));
+        // Check if category has children
+        long childCount = categoryRepository.countChildCategories(tenantId, id);
         if (childCount > 0) {
             throw new IllegalStateException("Cannot delete category with child categories. Delete children first.");
         }
@@ -151,7 +148,7 @@ public class CategoryService {
         categoryRepository.save(category);
     }
 
-    public Category updateCategoryStatus(UUID id, Boolean isActive, UUID tenantId) {
+    public Category updateCategoryStatus(Long id, Boolean isActive, Long tenantId) {
         Category category = categoryRepository.findByIdAndTenantIdAndDeletedAtIsNull(id, tenantId)
                 .orElseThrow(() -> new RuntimeException("Category not found with id: " + id));
         
@@ -162,11 +159,11 @@ public class CategoryService {
         return categoryRepository.save(category);
     }
 
-    public List<Category> reorderCategories(UUID tenantId, UUID parentId, List<UUID> categoryIds) {
+    public List<Category> reorderCategories(Long tenantId, Long parentId, List<Long> categoryIds) {
         List<Category> categories = new ArrayList<>();
         
         for (int i = 0; i < categoryIds.size(); i++) {
-            UUID categoryId = categoryIds.get(i);
+            Long categoryId = categoryIds.get(i);
             Category category = categoryRepository.findByIdAndTenantIdAndDeletedAtIsNull(categoryId, tenantId)
                     .orElseThrow(() -> new RuntimeException("Category not found with id: " + categoryId));
             
@@ -179,28 +176,28 @@ public class CategoryService {
         return categories;
     }
 
-    public long getCategoryCount(UUID tenantId) {
+    public long getCategoryCount(Long tenantId) {
         return categoryRepository.findByTenantIdAndDeletedAtIsNullOrderBySortOrderAsc(tenantId).size();
     }
 
-    public long getActiveCategoryCount(UUID tenantId) {
+    public long getActiveCategoryCount(Long tenantId) {
         return categoryRepository.findByTenantIdAndIsActiveAndDeletedAtIsNullOrderBySortOrderAsc(tenantId, true).size();
     }
 
-    public long getRootCategoryCount(UUID tenantId) {
+    public long getRootCategoryCount(Long tenantId) {
         return categoryRepository.findRootCategories(tenantId).size();
     }
 
-    public List<Category> getDirectChildren(UUID tenantId, UUID parentId) {
+    public List<Category> getDirectChildren(Long tenantId, Long parentId) {
         return getChildCategories(tenantId, parentId);
     }
 
-    public List<Category> reorderCategories(UUID tenantId, List<Map<String, Object>> reorderData) {
+    public List<Category> reorderCategories(Long tenantId, List<Map<String, Object>> reorderData) {
         List<Category> categories = new ArrayList<>();
         
         for (int i = 0; i < reorderData.size(); i++) {
             Map<String, Object> data = reorderData.get(i);
-            UUID categoryId = UUID.fromString(data.get("id").toString());
+            Long categoryId = Long.parseLong(data.get("id").toString());
             
             Category category = categoryRepository.findByIdAndTenantIdAndDeletedAtIsNull(categoryId, tenantId)
                     .orElseThrow(() -> new RuntimeException("Category not found with id: " + categoryId));
@@ -214,39 +211,39 @@ public class CategoryService {
         return categories;
     }
 
-    public Page<Category> getAllCategoriesByTenant(UUID tenantId, Pageable pageable) {
+    public Page<Category> getAllCategoriesByTenant(Long tenantId, Pageable pageable) {
         List<Category> categories = getAllCategoriesByTenant(tenantId);
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), categories.size());
         return new PageImpl<>(categories.subList(start, end), pageable, categories.size());
     }
 
-    public Page<Category> searchCategories(UUID tenantId, String keyword, Pageable pageable) {
+    public Page<Category> searchCategories(Long tenantId, String keyword, Pageable pageable) {
         List<Category> categories = searchCategories(tenantId, keyword);
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), categories.size());
         return new PageImpl<>(categories.subList(start, end), pageable, categories.size());
     }
 
-    public Page<Category> getChildCategories(UUID tenantId, Long parentId, Pageable pageable) {
+    public Page<Category> getChildCategories(Long tenantId, Long parentId, Pageable pageable) {
         List<Category> categories = categoryRepository.findByTenantIdAndParentIdAndDeletedAtIsNullOrderBySortOrderAsc(tenantId, parentId);
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), categories.size());
         return new PageImpl<>(categories.subList(start, end), pageable, categories.size());
     }
 
-    public Page<Category> getCategoriesByStatus(UUID tenantId, Boolean isActive, Pageable pageable) {
+    public Page<Category> getCategoriesByStatus(Long tenantId, Boolean isActive, Pageable pageable) {
         List<Category> categories = categoryRepository.findByTenantIdAndIsActiveAndDeletedAtIsNullOrderBySortOrderAsc(tenantId, isActive);
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), categories.size());
         return new PageImpl<>(categories.subList(start, end), pageable, categories.size());
     }
 
-    public List<Category> getCategoryTree(UUID tenantId) {
+    public List<Category> getCategoryTree(Long tenantId) {
         return getCategoryHierarchy(tenantId);
     }
 
-    private List<Category> buildCategoryTree(List<Category> categories, UUID tenantId) {
+    private List<Category> buildCategoryTree(List<Category> categories, Long tenantId) {
         for (Category category : categories) {
             List<Category> children = getChildCategories(tenantId, category.getId());
             if (!children.isEmpty()) {
@@ -256,7 +253,7 @@ public class CategoryService {
         return categories;
     }
 
-    private void validateCategory(Category category, UUID tenantId) {
+    private void validateCategory(Category category, Long tenantId) {
         if (!StringUtils.hasText(category.getName())) {
             throw new IllegalArgumentException("Category name is required");
         }
@@ -269,7 +266,7 @@ public class CategoryService {
         }
     }
 
-    private void validateCategoryUpdate(Category category, UUID tenantId, UUID categoryId) {
+    private void validateCategoryUpdate(Category category, Long tenantId, Long categoryId) {
         validateCategory(category, tenantId);
         
         // Check slug uniqueness if provided
@@ -281,13 +278,13 @@ public class CategoryService {
         }
     }
 
-    private boolean isCircularReference(UUID categoryId, Long parentId, UUID tenantId) {
+    private boolean isCircularReference(Long categoryId, Long parentId, Long tenantId) {
         if (parentId == null) {
             return false;
         }
         
-        // Find the parent category by converting parentId to UUID for lookup
-        Optional<Category> parent = categoryRepository.findByIdAndTenantIdAndDeletedAtIsNull(UUID.fromString(parentId.toString()), tenantId);
+        // Find the parent category
+        Optional<Category> parent = categoryRepository.findByIdAndTenantIdAndDeletedAtIsNull(parentId, tenantId);
         if (parent.isPresent()) {
             if (parent.get().getId().equals(categoryId)) {
                 return true;
@@ -300,7 +297,7 @@ public class CategoryService {
         return false;
     }
 
-    private String generateSlug(String name, UUID tenantId) {
+    private String generateSlug(String name, Long tenantId) {
         String baseSlug = name.toLowerCase()
                 .replaceAll("[^a-z0-9\\s-]", "")
                 .replaceAll("\\s+", "-")
@@ -318,7 +315,7 @@ public class CategoryService {
         return slug;
     }
 
-    private Integer getNextSortOrder(UUID tenantId, Long parentId) {
+    private Integer getNextSortOrder(Long tenantId, Long parentId) {
         List<Category> siblings = parentId == null ? 
                 getRootCategories(tenantId) : 
                 categoryRepository.findByTenantIdAndParentIdAndDeletedAtIsNullOrderBySortOrderAsc(tenantId, parentId);

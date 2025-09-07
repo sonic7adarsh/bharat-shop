@@ -18,228 +18,232 @@ public interface ProductVariantOptionValueRepository extends TenantAwareReposito
     /**
      * Find all option values by variant ID for current tenant
      */
-    @Query("SELECT pvov FROM ProductVariantOptionValue pvov WHERE pvov.variantId = :variantId AND pvov.tenantId = :tenantId AND pvov.deletedAt IS NULL ORDER BY pvov.optionId ASC")
-    List<ProductVariantOptionValue> findByVariantId(@Param("variantId") UUID variantId, @Param("tenantId") String tenantId);
+    @Query(value = "SELECT * FROM product_variant_option_values pvov WHERE pvov.variant_id = :variantId AND pvov.tenant_id = :tenantId AND pvov.deleted_at IS NULL ORDER BY pvov.option_id ASC", nativeQuery = true)
+    List<ProductVariantOptionValue> findByVariantId(@Param("variantId") Long variantId, @Param("tenantId") Long tenantId);
     
     /**
      * Find all option values by multiple variant IDs for current tenant
      */
-    @Query("SELECT pvov FROM ProductVariantOptionValue pvov WHERE pvov.variantId IN :variantIds AND pvov.tenantId = :tenantId AND pvov.deletedAt IS NULL ORDER BY pvov.variantId ASC, pvov.optionId ASC")
-    List<ProductVariantOptionValue> findByVariantIds(@Param("variantIds") List<UUID> variantIds, @Param("tenantId") String tenantId);
+    @Query(value = "SELECT * FROM product_variant_option_values pvov WHERE pvov.variant_id IN :variantIds AND pvov.tenant_id = :tenantId AND pvov.deleted_at IS NULL ORDER BY pvov.variant_id ASC, pvov.option_id ASC", nativeQuery = true)
+    List<ProductVariantOptionValue> findByVariantIds(@Param("variantIds") List<Long> variantIds, @Param("tenantId") Long tenantId);
     
     /**
      * Find all option values by option ID for current tenant
      */
-    @Query("SELECT pvov FROM ProductVariantOptionValue pvov WHERE pvov.optionId = :optionId AND pvov.tenantId = :tenantId AND pvov.deletedAt IS NULL ORDER BY pvov.variantId ASC")
-    List<ProductVariantOptionValue> findByOptionId(@Param("optionId") UUID optionId, @Param("tenantId") String tenantId);
+    @Query(value = "SELECT * FROM product_variant_option_values pvov WHERE pvov.option_id = :optionId AND pvov.tenant_id = :tenantId AND pvov.deleted_at IS NULL ORDER BY pvov.variant_id ASC", nativeQuery = true)
+    List<ProductVariantOptionValue> findByOptionId(@Param("optionId") Long optionId, @Param("tenantId") Long tenantId);
     
     /**
      * Find all option values by option value ID for current tenant
      */
-    @Query("SELECT pvov FROM ProductVariantOptionValue pvov WHERE pvov.optionValueId = :optionValueId AND pvov.tenantId = :tenantId AND pvov.deletedAt IS NULL ORDER BY pvov.variantId ASC")
-    List<ProductVariantOptionValue> findByOptionValueId(@Param("optionValueId") UUID optionValueId, @Param("tenantId") String tenantId);
+    @Query(value = "SELECT * FROM product_variant_option_values pvov WHERE pvov.option_value_id = :optionValueId AND pvov.tenant_id = :tenantId AND pvov.deleted_at IS NULL ORDER BY pvov.variant_id ASC", nativeQuery = true)
+    List<ProductVariantOptionValue> findByOptionValueId(@Param("optionValueId") Long optionValueId, @Param("tenantId") Long tenantId);
     
     /**
      * Find option value by variant ID and option ID for current tenant
      */
-    @Query("SELECT pvov FROM ProductVariantOptionValue pvov WHERE pvov.variantId = :variantId AND pvov.optionId = :optionId AND pvov.tenantId = :tenantId AND pvov.deletedAt IS NULL")
-    List<ProductVariantOptionValue> findByVariantIdAndOptionId(@Param("variantId") UUID variantId, @Param("optionId") UUID optionId, @Param("tenantId") String tenantId);
+    @Query(value = "SELECT * FROM product_variant_option_values pvov WHERE pvov.variant_id = :variantId AND pvov.option_id = :optionId AND pvov.tenant_id = :tenantId AND pvov.deleted_at IS NULL", nativeQuery = true)
+    List<ProductVariantOptionValue> findByVariantIdAndOptionId(@Param("variantId") Long variantId, @Param("optionId") Long optionId, @Param("tenantId") Long tenantId);
     
     /**
      * Find variants by option value combinations for current tenant
      * This is used to find variants that match specific option value combinations
      */
-    @Query("SELECT pvov.variantId FROM ProductVariantOptionValue pvov WHERE pvov.optionValueId IN :optionValueIds AND pvov.tenantId = :tenantId AND pvov.deletedAt IS NULL GROUP BY pvov.variantId HAVING COUNT(DISTINCT pvov.optionValueId) = :optionValueCount")
-    List<UUID> findVariantIdsByOptionValueCombination(@Param("optionValueIds") List<UUID> optionValueIds, @Param("optionValueCount") long optionValueCount, @Param("tenantId") String tenantId);
+    @Query(value = "SELECT DISTINCT pvov.variant_id FROM product_variant_option_values pvov WHERE pvov.option_value_id IN :optionValueIds AND pvov.tenant_id = :tenantId AND pvov.deleted_at IS NULL GROUP BY pvov.variant_id HAVING COUNT(DISTINCT pvov.option_value_id) = :optionValueCount", nativeQuery = true)
+    List<Long> findVariantIdsByOptionValueCombination(@Param("optionValueIds") List<Long> optionValueIds, @Param("optionValueCount") long optionValueCount, @Param("tenantId") Long tenantId);
     
     /**
      * Check if variant has specific option value combination for current tenant
      */
-    @Query("SELECT COUNT(pvov) FROM ProductVariantOptionValue pvov WHERE pvov.variantId = :variantId AND pvov.optionValueId IN :optionValueIds AND pvov.tenantId = :tenantId AND pvov.deletedAt IS NULL")
-    long countByVariantIdAndOptionValueIds(@Param("variantId") UUID variantId, @Param("optionValueIds") List<UUID> optionValueIds, @Param("tenantId") String tenantId);
+    @Query(value = "SELECT COUNT(*) FROM product_variant_option_values pvov WHERE pvov.variant_id = :variantId AND pvov.option_value_id IN :optionValueIds AND pvov.tenant_id = :tenantId AND pvov.deleted_at IS NULL", nativeQuery = true)
+    long countByVariantIdAndOptionValueIds(@Param("variantId") Long variantId, @Param("optionValueIds") List<Long> optionValueIds, @Param("tenantId") Long tenantId);
     
     /**
      * Check if option value combination exists for any variant (excluding current variant) for current tenant
      * This is used to enforce unique variant combinations
      */
-    @Query("SELECT COUNT(DISTINCT pvov.variantId) > 0 FROM ProductVariantOptionValue pvov WHERE pvov.optionValueId IN :optionValueIds AND pvov.variantId != :excludeVariantId AND pvov.tenantId = :tenantId AND pvov.deletedAt IS NULL GROUP BY pvov.variantId HAVING COUNT(DISTINCT pvov.optionValueId) = :optionValueCount")
-    boolean existsByOptionValueCombinationAndVariantIdNot(@Param("optionValueIds") List<UUID> optionValueIds, @Param("optionValueCount") long optionValueCount, @Param("excludeVariantId") UUID excludeVariantId, @Param("tenantId") String tenantId);
+    @Query(value = "SELECT COUNT(*) > 0 FROM product_variant_option_values pvov WHERE pvov.option_value_id IN :optionValueIds AND pvov.variant_id != :excludeVariantId AND pvov.tenant_id = :tenantId AND pvov.deleted_at IS NULL GROUP BY pvov.variant_id HAVING COUNT(DISTINCT pvov.option_value_id) = :optionValueCount", nativeQuery = true)
+    boolean existsByOptionValueCombinationAndVariantIdNot(@Param("optionValueIds") List<Long> optionValueIds, @Param("optionValueCount") long optionValueCount, @Param("excludeVariantId") Long excludeVariantId, @Param("tenantId") Long tenantId);
     
     /**
      * Check if option value combination exists for any variant for current tenant
      */
-    @Query("SELECT COUNT(DISTINCT pvov.variantId) > 0 FROM ProductVariantOptionValue pvov WHERE pvov.optionValueId IN :optionValueIds AND pvov.tenantId = :tenantId AND pvov.deletedAt IS NULL GROUP BY pvov.variantId HAVING COUNT(DISTINCT pvov.optionValueId) = :optionValueCount")
-    boolean existsByOptionValueCombination(@Param("optionValueIds") List<UUID> optionValueIds, @Param("optionValueCount") long optionValueCount, @Param("tenantId") String tenantId);
+    @Query(value = "SELECT COUNT(*) > 0 FROM product_variant_option_values pvov WHERE pvov.option_value_id IN :optionValueIds AND pvov.tenant_id = :tenantId AND pvov.deleted_at IS NULL GROUP BY pvov.variant_id HAVING COUNT(DISTINCT pvov.option_value_id) = :optionValueCount", nativeQuery = true)
+    boolean existsByOptionValueCombination(@Param("optionValueIds") List<Long> optionValueIds, @Param("optionValueCount") long optionValueCount, @Param("tenantId") Long tenantId);
     
     /**
      * Count option values by variant ID for current tenant
      */
-    @Query("SELECT COUNT(pvov) FROM ProductVariantOptionValue pvov WHERE pvov.variantId = :variantId AND pvov.tenantId = :tenantId AND pvov.deletedAt IS NULL")
-    long countByVariantId(@Param("variantId") UUID variantId, @Param("tenantId") String tenantId);
+    @Query(value = "SELECT COUNT(*) FROM product_variant_option_values pvov WHERE pvov.variant_id = :variantId AND pvov.tenant_id = :tenantId AND pvov.deleted_at IS NULL", nativeQuery = true)
+    long countByVariantId(@Param("variantId") Long variantId, @Param("tenantId") Long tenantId);
     
     /**
      * Count variants by option ID for current tenant
      */
-    @Query("SELECT COUNT(DISTINCT pvov.variantId) FROM ProductVariantOptionValue pvov WHERE pvov.optionId = :optionId AND pvov.tenantId = :tenantId AND pvov.deletedAt IS NULL")
-    long countVariantsByOptionId(@Param("optionId") UUID optionId, @Param("tenantId") String tenantId);
+    @Query(value = "SELECT COUNT(DISTINCT pvov.variant_id) FROM product_variant_option_values pvov WHERE pvov.option_id = :optionId AND pvov.tenant_id = :tenantId AND pvov.deleted_at IS NULL", nativeQuery = true)
+    long countVariantsByOptionId(@Param("optionId") Long optionId, @Param("tenantId") Long tenantId);
     
     /**
      * Count variants by option value ID for current tenant
      */
-    @Query("SELECT COUNT(DISTINCT pvov.variantId) FROM ProductVariantOptionValue pvov WHERE pvov.optionValueId = :optionValueId AND pvov.tenantId = :tenantId AND pvov.deletedAt IS NULL")
-    long countVariantsByOptionValueId(@Param("optionValueId") UUID optionValueId, @Param("tenantId") String tenantId);
+    @Query(value = "SELECT COUNT(DISTINCT pvov.variant_id) FROM product_variant_option_values pvov WHERE pvov.option_value_id = :optionValueId AND pvov.tenant_id = :tenantId AND pvov.deleted_at IS NULL", nativeQuery = true)
+    long countVariantsByOptionValueId(@Param("optionValueId") Long optionValueId, @Param("tenantId") Long tenantId);
     
     /**
      * Get distinct option IDs by variant ID for current tenant
      */
-    @Query("SELECT DISTINCT pvov.optionId FROM ProductVariantOptionValue pvov WHERE pvov.variantId = :variantId AND pvov.tenantId = :tenantId AND pvov.deletedAt IS NULL")
-    List<UUID> getOptionIdsByVariantId(@Param("variantId") UUID variantId, @Param("tenantId") String tenantId);
+    @Query(value = "SELECT DISTINCT pvov.option_id FROM product_variant_option_values pvov WHERE pvov.variant_id = :variantId AND pvov.tenant_id = :tenantId AND pvov.deleted_at IS NULL", nativeQuery = true)
+    List<Long> getOptionIdsByVariantId(@Param("variantId") Long variantId, @Param("tenantId") Long tenantId);
     
     /**
      * Get distinct option value IDs by variant ID for current tenant
      */
-    @Query("SELECT DISTINCT pvov.optionValueId FROM ProductVariantOptionValue pvov WHERE pvov.variantId = :variantId AND pvov.tenantId = :tenantId AND pvov.deletedAt IS NULL")
-    List<UUID> getOptionValueIdsByVariantId(@Param("variantId") UUID variantId, @Param("tenantId") String tenantId);
+    @Query(value = "SELECT DISTINCT pvov.option_value_id FROM product_variant_option_values pvov WHERE pvov.variant_id = :variantId AND pvov.tenant_id = :tenantId AND pvov.deleted_at IS NULL", nativeQuery = true)
+    List<Long> getOptionValueIdsByVariantId(@Param("variantId") Long variantId, @Param("tenantId") Long tenantId);
     
     /**
      * Get distinct variant IDs by option ID for current tenant
      */
-    @Query("SELECT DISTINCT pvov.variantId FROM ProductVariantOptionValue pvov WHERE pvov.optionId = :optionId AND pvov.tenantId = :tenantId AND pvov.deletedAt IS NULL")
-    List<UUID> getVariantIdsByOptionId(@Param("optionId") UUID optionId, @Param("tenantId") String tenantId);
+    @Query(value = "SELECT DISTINCT pvov.variant_id FROM product_variant_option_values pvov WHERE pvov.option_id = :optionId AND pvov.tenant_id = :tenantId AND pvov.deleted_at IS NULL", nativeQuery = true)
+    List<Long> getVariantIdsByOptionId(@Param("optionId") Long optionId, @Param("tenantId") Long tenantId);
     
     /**
      * Get distinct variant IDs by option value ID for current tenant
      */
-    @Query("SELECT DISTINCT pvov.variantId FROM ProductVariantOptionValue pvov WHERE pvov.optionValueId = :optionValueId AND pvov.tenantId = :tenantId AND pvov.deletedAt IS NULL")
-    List<UUID> getVariantIdsByOptionValueId(@Param("optionValueId") UUID optionValueId, @Param("tenantId") String tenantId);
+    @Query(value = "SELECT DISTINCT pvov.variant_id FROM product_variant_option_values pvov WHERE pvov.option_value_id = :optionValueId AND pvov.tenant_id = :tenantId AND pvov.deleted_at IS NULL", nativeQuery = true)
+    List<Long> getVariantIdsByOptionValueId(@Param("optionValueId") Long optionValueId, @Param("tenantId") Long tenantId);
     
     /**
      * Delete all option values by variant ID (soft delete)
      */
-    @Query("UPDATE ProductVariantOptionValue pvov SET pvov.deletedAt = CURRENT_TIMESTAMP WHERE pvov.variantId = :variantId AND pvov.tenantId = :tenantId")
-    void deleteByVariantId(@Param("variantId") UUID variantId, @Param("tenantId") String tenantId);
+    @Modifying
+    @Query(value = "UPDATE product_variant_option_values SET deleted_at = CURRENT_TIMESTAMP WHERE variant_id = :variantId AND tenant_id = :tenantId", nativeQuery = true)
+    void deleteByVariantId(@Param("variantId") Long variantId, @Param("tenantId") Long tenantId);
     
     /**
      * Delete all option values by option ID (soft delete)
      */
-    @Query("UPDATE ProductVariantOptionValue pvov SET pvov.deletedAt = CURRENT_TIMESTAMP WHERE pvov.optionId = :optionId AND pvov.tenantId = :tenantId")
-    void deleteByOptionId(@Param("optionId") UUID optionId, @Param("tenantId") String tenantId);
+    @Modifying
+    @Query(value = "UPDATE product_variant_option_values SET deleted_at = CURRENT_TIMESTAMP WHERE option_id = :optionId AND tenant_id = :tenantId", nativeQuery = true)
+    void deleteByOptionId(@Param("optionId") Long optionId, @Param("tenantId") Long tenantId);
     
     /**
      * Delete all option values by option value ID (soft delete)
      */
-    @Query("UPDATE ProductVariantOptionValue pvov SET pvov.deletedAt = CURRENT_TIMESTAMP WHERE pvov.optionValueId = :optionValueId AND pvov.tenantId = :tenantId")
-    void deleteByOptionValueId(@Param("optionValueId") UUID optionValueId, @Param("tenantId") String tenantId);
+    @Modifying
+    @Query(value = "UPDATE product_variant_option_values SET deleted_at = CURRENT_TIMESTAMP WHERE option_value_id = :optionValueId AND tenant_id = :tenantId", nativeQuery = true)
+    void deleteByOptionValueId(@Param("optionValueId") Long optionValueId, @Param("tenantId") Long tenantId);
     
     /**
      * Delete specific option value by variant ID and option ID (soft delete)
      */
-    @Query("UPDATE ProductVariantOptionValue pvov SET pvov.deletedAt = CURRENT_TIMESTAMP WHERE pvov.variantId = :variantId AND pvov.optionId = :optionId AND pvov.tenantId = :tenantId")
-    void deleteByVariantIdAndOptionId(@Param("variantId") UUID variantId, @Param("optionId") UUID optionId, @Param("tenantId") String tenantId);
+    @Modifying
+    @Query(value = "UPDATE product_variant_option_values SET deleted_at = CURRENT_TIMESTAMP WHERE variant_id = :variantId AND option_id = :optionId AND tenant_id = :tenantId", nativeQuery = true)
+    void deleteByVariantIdAndOptionId(@Param("variantId") Long variantId, @Param("optionId") Long optionId, @Param("tenantId") Long tenantId);
     
     // Methods with explicit tenant ID parameters
     
     /**
      * Find all option values by variant ID and tenant ID
      */
-    @Query("SELECT pvov FROM ProductVariantOptionValue pvov WHERE pvov.variantId = :variantId AND pvov.tenantId = :tenantId AND pvov.deletedAt IS NULL ORDER BY pvov.optionId ASC")
-    List<ProductVariantOptionValue> findByVariantIdAndTenantId(@Param("variantId") UUID variantId, @Param("tenantId") UUID tenantId);
+    @Query(value = "SELECT * FROM product_variant_option_values pvov WHERE pvov.variant_id = :variantId AND pvov.tenant_id = :tenantId AND pvov.deleted_at IS NULL ORDER BY pvov.option_id ASC", nativeQuery = true)
+    List<ProductVariantOptionValue> findByVariantIdAndTenantId(@Param("variantId") Long variantId, @Param("tenantId") Long tenantId);
     
     /**
      * Find all option values by variant ID and tenant ID with pagination
      */
-    @Query("SELECT pvov FROM ProductVariantOptionValue pvov WHERE pvov.variantId = :variantId AND pvov.tenantId = :tenantId AND pvov.deletedAt IS NULL ORDER BY pvov.optionId ASC")
-    Page<ProductVariantOptionValue> findByVariantIdAndTenantId(@Param("variantId") UUID variantId, @Param("tenantId") UUID tenantId, Pageable pageable);
+    @Query(value = "SELECT * FROM product_variant_option_values pvov WHERE pvov.variant_id = :variantId AND pvov.tenant_id = :tenantId AND pvov.deleted_at IS NULL ORDER BY pvov.option_id ASC", nativeQuery = true)
+    Page<ProductVariantOptionValue> findByVariantIdAndTenantId(@Param("variantId") Long variantId, @Param("tenantId") Long tenantId, Pageable pageable);
     
     /**
      * Find option value by variant ID and option ID and tenant ID
      */
-    @Query("SELECT pvov FROM ProductVariantOptionValue pvov WHERE pvov.variantId = :variantId AND pvov.optionId = :optionId AND pvov.tenantId = :tenantId AND pvov.deletedAt IS NULL")
-    Optional<ProductVariantOptionValue> findByVariantIdAndOptionIdAndTenantId(@Param("variantId") UUID variantId, @Param("optionId") UUID optionId, @Param("tenantId") UUID tenantId);
+    @Query(value = "SELECT * FROM product_variant_option_values pvov WHERE pvov.variant_id = :variantId AND pvov.option_id = :optionId AND pvov.tenant_id = :tenantId AND pvov.deleted_at IS NULL", nativeQuery = true)
+    Optional<ProductVariantOptionValue> findByVariantIdAndOptionIdAndTenantId(@Param("variantId") Long variantId, @Param("optionId") Long optionId, @Param("tenantId") Long tenantId);
     
     /**
      * Find all option values by option ID and tenant ID
      */
-    @Query("SELECT pvov FROM ProductVariantOptionValue pvov WHERE pvov.optionId = :optionId AND pvov.tenantId = :tenantId AND pvov.deletedAt IS NULL ORDER BY pvov.variantId ASC")
-    List<ProductVariantOptionValue> findByOptionIdAndTenantId(@Param("optionId") UUID optionId, @Param("tenantId") UUID tenantId);
+    @Query(value = "SELECT * FROM product_variant_option_values pvov WHERE pvov.option_id = :optionId AND pvov.tenant_id = :tenantId AND pvov.deleted_at IS NULL ORDER BY pvov.variant_id ASC", nativeQuery = true)
+    List<ProductVariantOptionValue> findByOptionIdAndTenantId(@Param("optionId") Long optionId, @Param("tenantId") Long tenantId);
     
     /**
      * Find all option values by option value ID and tenant ID
      */
-    @Query("SELECT pvov FROM ProductVariantOptionValue pvov WHERE pvov.optionValueId = :optionValueId AND pvov.tenantId = :tenantId AND pvov.deletedAt IS NULL ORDER BY pvov.variantId ASC")
-    List<ProductVariantOptionValue> findByOptionValueIdAndTenantId(@Param("optionValueId") UUID optionValueId, @Param("tenantId") UUID tenantId);
+    @Query(value = "SELECT * FROM product_variant_option_values pvov WHERE pvov.option_value_id = :optionValueId AND pvov.tenant_id = :tenantId AND pvov.deleted_at IS NULL ORDER BY pvov.variant_id ASC", nativeQuery = true)
+    List<ProductVariantOptionValue> findByOptionValueIdAndTenantId(@Param("optionValueId") Long optionValueId, @Param("tenantId") Long tenantId);
     
     /**
      * Find all option values by multiple variant IDs and tenant ID
      */
-    @Query("SELECT pvov FROM ProductVariantOptionValue pvov WHERE pvov.variantId IN :variantIds AND pvov.tenantId = :tenantId AND pvov.deletedAt IS NULL ORDER BY pvov.variantId ASC, pvov.optionId ASC")
-    List<ProductVariantOptionValue> findByVariantIdsAndTenantId(@Param("variantIds") List<UUID> variantIds, @Param("tenantId") UUID tenantId);
+    @Query(value = "SELECT * FROM product_variant_option_values pvov WHERE pvov.variant_id IN :variantIds AND pvov.tenant_id = :tenantId AND pvov.deleted_at IS NULL ORDER BY pvov.variant_id ASC, pvov.option_id ASC", nativeQuery = true)
+    List<ProductVariantOptionValue> findByVariantIdsAndTenantId(@Param("variantIds") List<Long> variantIds, @Param("tenantId") Long tenantId);
     
     /**
      * Count option values by variant ID and tenant ID
      */
-    @Query("SELECT COUNT(pvov) FROM ProductVariantOptionValue pvov WHERE pvov.variantId = :variantId AND pvov.tenantId = :tenantId AND pvov.deletedAt IS NULL")
-    long countByVariantIdAndTenantId(@Param("variantId") UUID variantId, @Param("tenantId") UUID tenantId);
+    @Query(value = "SELECT COUNT(*) FROM product_variant_option_values pvov WHERE pvov.variant_id = :variantId AND pvov.tenant_id = :tenantId AND pvov.deleted_at IS NULL", nativeQuery = true)
+    long countByVariantIdAndTenantId(@Param("variantId") Long variantId, @Param("tenantId") Long tenantId);
     
     /**
      * Count variants by option ID and tenant ID
      */
-    @Query("SELECT COUNT(DISTINCT pvov.variantId) FROM ProductVariantOptionValue pvov WHERE pvov.optionId = :optionId AND pvov.tenantId = :tenantId AND pvov.deletedAt IS NULL")
-    long countByOptionIdAndTenantId(@Param("optionId") UUID optionId, @Param("tenantId") UUID tenantId);
+    @Query(value = "SELECT COUNT(DISTINCT pvov.variant_id) FROM product_variant_option_values pvov WHERE pvov.option_id = :optionId AND pvov.tenant_id = :tenantId AND pvov.deleted_at IS NULL", nativeQuery = true)
+    long countByOptionIdAndTenantId(@Param("optionId") Long optionId, @Param("tenantId") Long tenantId);
     
     /**
      * Count variants by option value ID and tenant ID
      */
-    @Query("SELECT COUNT(DISTINCT pvov.variantId) FROM ProductVariantOptionValue pvov WHERE pvov.optionValueId = :optionValueId AND pvov.tenantId = :tenantId AND pvov.deletedAt IS NULL")
-    long countByOptionValueIdAndTenantId(@Param("optionValueId") UUID optionValueId, @Param("tenantId") UUID tenantId);
+    @Query(value = "SELECT COUNT(DISTINCT pvov.variant_id) FROM product_variant_option_values pvov WHERE pvov.option_value_id = :optionValueId AND pvov.tenant_id = :tenantId AND pvov.deleted_at IS NULL", nativeQuery = true)
+    long countByOptionValueIdAndTenantId(@Param("optionValueId") Long optionValueId, @Param("tenantId") Long tenantId);
     
     /**
      * Get distinct variant IDs by option ID and tenant ID
      */
-    @Query("SELECT DISTINCT pvov.variantId FROM ProductVariantOptionValue pvov WHERE pvov.optionId = :optionId AND pvov.tenantId = :tenantId AND pvov.deletedAt IS NULL")
-    List<UUID> findVariantIdsByOptionIdAndTenantId(@Param("optionId") UUID optionId, @Param("tenantId") UUID tenantId);
+    @Query(value = "SELECT DISTINCT pvov.variant_id FROM product_variant_option_values pvov WHERE pvov.option_id = :optionId AND pvov.tenant_id = :tenantId AND pvov.deleted_at IS NULL", nativeQuery = true)
+    List<Long> findVariantIdsByOptionIdAndTenantId(@Param("optionId") Long optionId, @Param("tenantId") Long tenantId);
     
     /**
      * Get distinct variant IDs by option value ID and tenant ID
      */
-    @Query("SELECT DISTINCT pvov.variantId FROM ProductVariantOptionValue pvov WHERE pvov.optionValueId = :optionValueId AND pvov.tenantId = :tenantId AND pvov.deletedAt IS NULL")
-    List<UUID> findVariantIdsByOptionValueIdAndTenantId(@Param("optionValueId") UUID optionValueId, @Param("tenantId") UUID tenantId);
+    @Query(value = "SELECT DISTINCT pvov.variant_id FROM product_variant_option_values pvov WHERE pvov.option_value_id = :optionValueId AND pvov.tenant_id = :tenantId AND pvov.deleted_at IS NULL", nativeQuery = true)
+    List<Long> findVariantIdsByOptionValueIdAndTenantId(@Param("optionValueId") Long optionValueId, @Param("tenantId") Long tenantId);
     
     /**
      * Check if variant has option and tenant ID
      */
-    @Query("SELECT COUNT(pvov) > 0 FROM ProductVariantOptionValue pvov WHERE pvov.variantId = :variantId AND pvov.optionId = :optionId AND pvov.tenantId = :tenantId AND pvov.deletedAt IS NULL")
-    boolean existsByVariantIdAndOptionIdAndTenantId(@Param("variantId") UUID variantId, @Param("optionId") UUID optionId, @Param("tenantId") UUID tenantId);
+    @Query(value = "SELECT COUNT(*) > 0 FROM product_variant_option_values pvov WHERE pvov.variant_id = :variantId AND pvov.option_id = :optionId AND pvov.tenant_id = :tenantId AND pvov.deleted_at IS NULL", nativeQuery = true)
+    boolean existsByVariantIdAndOptionIdAndTenantId(@Param("variantId") Long variantId, @Param("optionId") Long optionId, @Param("tenantId") Long tenantId);
     
     /**
      * Find variant by option values and tenant ID
      */
-    @Query("SELECT pvov.variantId FROM ProductVariantOptionValue pvov " +
-           "JOIN ProductVariant pv ON pvov.variantId = pv.id " +
-           "WHERE pv.productId = :productId AND pvov.optionValueId IN :optionValueIds " +
-           "AND pvov.tenantId = :tenantId AND pvov.deletedAt IS NULL " +
-           "GROUP BY pvov.variantId " +
-           "HAVING COUNT(DISTINCT pvov.optionValueId) = :optionValueCount")
-    Optional<UUID> findVariantByOptionValues(@Param("productId") UUID productId, @Param("optionValueIds") java.util.Collection<UUID> optionValueIds, @Param("optionValueCount") int optionValueCount, @Param("tenantId") UUID tenantId);
+    @Query(value = "SELECT pvov.variant_id FROM product_variant_option_values pvov " +
+           "JOIN product_variants pv ON pvov.variant_id = pv.id " +
+           "WHERE pv.product_id = :productId AND pvov.option_value_id IN :optionValueIds " +
+           "AND pvov.tenant_id = :tenantId AND pvov.deleted_at IS NULL " +
+           "GROUP BY pvov.variant_id " +
+           "HAVING COUNT(DISTINCT pvov.option_value_id) = :optionValueCount", nativeQuery = true)
+    Optional<Long> findVariantByOptionValues(@Param("productId") Long productId, @Param("optionValueIds") java.util.Collection<Long> optionValueIds, @Param("optionValueCount") int optionValueCount, @Param("tenantId") Long tenantId);
     
     /**
      * Delete by option value ID and tenant ID
      */
     @Modifying
-    @Query("UPDATE ProductVariantOptionValue pvov SET pvov.deletedAt = CURRENT_TIMESTAMP WHERE pvov.optionValueId = :optionValueId AND pvov.tenantId = :tenantId")
-    void deleteByOptionValueIdAndTenantId(@Param("optionValueId") UUID optionValueId, @Param("tenantId") UUID tenantId);
+    @Query(value = "UPDATE product_variant_option_values SET deleted_at = CURRENT_TIMESTAMP WHERE option_value_id = :optionValueId AND tenant_id = :tenantId", nativeQuery = true)
+    void deleteByOptionValueIdAndTenantId(@Param("optionValueId") Long optionValueId, @Param("tenantId") Long tenantId);
     
     /**
      * Delete by option ID and tenant ID
      */
     @Modifying
-    @Query("UPDATE ProductVariantOptionValue pvov SET pvov.deletedAt = CURRENT_TIMESTAMP WHERE pvov.optionId = :optionId AND pvov.tenantId = :tenantId")
-    void deleteByOptionIdAndTenantId(@Param("optionId") UUID optionId, @Param("tenantId") UUID tenantId);
+    @Query(value = "UPDATE product_variant_option_values SET deleted_at = CURRENT_TIMESTAMP WHERE option_id = :optionId AND tenant_id = :tenantId", nativeQuery = true)
+    void deleteByOptionIdAndTenantId(@Param("optionId") Long optionId, @Param("tenantId") Long tenantId);
     
     /**
      * Delete by variant ID and tenant ID
      */
     @Modifying
-    @Query("UPDATE ProductVariantOptionValue pvov SET pvov.deletedAt = CURRENT_TIMESTAMP WHERE pvov.variantId = :variantId AND pvov.tenantId = :tenantId")
-    void deleteByVariantIdAndTenantId(@Param("variantId") UUID variantId, @Param("tenantId") UUID tenantId);
+    @Query(value = "UPDATE product_variant_option_values SET deleted_at = CURRENT_TIMESTAMP WHERE variant_id = :variantId AND tenant_id = :tenantId", nativeQuery = true)
+    void deleteByVariantIdAndTenantId(@Param("variantId") Long variantId, @Param("tenantId") Long tenantId);
 }

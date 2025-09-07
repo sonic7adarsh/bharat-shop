@@ -7,7 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
+// import java.util.UUID; // Replaced with Long
 
 @Data
 @Builder
@@ -15,9 +15,9 @@ import java.util.UUID;
 @AllArgsConstructor
 public class SubscriptionResponseDto {
 
-    private UUID id;
-    private UUID vendorId;
-    private UUID planId;
+    private Long id;
+    private Long vendorId;
+    private Long planId;
     private PlanResponseDto plan;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
@@ -108,9 +108,9 @@ public class SubscriptionResponseDto {
     }
     
     public static class SubscriptionResponseDtoBuilder {
-        private UUID id;
-        private UUID vendorId;
-        private UUID planId;
+        private Long id;
+        private Long vendorId;
+        private Long planId;
         private PlanResponseDto plan;
         private LocalDateTime startDate;
         private LocalDateTime endDate;
@@ -125,17 +125,17 @@ public class SubscriptionResponseDto {
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
         
-        public SubscriptionResponseDtoBuilder id(UUID id) {
+        public SubscriptionResponseDtoBuilder id(Long id) {
             this.id = id;
             return this;
         }
         
-        public SubscriptionResponseDtoBuilder vendorId(UUID vendorId) {
+        public SubscriptionResponseDtoBuilder vendorId(Long vendorId) {
             this.vendorId = vendorId;
             return this;
         }
         
-        public SubscriptionResponseDtoBuilder planId(UUID planId) {
+        public SubscriptionResponseDtoBuilder planId(Long planId) {
             this.planId = planId;
             return this;
         }

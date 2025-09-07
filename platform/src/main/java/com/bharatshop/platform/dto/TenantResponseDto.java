@@ -8,7 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
+// import java.util.UUID; // Replaced with Long
 
 @Data
 @Builder
@@ -17,8 +17,8 @@ import java.util.UUID;
 @Schema(description = "DTO for tenant response")
 public class TenantResponseDto {
     
-    @Schema(description = "Unique identifier of the tenant", example = "550e8400-e29b-41d4-a716-446655440000")
-    private UUID id;
+    @Schema(description = "Unique identifier of the tenant", example = "1")
+    private Long id;
     
     @Schema(description = "Name of the tenant", example = "Acme Corporation")
     private String name;
@@ -46,7 +46,7 @@ public class TenantResponseDto {
     }
     
     public static class TenantResponseDtoBuilder {
-        private UUID id;
+        private Long id;
         private String name;
         private String code;
         private String description;
@@ -54,7 +54,7 @@ public class TenantResponseDto {
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
         
-        public TenantResponseDtoBuilder id(UUID id) {
+        public TenantResponseDtoBuilder id(Long id) {
             this.id = id;
             return this;
         }

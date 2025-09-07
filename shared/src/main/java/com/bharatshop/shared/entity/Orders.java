@@ -11,6 +11,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+// import java.util.UUID; // Replaced with Long
 
 @Entity(name = "SharedOrder")
 @Table(name = "orders", indexes = {
@@ -24,7 +25,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Order {
+public class Orders {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

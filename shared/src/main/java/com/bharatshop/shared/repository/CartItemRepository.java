@@ -16,70 +16,71 @@ public interface CartItemRepository extends JpaRepository<CartItem, Long> {
     /**
      * Find cart item by cart ID and product ID
      */
-    @Query("SELECT ci FROM SharedCartItem ci " +
-           "WHERE ci.cart.id = :cartId AND ci.product.id = :productId")
+    @Query(value = "SELECT * FROM cart_items " +
+           "WHERE cart_id = :cartId AND product_id = :productId", nativeQuery = true)
     Optional<CartItem> findByCartIdAndProductId(@Param("cartId") Long cartId, 
                                                @Param("productId") Long productId);
     
     /**
      * Find all cart items for a specific cart
      */
-    @Query("SELECT ci FROM SharedCartItem ci LEFT JOIN FETCH ci.product " +
-           "WHERE ci.cart.id = :cartId ORDER BY ci.createdAt ASC")
+    @Query(value = "SELECT ci.* FROM cart_items ci " +
+           "LEFT JOIN products p ON ci.product_id = p.id " +
+           "WHERE ci.cart_id = :cartId ORDER BY ci.created_at ASC", nativeQuery = true)
     List<CartItem> findByCartIdWithProduct(@Param("cartId") Long cartId);
     
     /**
      * Find cart items by customer and tenant (through cart relationship)
      */
-    @Query("SELECT ci FROM SharedCartItem ci " +
-           "JOIN ci.cart c " +
-           "LEFT JOIN FETCH ci.product " +
-           "WHERE c.customerId = :customerId AND c.tenantId = :tenantId " +
-           "ORDER BY ci.createdAt ASC")
+    @Query(value = "SELECT ci.* FROM cart_items ci " +
+           "JOIN carts c ON ci.cart_id = c.id " +
+           "LEFT JOIN products p ON ci.product_id = p.id " +
+           "WHERE c.customer_id = :customerId AND c.tenant_id = :tenantId " +
+           "ORDER BY ci.created_at ASC", nativeQuery = true)
     List<CartItem> findByCustomerIdAndTenantId(@Param("customerId") Long customerId, 
                                               @Param("tenantId") Long tenantId);
     
     /**
      * Count items in a specific cart
      */
-    @Query("SELECT COUNT(ci) FROM SharedCartItem ci WHERE ci.cart.id = :cartId")
+    @Query(value = "SELECT COUNT(*) FROM cart_items WHERE cart_id = :cartId", nativeQuery = true)
     Long countByCartId(@Param("cartId") Long cartId);
     
     /**
      * Sum total quantity in a cart
      */
-    @Query("SELECT COALESCE(SUM(ci.quantity), 0) FROM SharedCartItem ci WHERE ci.cart.id = :cartId")
-    Integer sumQuantityByCartId(@Param("cartId") Long cartId);
+    @Query(value = "SELECT SUM(quantity) FROM cart_items WHERE cart_id = :cartId", nativeQuery = true)
+    Long sumQuantityByCartId(@Param("cartId") Long cartId);
     
     /**
      * Delete cart item by cart ID and product ID
      */
     @Modifying
-    @Query("DELETE FROM SharedCartItem ci WHERE ci.cart.id = :cartId AND ci.product.id = :productId")
+    @Query(value = "DELETE FROM cart_items WHERE cart_id = :cartId AND product_id = :productId", nativeQuery = true)
     void deleteByCartIdAndProductId(@Param("cartId") Long cartId, @Param("productId") Long productId);
     
     /**
      * Delete all cart items for a specific cart
      */
     @Modifying
-    @Query("DELETE FROM SharedCartItem ci WHERE ci.cart.id = :cartId")
+    @Query(value = "DELETE FROM cart_items WHERE cart_id = :cartId", nativeQuery = true)
     void deleteByCartId(@Param("cartId") Long cartId);
     
     /**
      * Find cart items by product ID (useful for product updates)
      */
-    @Query("SELECT ci FROM SharedCartItem ci " +
-           "JOIN ci.cart c " +
-           "WHERE ci.product.id = :productId AND c.tenantId = :tenantId")
-    List<CartItem> findByProductIdAndTenantId(@Param("productId") Long productId, 
+    @Query(value = "SELECT ci.* FROM cart_items ci " +
+           "JOIN carts c ON ci.cart_id = c.id " +
+           "WHERE ci.product_id = :productId AND c.tenant_id = :tenantId", nativeQuery = true)
+    List<CartItem> findByProductIdAndTenantId(@Param("productId") Long productId,
                                              @Param("tenantId") Long tenantId);
     
     /**
      * Update cart item quantity
      */
     @Modifying
-    @Query("UPDATE SharedCartItem ci SET ci.quantity = :quantity, ci.updatedAt = CURRENT_TIMESTAMP " +
-           "WHERE ci.cart.id = :cartId AND ci.product.id = :productId")
+    @Query(value = "UPDATE cart_items SET quantity = :quantity, updated_at = CURRENT_TIMESTAMP " +
+           "WHERE cart_id = :cartId AND product_id = :productId", nativeQuery = true)
     int updateQuantityByCartIdAndProductId(@Param("cartId") Long cartId, 
                                           @Param("productId") Long productId, 
                                           @Param("quantity") Integer quantity);
@@ -87,7 +88,7 @@ public interface CartItemRepository extends JpaRepository<CartItem, Long> {
     /**
      * Check if cart item exists
      */
-    @Query("SELECT CASE WHEN COUNT(ci) > 0 THEN true ELSE false END FROM SharedCartItem ci " +
-           "WHERE ci.cart.id = :cartId AND ci.product.id = :productId")
+    @Query(value = "SELECT CASE WHEN COUNT(*) > 0 THEN true ELSE false END FROM cart_items " +
+           "WHERE cart_id = :cartId AND product_id = :productId", nativeQuery = true)
     boolean existsByCartIdAndProductId(@Param("cartId") Long cartId, @Param("productId") Long productId);
 }

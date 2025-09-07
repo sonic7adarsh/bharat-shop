@@ -41,7 +41,7 @@ public class Tenant extends BaseEntity {
     private boolean active = true;
     
     // System tenant UUID for global tenant management
-    private static final UUID SYSTEM_TENANT_ID = UUID.fromString("00000000-0000-0000-0000-000000000000");
+    private static final Long SYSTEM_TENANT_ID = 0L;
     
     /**
      * Override the tenant filter for Tenant entity since it's the master tenant data

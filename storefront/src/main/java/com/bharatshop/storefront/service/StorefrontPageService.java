@@ -1,7 +1,8 @@
 package com.bharatshop.storefront.service;
 
+import com.bharatshop.shared.entity.Page;
+import com.bharatshop.shared.enums.PageType;
 import com.bharatshop.storefront.dto.PageResponseDto;
-import com.bharatshop.storefront.model.Page;
 import com.bharatshop.storefront.repository.StorefrontPageRepository;
 import com.bharatshop.shared.entity.Template;
 import com.bharatshop.shared.service.TemplateService;
@@ -15,14 +16,14 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
+
 import java.util.stream.Collectors;
 
 /**
  * Service for managing CMS pages in the storefront.
  * Provides read-only operations for customer-facing page content.
  */
-@Service("storefrontPageService")
+@Service
 @RequiredArgsConstructor
 @Transactional
 public class StorefrontPageService {
@@ -36,10 +37,11 @@ public class StorefrontPageService {
      * Get page by slug (tenant-aware)
      */
     @Cacheable(value = "page", key = "'slug_' + #slug + '_' + #tenantId")
-    public PageResponseDto getPageBySlug(String slug, UUID tenantId) {
+    public PageResponseDto getPageBySlug(String slug, String tenantId) {
         log.debug("Fetching page with slug: {} for tenant: {}", slug, tenantId);
         
-        Page page = pageRepository.findBySlugAndTenantId(slug, tenantId)
+        Long tenantIdLong = Long.parseLong(tenantId);
+        Page page = pageRepository.findBySlugAndActiveAndPublishedAndTenantIdAndDeletedAtIsNull(slug, true, true, tenantIdLong)
                 .orElseThrow(() -> new RuntimeException("Page not found with slug: " + slug));
         
         return mapToResponseDto(page);
@@ -62,10 +64,11 @@ public class StorefrontPageService {
      * Get all active and published pages for a tenant
      */
     @Cacheable(value = "pages", key = "'tenant_' + #tenantId")
-    public List<PageResponseDto> getAllPages(UUID tenantId) {
+    public List<PageResponseDto> getAllPages(String tenantId) {
         log.debug("Fetching all pages for tenant: {}", tenantId);
         
-        List<Page> pages = pageRepository.findActivePublishedByTenantId(tenantId);
+        Long tenantIdLong = Long.parseLong(tenantId);
+        List<Page> pages = pageRepository.findByActiveAndPublishedAndTenantIdAndDeletedAtIsNullOrderBySortOrderAsc(true, true, tenantIdLong);
         return pages.stream()
                 .map(this::mapToResponseDto)
                 .collect(Collectors.toList());
@@ -75,10 +78,11 @@ public class StorefrontPageService {
      * Get pages by type for a tenant
      */
     @Cacheable(value = "pagesByType", key = "#pageType + '_' + #tenantId")
-    public List<PageResponseDto> getPagesByType(Page.PageType pageType, UUID tenantId) {
+    public List<PageResponseDto> getPagesByType(PageType pageType, String tenantId) {
         log.debug("Fetching pages of type: {} for tenant: {}", pageType, tenantId);
         
-        List<Page> pages = pageRepository.findByPageTypeAndTenantId(pageType, tenantId);
+        Long tenantIdLong = Long.parseLong(tenantId);
+        List<Page> pages = pageRepository.findByPageTypeAndActiveAndPublishedAndTenantIdAndDeletedAtIsNullOrderBySortOrderAsc(pageType, true, true, tenantIdLong);
         return pages.stream()
                 .map(this::mapToResponseDto)
                 .collect(Collectors.toList());
@@ -90,8 +94,8 @@ public class StorefrontPageService {
     @Transactional(readOnly = true)
     public Optional<PageRenderData> getPageRenderData(String slug) {
         String tenantIdStr = TenantContext.getCurrentTenant();
-        UUID tenantId = UUID.fromString(tenantIdStr);
-        Optional<Page> pageOpt = pageRepository.findBySlugAndTenantId(slug, tenantId);
+        Long tenantId = Long.parseLong(tenantIdStr);
+        Optional<Page> pageOpt = pageRepository.findBySlugAndActiveAndPublishedAndTenantIdAndDeletedAtIsNull(slug, true, true, tenantId);
         
         if (pageOpt.isEmpty()) {
             return Optional.empty();
@@ -113,8 +117,8 @@ public class StorefrontPageService {
     /**
      * Update page layout (for template customization)
      */
-    public Page updatePageLayout(UUID id, String layoutJson) {
-        Page page = pageRepository.findActiveById(id)
+    public Page updatePageLayout(Long id, String layoutJson) {
+        Page page = pageRepository.findByIdAndActiveAndDeletedAtIsNull(id, true)
             .orElseThrow(() -> new IllegalArgumentException("Page not found with ID: " + id));
         
         if (layoutJson != null && !isValidJson(layoutJson)) {
@@ -130,8 +134,8 @@ public class StorefrontPageService {
     /**
      * Update page SEO settings
      */
-    public Page updatePageSeo(UUID id, String seoJson) {
-        Page page = pageRepository.findActiveById(id)
+    public Page updatePageSeo(Long id, String seoJson) {
+        Page page = pageRepository.findByIdAndActiveAndDeletedAtIsNull(id, true)
             .orElseThrow(() -> new IllegalArgumentException("Page not found with ID: " + id));
         
         if (seoJson != null && !isValidJson(seoJson)) {

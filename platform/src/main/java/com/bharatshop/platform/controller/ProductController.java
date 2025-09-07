@@ -1,10 +1,11 @@
 package com.bharatshop.platform.controller;
 
-import com.bharatshop.platform.service.ProductService;
-import com.bharatshop.platform.service.ProductVariantService;
+
 import com.bharatshop.platform.service.OptionService;
 import com.bharatshop.platform.service.OptionValueService;
 import com.bharatshop.platform.service.ProductOptionService;
+import com.bharatshop.platform.service.ProductVariantService;
+import com.bharatshop.platform.service.PlatformProductService;
 import com.bharatshop.shared.dto.*;
 import com.bharatshop.shared.entity.Product;
 import com.bharatshop.shared.service.FeatureFlagService;
@@ -23,15 +24,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
-import org.springframework.stereotype.Component;
+// import java.util.UUID; // Replaced with Long
 
 @RestController
 @RequestMapping("/api/platform/products")
 @RequiredArgsConstructor
 public class ProductController {
 
-    private final ProductService productService;
+    private final PlatformProductService platformProductService;
     private final ProductVariantService productVariantService;
     private final OptionService optionService;
     private final OptionValueService optionValueService;
@@ -48,7 +48,7 @@ public class ProductController {
             @RequestParam(required = false) Product.ProductStatus status,
             Authentication authentication) {
         
-        UUID tenantId = getTenantIdFromAuth(authentication);
+        Long tenantId = getTenantIdFromAuth(authentication);
         
         Sort sort = sortDir.equalsIgnoreCase("desc") ? 
                 Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
@@ -57,11 +57,11 @@ public class ProductController {
         Page<Product> products;
         
         if (search != null && !search.trim().isEmpty()) {
-            products = productService.searchProducts(tenantId, search, pageable);
+            products = platformProductService.searchProducts(tenantId, search, pageable);
         } else if (status != null) {
-            products = productService.getProductsByStatus(tenantId, status, pageable);
+            products = platformProductService.getProductsByStatus(tenantId, status, pageable);
         } else {
-            products = productService.getAllProductsByTenant(tenantId, pageable);
+            products = platformProductService.getAllProductsByTenant(tenantId, pageable);
         }
         
         Map<String, Object> response = new HashMap<>();
@@ -76,38 +76,38 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Product> getProductById(@PathVariable UUID id, Authentication authentication) {
-        UUID tenantId = getTenantIdFromAuth(authentication);
+    public ResponseEntity<Product> getProductById(@PathVariable Long id, Authentication authentication) {
+        Long tenantId = getTenantIdFromAuth(authentication);
         
-        Optional<Product> product = productService.getProductById(id, tenantId);
+        Optional<Product> product = platformProductService.getProductById(id, tenantId);
         return product.map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/slug/{slug}")
     public ResponseEntity<Product> getProductBySlug(@PathVariable String slug, Authentication authentication) {
-        UUID tenantId = getTenantIdFromAuth(authentication);
+        Long tenantId = getTenantIdFromAuth(authentication);
         
-        Optional<Product> product = productService.getProductBySlug(slug, tenantId);
+        Optional<Product> product = platformProductService.getProductBySlug(slug, tenantId);
         return product.map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/category/{categoryId}")
     public ResponseEntity<List<Product>> getProductsByCategory(
-            @PathVariable UUID categoryId, 
+            @PathVariable Long categoryId, 
             Authentication authentication) {
         
-        UUID tenantId = getTenantIdFromAuth(authentication);
-        List<Product> products = productService.getProductsByCategory(tenantId, categoryId);
+        Long tenantId = getTenantIdFromAuth(authentication);
+        List<Product> products = platformProductService.getProductsByCategory(tenantId, categoryId);
         return ResponseEntity.ok(products);
     }
 
     @PostMapping
     public ResponseEntity<Product> createProduct(@RequestBody Product product, Authentication authentication) {
         try {
-            UUID tenantId = getTenantIdFromAuth(authentication);
-            Product createdProduct = productService.createProduct(product, tenantId);
+            Long tenantId = getTenantIdFromAuth(authentication);
+            Product createdProduct = platformProductService.createProduct(product, tenantId);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdProduct);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
@@ -118,13 +118,13 @@ public class ProductController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Product> updateProduct(
-            @PathVariable UUID id, 
+            @PathVariable Long id, 
             @RequestBody Product product, 
             Authentication authentication) {
         
         try {
-            UUID tenantId = getTenantIdFromAuth(authentication);
-            Product updatedProduct = productService.updateProduct(id, product, tenantId);
+            Long tenantId = getTenantIdFromAuth(authentication);
+            Product updatedProduct = platformProductService.updateProduct(id, product, tenantId);
             return ResponseEntity.ok(updatedProduct);
         } catch (RuntimeException e) {
             if (e.getMessage().contains("not found")) {
@@ -137,10 +137,10 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable UUID id, Authentication authentication) {
+    public ResponseEntity<Void> deleteProduct(@PathVariable Long id, Authentication authentication) {
         try {
-            UUID tenantId = getTenantIdFromAuth(authentication);
-            productService.deleteProduct(id, tenantId);
+            Long tenantId = getTenantIdFromAuth(authentication);
+            platformProductService.deleteProduct(id, tenantId);
             return ResponseEntity.noContent().build();
         } catch (RuntimeException e) {
             if (e.getMessage().contains("not found")) {
@@ -154,12 +154,12 @@ public class ProductController {
 
     @PatchMapping("/{id}/status")
     public ResponseEntity<Product> updateProductStatus(
-            @PathVariable UUID id, 
+            @PathVariable Long id, 
             @RequestBody Map<String, String> statusUpdate, 
             Authentication authentication) {
         
         try {
-            UUID tenantId = getTenantIdFromAuth(authentication);
+            Long tenantId = getTenantIdFromAuth(authentication);
             String statusStr = statusUpdate.get("status");
             
             if (statusStr == null) {
@@ -167,7 +167,7 @@ public class ProductController {
             }
             
             Product.ProductStatus status = Product.ProductStatus.valueOf(statusStr.toUpperCase());
-            Product updatedProduct = productService.updateProductStatus(id, status, tenantId);
+            Product updatedProduct = platformProductService.updateProductStatus(id, status, tenantId);
             return ResponseEntity.ok(updatedProduct);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
@@ -183,17 +183,17 @@ public class ProductController {
 
     @GetMapping("/stats")
     public ResponseEntity<Map<String, Object>> getProductStats(Authentication authentication) {
-        UUID tenantId = getTenantIdFromAuth(authentication);
+        Long tenantId = getTenantIdFromAuth(authentication);
         
         // Enforce analytics feature access
         featureFlagService.enforceFeatureAccess(tenantId, "analytics");
         
         Map<String, Object> stats = new HashMap<>();
-        stats.put("totalProducts", productService.getProductCount(tenantId));
-        stats.put("activeProducts", productService.getProductCountByStatus(tenantId, Product.ProductStatus.ACTIVE));
-        stats.put("draftProducts", productService.getProductCountByStatus(tenantId, Product.ProductStatus.DRAFT));
-        stats.put("inactiveProducts", productService.getProductCountByStatus(tenantId, Product.ProductStatus.INACTIVE));
-        stats.put("outOfStockProducts", productService.getProductCountByStatus(tenantId, Product.ProductStatus.OUT_OF_STOCK));
+        stats.put("totalProducts", platformProductService.getProductCount(tenantId));
+        stats.put("activeProducts", platformProductService.getProductCountByStatus(tenantId, Product.ProductStatus.ACTIVE));
+        stats.put("draftProducts", platformProductService.getProductCountByStatus(tenantId, Product.ProductStatus.DRAFT));
+        stats.put("inactiveProducts", platformProductService.getProductCountByStatus(tenantId, Product.ProductStatus.INACTIVE));
+        stats.put("outOfStockProducts", platformProductService.getProductCountByStatus(tenantId, Product.ProductStatus.OUT_OF_STOCK));
         
         return ResponseEntity.ok(stats);
     }
@@ -201,19 +201,19 @@ public class ProductController {
     // Product Variant endpoints
     @GetMapping("/{productId}/variants")
     public ResponseEntity<List<ProductVariantDto>> getProductVariants(
-            @PathVariable UUID productId,
+            @PathVariable Long productId,
             Authentication authentication) {
-        UUID tenantId = getTenantIdFromAuth(authentication);
+        Long tenantId = getTenantIdFromAuth(authentication);
         List<ProductVariantDto> variants = productVariantService.getVariantsByProduct(productId, tenantId);
         return ResponseEntity.ok(variants);
     }
 
     @GetMapping("/{productId}/variants/{variantId}")
     public ResponseEntity<ProductVariantDto> getProductVariant(
-            @PathVariable UUID productId,
-            @PathVariable UUID variantId,
+            @PathVariable Long productId,
+            @PathVariable Long variantId,
             Authentication authentication) {
-        UUID tenantId = getTenantIdFromAuth(authentication);
+        Long tenantId = getTenantIdFromAuth(authentication);
         Optional<ProductVariantDto> variant = productVariantService.getVariantById(variantId, tenantId);
         return variant.map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -221,19 +221,19 @@ public class ProductController {
 
     @PostMapping("/{productId}/variants")
     public ResponseEntity<ProductVariantDto> createProductVariant(
-            @PathVariable UUID productId,
+            @PathVariable Long productId,
             @RequestBody ProductVariantDto variantDto,
             @RequestParam(required = false) Map<String, String> optionValues,
             Authentication authentication) {
         try {
-            UUID tenantId = getTenantIdFromAuth(authentication);
+            Long tenantId = getTenantIdFromAuth(authentication);
             variantDto.setProductId(productId);
             
-            Map<UUID, UUID> optionValueMap = null;
+            Map<Long, Long> optionValueMap = null;
             if (optionValues != null && !optionValues.isEmpty()) {
                 optionValueMap = new HashMap<>();
                 for (Map.Entry<String, String> entry : optionValues.entrySet()) {
-                    optionValueMap.put(UUID.fromString(entry.getKey()), UUID.fromString(entry.getValue()));
+                    optionValueMap.put(Long.parseLong(entry.getKey()), Long.parseLong(entry.getValue()));
                 }
             }
             
@@ -248,19 +248,19 @@ public class ProductController {
 
     @PutMapping("/{productId}/variants/{variantId}")
     public ResponseEntity<ProductVariantDto> updateProductVariant(
-            @PathVariable UUID productId,
-            @PathVariable UUID variantId,
+            @PathVariable Long productId,
+            @PathVariable Long variantId,
             @RequestBody ProductVariantDto variantDto,
             @RequestParam(required = false) Map<String, String> optionValues,
             Authentication authentication) {
         try {
-            UUID tenantId = getTenantIdFromAuth(authentication);
+            Long tenantId = getTenantIdFromAuth(authentication);
             
-            Map<UUID, UUID> optionValueMap = null;
+            Map<Long, Long> optionValueMap = null;
             if (optionValues != null && !optionValues.isEmpty()) {
                 optionValueMap = new HashMap<>();
                 for (Map.Entry<String, String> entry : optionValues.entrySet()) {
-                    optionValueMap.put(UUID.fromString(entry.getKey()), UUID.fromString(entry.getValue()));
+                    optionValueMap.put(Long.parseLong(entry.getKey()), Long.parseLong(entry.getValue()));
                 }
             }
             
@@ -278,11 +278,11 @@ public class ProductController {
 
     @DeleteMapping("/{productId}/variants/{variantId}")
     public ResponseEntity<Void> deleteProductVariant(
-            @PathVariable UUID productId,
-            @PathVariable UUID variantId,
+            @PathVariable Long productId,
+            @PathVariable Long variantId,
             Authentication authentication) {
         try {
-            UUID tenantId = getTenantIdFromAuth(authentication);
+            Long tenantId = getTenantIdFromAuth(authentication);
             productVariantService.deleteVariant(variantId, tenantId);
             return ResponseEntity.noContent().build();
         } catch (RuntimeException e) {
@@ -297,11 +297,11 @@ public class ProductController {
 
     @PatchMapping("/{productId}/variants/{variantId}/default")
     public ResponseEntity<ProductVariantDto> setDefaultVariant(
-            @PathVariable UUID productId,
-            @PathVariable UUID variantId,
+            @PathVariable Long productId,
+            @PathVariable Long variantId,
             Authentication authentication) {
         try {
-            UUID tenantId = getTenantIdFromAuth(authentication);
+            Long tenantId = getTenantIdFromAuth(authentication);
             ProductVariantDto updatedVariant = productVariantService.setDefaultVariant(variantId, tenantId);
             return ResponseEntity.ok(updatedVariant);
         } catch (RuntimeException e) {
@@ -316,12 +316,12 @@ public class ProductController {
 
     @PatchMapping("/{productId}/variants/{variantId}/stock")
     public ResponseEntity<ProductVariantDto> updateVariantStock(
-            @PathVariable UUID productId,
-            @PathVariable UUID variantId,
+            @PathVariable Long productId,
+            @PathVariable Long variantId,
             @RequestBody Map<String, Integer> stockUpdate,
             Authentication authentication) {
         try {
-            UUID tenantId = getTenantIdFromAuth(authentication);
+            Long tenantId = getTenantIdFromAuth(authentication);
             Integer stock = stockUpdate.get("stock");
             
             if (stock == null) {
@@ -343,22 +343,22 @@ public class ProductController {
     // Product Option endpoints
     @GetMapping("/{productId}/options")
     public ResponseEntity<List<ProductOptionDto>> getProductOptions(
-            @PathVariable UUID productId,
+            @PathVariable Long productId,
             Authentication authentication) {
-        UUID tenantId = getTenantIdFromAuth(authentication);
+        Long tenantId = getTenantIdFromAuth(authentication);
         List<ProductOptionDto> options = productOptionService.getProductOptions(productId, tenantId);
         return ResponseEntity.ok(options);
     }
 
     @PostMapping("/{productId}/options/{optionId}")
     public ResponseEntity<ProductOptionDto> addOptionToProduct(
-            @PathVariable UUID productId,
-            @PathVariable UUID optionId,
+            @PathVariable Long productId,
+            @PathVariable Long optionId,
             @RequestParam(defaultValue = "false") boolean isRequired,
             @RequestParam(defaultValue = "0") Integer sortOrder,
             Authentication authentication) {
         try {
-            UUID tenantId = getTenantIdFromAuth(authentication);
+            Long tenantId = getTenantIdFromAuth(authentication);
             ProductOptionDto productOption = productOptionService.addOptionToProduct(productId, optionId, isRequired, sortOrder, tenantId);
             return ResponseEntity.status(HttpStatus.CREATED).body(productOption);
         } catch (IllegalArgumentException e) {
@@ -370,11 +370,11 @@ public class ProductController {
 
     @DeleteMapping("/{productId}/options/{optionId}")
     public ResponseEntity<Void> removeOptionFromProduct(
-            @PathVariable UUID productId,
-            @PathVariable UUID optionId,
+            @PathVariable Long productId,
+            @PathVariable Long optionId,
             Authentication authentication) {
         try {
-            UUID tenantId = getTenantIdFromAuth(authentication);
+            Long tenantId = getTenantIdFromAuth(authentication);
             productOptionService.removeOptionFromProduct(productId, optionId, tenantId);
             return ResponseEntity.noContent().build();
         } catch (RuntimeException e) {
@@ -397,7 +397,7 @@ public class ProductController {
             @RequestParam(required = false) String search,
             Authentication authentication) {
         
-        UUID tenantId = getTenantIdFromAuth(authentication);
+        Long tenantId = getTenantIdFromAuth(authentication);
         
         Sort sort = sortDir.equalsIgnoreCase("desc") ? 
                 Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
@@ -427,7 +427,7 @@ public class ProductController {
             @RequestBody OptionDto optionDto,
             Authentication authentication) {
         try {
-            UUID tenantId = getTenantIdFromAuth(authentication);
+            Long tenantId = getTenantIdFromAuth(authentication);
             OptionDto createdOption = optionService.createOption(optionDto, tenantId);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdOption);
         } catch (IllegalArgumentException e) {
@@ -439,9 +439,9 @@ public class ProductController {
 
     @GetMapping("/options/{optionId}")
     public ResponseEntity<OptionDto> getOption(
-            @PathVariable UUID optionId,
+            @PathVariable Long optionId,
             Authentication authentication) {
-        UUID tenantId = getTenantIdFromAuth(authentication);
+        Long tenantId = getTenantIdFromAuth(authentication);
         Optional<OptionDto> option = optionService.getOptionById(optionId, tenantId);
         return option.map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -449,11 +449,11 @@ public class ProductController {
 
     @PutMapping("/options/{optionId}")
     public ResponseEntity<OptionDto> updateOption(
-            @PathVariable UUID optionId,
+            @PathVariable Long optionId,
             @RequestBody OptionDto optionDto,
             Authentication authentication) {
         try {
-            UUID tenantId = getTenantIdFromAuth(authentication);
+            Long tenantId = getTenantIdFromAuth(authentication);
             OptionDto updatedOption = optionService.updateOption(optionId, optionDto, tenantId);
             return ResponseEntity.ok(updatedOption);
         } catch (RuntimeException e) {
@@ -468,10 +468,10 @@ public class ProductController {
 
     @DeleteMapping("/options/{optionId}")
     public ResponseEntity<Void> deleteOption(
-            @PathVariable UUID optionId,
+            @PathVariable Long optionId,
             Authentication authentication) {
         try {
-            UUID tenantId = getTenantIdFromAuth(authentication);
+            Long tenantId = getTenantIdFromAuth(authentication);
             optionService.deleteOption(optionId, tenantId);
             return ResponseEntity.noContent().build();
         } catch (RuntimeException e) {
@@ -487,20 +487,20 @@ public class ProductController {
     // Option Value endpoints
     @GetMapping("/options/{optionId}/values")
     public ResponseEntity<List<OptionValueDto>> getOptionValues(
-            @PathVariable UUID optionId,
+            @PathVariable Long optionId,
             Authentication authentication) {
-        UUID tenantId = getTenantIdFromAuth(authentication);
+        Long tenantId = getTenantIdFromAuth(authentication);
         List<OptionValueDto> optionValues = optionValueService.getOptionValuesByOption(optionId, tenantId);
         return ResponseEntity.ok(optionValues);
     }
 
     @PostMapping("/options/{optionId}/values")
     public ResponseEntity<OptionValueDto> createOptionValue(
-            @PathVariable UUID optionId,
+            @PathVariable Long optionId,
             @RequestBody OptionValueDto optionValueDto,
             Authentication authentication) {
         try {
-            UUID tenantId = getTenantIdFromAuth(authentication);
+            Long tenantId = getTenantIdFromAuth(authentication);
             optionValueDto.setOptionId(optionId);
             OptionValueDto createdOptionValue = optionValueService.createOptionValue(optionValueDto, tenantId);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdOptionValue);
@@ -513,12 +513,12 @@ public class ProductController {
 
     @PutMapping("/options/{optionId}/values/{valueId}")
     public ResponseEntity<OptionValueDto> updateOptionValue(
-            @PathVariable UUID optionId,
-            @PathVariable UUID valueId,
+            @PathVariable Long optionId,
+            @PathVariable Long valueId,
             @RequestBody OptionValueDto optionValueDto,
             Authentication authentication) {
         try {
-            UUID tenantId = getTenantIdFromAuth(authentication);
+            Long tenantId = getTenantIdFromAuth(authentication);
             OptionValueDto updatedOptionValue = optionValueService.updateOptionValue(valueId, optionValueDto, tenantId);
             return ResponseEntity.ok(updatedOptionValue);
         } catch (RuntimeException e) {
@@ -533,11 +533,11 @@ public class ProductController {
 
     @DeleteMapping("/options/{optionId}/values/{valueId}")
     public ResponseEntity<Void> deleteOptionValue(
-            @PathVariable UUID optionId,
-            @PathVariable UUID valueId,
+            @PathVariable Long optionId,
+            @PathVariable Long valueId,
             Authentication authentication) {
         try {
-            UUID tenantId = getTenantIdFromAuth(authentication);
+            Long tenantId = getTenantIdFromAuth(authentication);
             optionValueService.deleteOptionValue(valueId, tenantId);
             return ResponseEntity.noContent().build();
         } catch (RuntimeException e) {
@@ -550,9 +550,9 @@ public class ProductController {
         }
     }
 
-    private UUID getTenantIdFromAuth(Authentication authentication) {
+    private Long getTenantIdFromAuth(Authentication authentication) {
         // Extract tenant ID from JWT token or user details
         // This is a placeholder - implement based on your JWT structure
-        return UUID.fromString("550e8400-e29b-41d4-a716-446655440000"); // For now, return a default tenant ID
+        return 1L; // For now, return a default tenant ID
     }
 }
