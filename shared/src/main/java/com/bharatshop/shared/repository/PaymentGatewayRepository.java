@@ -10,17 +10,17 @@ import java.util.Optional;
 @Repository
 public interface PaymentGatewayRepository extends JpaRepository<PaymentGateway, Long> {
     
-    List<PaymentGateway> findByTenantId(String tenantId);
+    List<PaymentGateway> findByTenantId(Long tenantId);
     
-    List<PaymentGateway> findByTenantIdAndIsActiveTrue(String tenantId);
+    List<PaymentGateway> findByTenantIdAndIsActiveTrue(Long tenantId);
     
     Optional<PaymentGateway> findByTenantIdAndGatewayTypeAndIsActiveTrue(
-        String tenantId, 
+        Long tenantId, 
         PaymentGateway.GatewayType gatewayType
     );
     
     List<PaymentGateway> findByTenantIdAndGatewayType(
-        String tenantId, 
+        Long tenantId, 
         PaymentGateway.GatewayType gatewayType
     );
     
@@ -31,6 +31,6 @@ public interface PaymentGatewayRepository extends JpaRepository<PaymentGateway, 
         Long tenantId, 
         PaymentGateway.GatewayType gatewayType
     ) {
-        return findByTenantIdAndGatewayTypeAndIsActiveTrue(tenantId.toString(), gatewayType);
+        return findByTenantIdAndGatewayTypeAndIsActiveTrue(tenantId, gatewayType);
     }
 }

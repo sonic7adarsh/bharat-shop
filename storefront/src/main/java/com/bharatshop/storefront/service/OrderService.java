@@ -59,10 +59,10 @@ public class OrderService {
     /**
      * Create order from cart (checkout)
      */
-    public Orders createOrderFromCart(Long customerId, String tenantId, Long addressId, String notes) {
+    public Orders createOrderFromCart(Long customerId, Long tenantId, Long addressId, String notes) {
         // Check order limit before creating
-        int currentOrderCount = orderRepository.countByTenantId(Long.parseLong(tenantId)).intValue();
-        featureFlagService.enforceOrderLimit(Long.parseLong(tenantId), currentOrderCount);
+        int currentOrderCount = orderRepository.countByTenantId(tenantId).intValue();
+        featureFlagService.enforceOrderLimit(tenantId, currentOrderCount);
         
         // Get customer's cart
         Cart cart = cartService.getOrCreateCart(customerId, tenantId);
@@ -83,15 +83,13 @@ public class OrderService {
         // Get and capture shipping address details
         CustomerAddress shippingAddress = null;
         if (addressId != null) {
-            // Convert String tenantId to Long for CustomerAddress repository compatibility
-        Long tenantIdLong = Long.parseLong(tenantId);
-            shippingAddress = customerAddressRepository.findByIdAndCustomerIdAndTenantId(addressId, customerId, tenantIdLong)
+            shippingAddress = customerAddressRepository.findByIdAndCustomerIdAndTenantId(addressId, customerId, tenantId)
                     .orElseThrow(() -> new RuntimeException("Shipping address not found or inactive"));
         }
         
         // Create order
         Orders order = Orders.builder()
-                .tenantId(Long.parseLong(tenantId))
+                .tenantId(tenantId)
                 .customerId(customerId)
                 .status(Orders.OrderStatus.PENDING)
                 .totalAmount(totalAmount)
@@ -129,7 +127,7 @@ public class OrderService {
                 if (cartItem.getVariantId() != null) {
                     // Use variant-based reservation
                     Reservation reservation = reservationService.reserveStock(
-                        Long.parseLong(tenantId),
+                        tenantId,
                         cartItem.getVariantId(), 
                         cartItem.getQuantity()
                     );
@@ -260,8 +258,8 @@ public class OrderService {
     /**
      * Get order by ID for customer
      */
-    public Optional<Orders> getOrderById(Long orderId, Long customerId, String tenantId) {
-        return orderRepository.findByIdAndCustomerIdAndTenantId(orderId, customerId, Long.parseLong(tenantId));
+    public Optional<Orders> getOrderById(Long orderId, Long customerId, Long tenantId) {
+        return orderRepository.findByIdAndCustomerIdAndTenantId(orderId, customerId, tenantId);
     }
     
     /**
@@ -298,22 +296,22 @@ public class OrderService {
     /**
      * Get customer orders with pagination
      */
-    public Page<Orders> getCustomerOrders(Long customerId, String tenantId, Pageable pageable) {
-        return orderRepository.findByCustomerIdAndTenantIdOrderByCreatedAtDesc(customerId, Long.parseLong(tenantId), pageable);
+    public Page<Orders> getCustomerOrders(Long customerId, Long tenantId, Pageable pageable) {
+        return orderRepository.findByCustomerIdAndTenantIdOrderByCreatedAtDesc(customerId, tenantId, pageable);
     }
     
     /**
      * Get customer orders by status
      */
-    public List<Orders> getCustomerOrdersByStatus(Long customerId, String tenantId, Orders.OrderStatus status) {
-        return orderRepository.findByCustomerIdAndTenantIdAndStatusOrderByCreatedAtDesc(customerId, Long.parseLong(tenantId), status);
+    public List<Orders> getCustomerOrdersByStatus(Long customerId, Long tenantId, Orders.OrderStatus status) {
+        return orderRepository.findByCustomerIdAndTenantIdAndStatusOrderByCreatedAtDesc(customerId, tenantId, status);
     }
     
     /**
      * Cancel order
      */
-    public Orders cancelOrder(Long orderId, Long customerId, String tenantId, String reason) {
-        Orders order = orderRepository.findByIdAndCustomerIdAndTenantId(orderId, customerId, Long.parseLong(tenantId))
+    public Orders cancelOrder(Long orderId, Long customerId, Long tenantId, String reason) {
+        Orders order = orderRepository.findByIdAndCustomerIdAndTenantId(orderId, customerId, tenantId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
         
         if (!order.canBeCancelled()) {
@@ -322,7 +320,7 @@ public class OrderService {
         
         // Release reservations for cancelled order
         try {
-            reservationService.releaseOrderReservations(Long.parseLong(tenantId), order.getId());
+            reservationService.releaseOrderReservations(tenantId, order.getId());
             log.info("Reservations released for cancelled order: {}", order.getOrderNumber());
         } catch (Exception e) {
             log.error("Failed to release reservations for cancelled order: {}", order.getOrderNumber(), e);
@@ -358,8 +356,8 @@ public class OrderService {
     /**
      * Mark order as shipped
      */
-    public Orders markOrderAsShipped(Long orderId, String tenantId, String trackingNumber, String courierPartner) {
-        Orders order = orderRepository.findByIdAndTenantId(orderId, Long.parseLong(tenantId))
+    public Orders markOrderAsShipped(Long orderId, Long tenantId, String trackingNumber, String courierPartner) {
+        Orders order = orderRepository.findByIdAndTenantId(orderId, tenantId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
         
         if (!order.canBeShipped()) {
@@ -376,8 +374,8 @@ public class OrderService {
     /**
      * Mark order as delivered
      */
-    public Orders markOrderAsDelivered(Long orderId, String tenantId) {
-        Orders order = orderRepository.findByIdAndTenantId(orderId, Long.parseLong(tenantId))
+    public Orders markOrderAsDelivered(Long orderId, Long tenantId) {
+        Orders order = orderRepository.findByIdAndTenantId(orderId, tenantId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
         
         if (order.getStatus() != Orders.OrderStatus.SHIPPED) {
@@ -394,8 +392,8 @@ public class OrderService {
     /**
      * Update order status
      */
-    public Orders updateOrderStatus(Long orderId, String tenantId, Orders.OrderStatus newStatus) {
-        Orders order = orderRepository.findByIdAndTenantId(orderId, Long.parseLong(tenantId))
+    public Orders updateOrderStatus(Long orderId, Long tenantId, Orders.OrderStatus newStatus) {
+        Orders order = orderRepository.findByIdAndTenantId(orderId, tenantId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
         
         Orders.OrderStatus currentStatus = order.getStatus();

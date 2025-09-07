@@ -109,8 +109,9 @@ public class PageController {
             @PathVariable com.bharatshop.shared.enums.PageType pageType) {
         
         try {
-            Long tenantId = Long.parseLong(TenantContext.getCurrentTenant());
-            List<PageResponseDto> pages = pageService.getPagesByType(pageType, tenantId.toString());
+            Long tenantId = TenantContext.getCurrentTenant();
+            
+            List<PageResponseDto> pages = pageService.getPagesByType(pageType, tenantId);
             return ResponseEntity.ok(ApiResponse.success(pages));
             
         } catch (Exception e) {
@@ -131,12 +132,12 @@ public class PageController {
             @Valid @RequestBody PageRequestDto pageRequest) {
         
         try {
-            Long tenantId = Long.parseLong(TenantContext.getCurrentTenant());
+            Long tenantId =  TenantContext.getCurrentTenant();
             
             // Enforce advanced features access for page creation
             featureFlagService.enforceFeatureAccess(tenantId, "advancedFeatures");
             
-            PageResponseDto createdPage = pageService.createPage(pageRequest, tenantId.toString());
+            PageResponseDto createdPage = pageService.createPage(pageRequest, tenantId);
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(ApiResponse.success(createdPage));
                     
@@ -166,12 +167,12 @@ public class PageController {
             @Valid @RequestBody PageRequestDto pageRequest) {
         
         try {
-            Long tenantId = Long.parseLong(TenantContext.getCurrentTenant());
+            Long tenantId =  TenantContext.getCurrentTenant();
             
             // Enforce advanced features access for page updates
             featureFlagService.enforceFeatureAccess(tenantId, "advancedFeatures");
             
-            PageResponseDto updatedPage = pageService.updatePage(id, pageRequest, tenantId.toString());
+            PageResponseDto updatedPage = pageService.updatePage(id, pageRequest, tenantId);
             return ResponseEntity.ok(ApiResponse.success(updatedPage));
             
         } catch (IllegalArgumentException e) {

@@ -42,6 +42,14 @@ public class LoggingContext {
     }
 
     /**
+     * Get the current tenant ID as Long from MDC
+     */
+    public static Long getTenantIdAsLong() {
+        String tenantId = MDC.get(TENANT_ID);
+        return tenantId != null ? Long.parseLong(tenantId) : null;
+    }
+
+    /**
      * Get the current user ID from MDC
      */
     public static String getUserId() {
@@ -61,6 +69,15 @@ public class LoggingContext {
     public static void setTenantId(String tenantId) {
         if (tenantId != null) {
             MDC.put(TENANT_ID, tenantId);
+        }
+    }
+
+    /**
+     * Set tenant ID in MDC from Long
+     */
+    public static void setTenantId(Long tenantId) {
+        if (tenantId != null) {
+            MDC.put(TENANT_ID, tenantId.toString());
         }
     }
 
@@ -108,6 +125,28 @@ public class LoggingContext {
         try {
             if (tenantId != null) {
                 MDC.put(TENANT_ID, tenantId);
+            }
+            if (userId != null) {
+                MDC.put(USER_ID, userId);
+            }
+            runnable.run();
+        } finally {
+            if (originalContext != null) {
+                MDC.setContextMap(originalContext);
+            } else {
+                MDC.clear();
+            }
+        }
+    }
+
+    /**
+     * Execute a runnable with specific logging context (Long tenantId overload)
+     */
+    public static void withContext(Long tenantId, String userId, Runnable runnable) {
+        Map<String, String> originalContext = MDC.getCopyOfContextMap();
+        try {
+            if (tenantId != null) {
+                MDC.put(TENANT_ID, tenantId.toString());
             }
             if (userId != null) {
                 MDC.put(USER_ID, userId);

@@ -24,7 +24,7 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@FilterDef(name = "tenantFilter", parameters = @ParamDef(name = "tenantId", type = String.class))
+@FilterDef(name = "tenantFilter", parameters = @ParamDef(name = "tenantId", type = Long.class))
 public class Tenant extends BaseEntity {
     
     @Column(nullable = false, unique = true, length = 100)

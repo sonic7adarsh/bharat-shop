@@ -166,7 +166,7 @@ public class TemplateController {
             @Valid @RequestBody Template template) {
         
         try {
-            Long tenantId = Long.parseLong(TenantContext.getCurrentTenant());
+            Long tenantId = TenantContext.getCurrentTenant();
             
             // Enforce advanced features access for template creation
             featureFlagService.enforceFeatureAccess(tenantId, "advancedFeatures");
@@ -201,7 +201,7 @@ public class TemplateController {
             @Valid @RequestBody Template template) {
         
         try {
-            Long tenantId = Long.parseLong(TenantContext.getCurrentTenant());
+            Long tenantId = TenantContext.getCurrentTenant();
             
             // Enforce advanced features access for template updates
             featureFlagService.enforceFeatureAccess(tenantId, "advancedFeatures");

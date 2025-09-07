@@ -50,7 +50,7 @@ public class Vendor {
     private VendorStatus status;
     
     @Column(name = "tenant_id", nullable = false)
-    private String tenantId;
+    private Long tenantId;
     
     @CreatedDate
     @Column(nullable = false, updatable = false)

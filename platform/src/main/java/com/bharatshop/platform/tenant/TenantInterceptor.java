@@ -18,11 +18,17 @@ public class TenantInterceptor implements HandlerInterceptor {
     
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        String tenantId = extractTenantId(request);
+        String tenantIdStr = extractTenantId(request);
         
-        if (StringUtils.hasText(tenantId)) {
-            TenantContext.setTenantId(tenantId);
-            log.debug("Tenant context set for request: {} - Tenant: {}", request.getRequestURI(), tenantId);
+        if (StringUtils.hasText(tenantIdStr)) {
+            try {
+                Long tenantId = Long.parseLong(tenantIdStr);
+                TenantContext.setTenantId(tenantId);
+                log.debug("Tenant context set for request: {} - Tenant: {}", request.getRequestURI(), tenantId);
+            } catch (NumberFormatException e) {
+                log.warn("Invalid tenant ID format in request: {} - Tenant: {}", request.getRequestURI(), tenantIdStr);
+                return false;
+            }
         } else {
             log.warn("No tenant ID found in request: {}", request.getRequestURI());
         }

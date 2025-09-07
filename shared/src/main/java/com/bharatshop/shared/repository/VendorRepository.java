@@ -24,7 +24,7 @@ public interface VendorRepository extends TenantAwareRepository<Vendor> {
      * Find vendor by domain name for specific tenant (active vendors only)
      */
     @Query(value = "SELECT * FROM vendors WHERE domain = ?1 AND tenant_id = ?2 AND deleted_at IS NULL AND is_active = true", nativeQuery = true)
-    Optional<Vendor> findByDomainAndTenantId(String domain, String tenantId);
+    Optional<Vendor> findByDomainAndTenantId(String domain, Long tenantId);
     
     /**
      * Check if domain is available (not used by any active vendor)
@@ -36,7 +36,7 @@ public interface VendorRepository extends TenantAwareRepository<Vendor> {
      * Find vendor by store name for specific tenant
      */
     @Query(value = "SELECT * FROM vendors WHERE store_name = ?1 AND tenant_id = ?2 AND deleted_at IS NULL", nativeQuery = true)
-    Optional<Vendor> findByStoreNameAndTenantId(String storeName, String tenantId);
+    Optional<Vendor> findByStoreNameAndTenantId(String storeName, Long tenantId);
     
     /**
      * Find active vendors by status

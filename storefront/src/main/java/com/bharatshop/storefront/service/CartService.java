@@ -40,8 +40,8 @@ public class CartService {
      * Get or create cart for customer
      */
     @Cacheable(value = "customerCart", key = "#customerId + '_' + #tenantId")
-    public Cart getOrCreateCart(Long customerId, String tenantId) {
-        return cartRepository.findByCustomerIdAndTenantId(customerId, Long.parseLong(tenantId))
+    public Cart getOrCreateCart(Long customerId, Long tenantId) {
+        return cartRepository.findByCustomerIdAndTenantId(customerId, tenantId)
                 .orElseGet(() -> createNewCart(customerId, tenantId));
     }
     
@@ -49,7 +49,7 @@ public class CartService {
      * Add item to cart
      */
     @CacheEvict(value = "customerCart", key = "#customerId + '_' + #tenantId")
-    public Cart addItemToCart(Long customerId, String tenantId, Long productId, Integer quantity) {
+    public Cart addItemToCart(Long customerId, Long tenantId, Long productId, Integer quantity) {
         // Validate product
        Product product = storefrontProductRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found: " + productId));
@@ -101,7 +101,7 @@ public class CartService {
      * Update cart item quantity
      */
     @CacheEvict(value = "customerCart", key = "#customerId + '_' + #tenantId")
-    public Cart updateCartItemQuantity(Long customerId, String tenantId, Long productId, Integer quantity) {
+    public Cart updateCartItemQuantity(Long customerId, Long tenantId, Long productId, Integer quantity) {
         Cart cart = getOrCreateCartForUpdate(customerId, tenantId);
         
         CartItem cartItem = cartItemRepository.findByCart_IdAndProduct_Id(cart.getId(), productId)
@@ -129,7 +129,7 @@ public class CartService {
      * Remove item from cart
      */
     @CacheEvict(value = "customerCart", key = "#customerId + '_' + #tenantId")
-    public Cart removeItemFromCart(Long customerId, String tenantId, Long productId) {
+    public Cart removeItemFromCart(Long customerId, Long tenantId, Long productId) {
         Cart cart = getOrCreateCartForUpdate(customerId, tenantId);
         
         CartItem cartItem = cartItemRepository.findByCart_IdAndProduct_Id(cart.getId(), productId)
@@ -149,8 +149,8 @@ public class CartService {
      * Clear entire cart
      */
     @CacheEvict(value = "customerCart", key = "#customerId + '_' + #tenantId")
-    public void clearCart(Long customerId, String tenantId) {
-        Cart cart = cartRepository.findByCustomerIdAndTenantId(customerId, Long.parseLong(tenantId))
+    public void clearCart(Long customerId, Long tenantId) {
+        Cart cart = cartRepository.findByCustomerIdAndTenantId(customerId, tenantId)
                 .orElse(null);
         
         if (cart != null) {
@@ -163,7 +163,7 @@ public class CartService {
     /**
      * Get cart total amount
      */
-    public BigDecimal getCartTotal(Long customerId, String tenantId) {
+    public BigDecimal getCartTotal(Long customerId, Long tenantId) {
         Cart cart = getOrCreateCart(customerId, tenantId);
         
         if (cart.getItems() == null || cart.getItems().isEmpty()) {
@@ -178,8 +178,8 @@ public class CartService {
     /**
      * Get cart item count
      */
-    public Integer getCartItemCount(Long customerId, String tenantId) {
-        Cart cart = cartRepository.findByCustomerIdAndTenantId(customerId, Long.parseLong(tenantId))
+    public Integer getCartItemCount(Long customerId, Long tenantId) {
+        Cart cart = cartRepository.findByCustomerIdAndTenantId(customerId, tenantId)
                 .orElse(null);
         return cart != null ? cart.getItems().size() : 0;
     }
@@ -187,7 +187,7 @@ public class CartService {
     /**
      * Validate cart before checkout
      */
-    public void validateCartForCheckout(Long customerId, String tenantId) {
+    public void validateCartForCheckout(Long customerId, Long tenantId) {
         Cart cart = getOrCreateCart(customerId, tenantId);
         
         if (cart.isEmpty()) {
@@ -227,15 +227,15 @@ public class CartService {
     /**
      * Check if cart exists and is not empty
      */
-    public boolean hasNonEmptyCart(Long customerId, String tenantId) {
-        Cart cart = cartRepository.findByCustomerIdAndTenantId(customerId, Long.parseLong(tenantId))
+    public boolean hasNonEmptyCart(Long customerId, Long tenantId) {
+        Cart cart = cartRepository.findByCustomerIdAndTenantId(customerId, tenantId)
                 .orElse(null);
         return cart != null && !cart.getItems().isEmpty();
     }
     
     // Private helper methods
     
-    private Cart createNewCart(Long customerId, String tenantId) {
+    private Cart createNewCart(Long customerId, Long tenantId) {
         Cart cart = Cart.builder()
                 .customerId(customerId)
                 .tenantId(tenantId)
@@ -245,8 +245,8 @@ public class CartService {
         return cartRepository.save(cart);
     }
     
-    private Cart getOrCreateCartForUpdate(Long customerId, String tenantId) {
-        return cartRepository.findByCustomerIdAndTenantId(customerId, Long.parseLong(tenantId))
+    private Cart getOrCreateCartForUpdate(Long customerId, Long tenantId) {
+        return cartRepository.findByCustomerIdAndTenantId(customerId, tenantId)
                 .orElseGet(() -> createNewCart(customerId, tenantId));
     }
 }

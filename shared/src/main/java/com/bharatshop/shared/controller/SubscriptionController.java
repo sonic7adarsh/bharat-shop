@@ -70,7 +70,7 @@ public class SubscriptionController {
     @GetMapping("/current")
     public ResponseEntity<SubscriptionResponseDto> getCurrentSubscription() {
         try {
-            Long vendorId = Long.parseLong(TenantContext.getCurrentTenant());
+            Long vendorId = TenantContext.getCurrentTenant();
             Optional<Subscription> subscriptionOpt = subscriptionService.getActiveSubscription(vendorId);
             if (subscriptionOpt.isPresent()) {
                 SubscriptionResponseDto subscription = subscriptionService.convertToResponseDto(subscriptionOpt.get());
@@ -90,7 +90,7 @@ public class SubscriptionController {
     @GetMapping
     public ResponseEntity<Page<SubscriptionResponseDto>> getSubscriptionHistory(Pageable pageable) {
         try {
-            Long vendorId = Long.parseLong(TenantContext.getCurrentTenant());
+            Long vendorId = TenantContext.getCurrentTenant();
             Page<SubscriptionResponseDto> subscriptions = subscriptionService.getSubscriptionHistory(vendorId, pageable);
             return ResponseEntity.ok(subscriptions);
         } catch (Exception e) {
@@ -103,7 +103,7 @@ public class SubscriptionController {
     public ResponseEntity<RazorpayOrderResponseDto> createSubscriptionOrder(
             @Valid @RequestBody SubscriptionRequestDto request) {
         try {
-            Long vendorId = Long.parseLong(TenantContext.getCurrentTenant());
+            Long vendorId = TenantContext.getCurrentTenant();
             RazorpayOrderResponseDto orderResponse = subscriptionService.createSubscriptionOrder(vendorId, request.getPlanId());
             return ResponseEntity.ok(orderResponse);
         } catch (RuntimeException e) {
@@ -119,7 +119,7 @@ public class SubscriptionController {
     public ResponseEntity<SubscriptionResponseDto> verifyPayment(
             @Valid @RequestBody SubscriptionRequestDto request) {
         try {
-            Long vendorId = Long.parseLong(TenantContext.getCurrentTenant());
+            Long vendorId = TenantContext.getCurrentTenant();
             Subscription subscription = subscriptionService.verifyAndActivateSubscription(
                     request.getRazorpayOrderId(),
                     request.getRazorpayPaymentId(),
@@ -139,7 +139,7 @@ public class SubscriptionController {
     public ResponseEntity<SubscriptionResponseDto> cancelSubscription(
             @Valid @RequestBody SubscriptionRequestDto request) {
         try {
-            Long vendorId = Long.parseLong(TenantContext.getCurrentTenant());
+            Long vendorId = TenantContext.getCurrentTenant();
             // Get current subscription first
             Optional<Subscription> currentSubscriptionOpt = subscriptionService.getActiveSubscription(vendorId);
             if (currentSubscriptionOpt.isEmpty()) {
@@ -175,7 +175,7 @@ public class SubscriptionController {
     @GetMapping("/features")
     public ResponseEntity<Object> getCurrentFeatures() {
         try {
-            Long vendorId = Long.parseLong(TenantContext.getCurrentTenant());
+            Long vendorId = TenantContext.getCurrentTenant();
             Object features = subscriptionService.getCurrentFeatures(vendorId);
             return ResponseEntity.ok(features);
         } catch (Exception e) {
@@ -187,7 +187,7 @@ public class SubscriptionController {
     @GetMapping("/check-feature/{feature}")
     public ResponseEntity<Boolean> checkFeature(@PathVariable String feature) {
         try {
-            Long vendorId = Long.parseLong(TenantContext.getCurrentTenant());
+            Long vendorId = TenantContext.getCurrentTenant();
             boolean hasFeature = subscriptionService.hasFeature(vendorId, feature);
             return ResponseEntity.ok(hasFeature);
         } catch (Exception e) {

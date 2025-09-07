@@ -60,7 +60,7 @@ public class NotificationService {
         private String subject;
         private String message;
         private Locale locale;
-        private String tenantId;
+        private Long tenantId;
         private boolean urgent;
         
         public NotificationRequest() {
@@ -98,8 +98,8 @@ public class NotificationService {
         public Locale getLocale() { return locale; }
         public void setLocale(Locale locale) { this.locale = locale; }
         
-        public String getTenantId() { return tenantId; }
-        public void setTenantId(String tenantId) { this.tenantId = tenantId; }
+        public Long getTenantId() { return tenantId; }
+        public void setTenantId(Long tenantId) { this.tenantId = tenantId; }
         
         public boolean isUrgent() { return urgent; }
         public void setUrgent(boolean urgent) { this.urgent = urgent; }

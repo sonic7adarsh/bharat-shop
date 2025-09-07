@@ -34,8 +34,8 @@ public class TemplateService {
      */
     @Transactional(readOnly = true)
     public List<Template> getAllActiveTemplates() {
-        String tenantId = TenantContext.requireCurrentTenant();
-        return templateRepository.findAllActiveTemplates(Long.parseLong(tenantId));
+        Long tenantId = TenantContext.requireCurrentTenant();
+        return templateRepository.findAllActiveTemplates(tenantId);
     }
     
     /**
@@ -51,7 +51,7 @@ public class TemplateService {
      */
     @Transactional(readOnly = true)
     public Optional<Template> getTemplateById(Long id) {
-        String tenantId = TenantContext.requireCurrentTenant();
+        Long tenantId = TenantContext.requireCurrentTenant();
         return templateRepository.findActiveById(id);
     }
     
@@ -60,8 +60,8 @@ public class TemplateService {
      */
     @Transactional(readOnly = true)
     public Optional<Template> getTemplateByName(String name) {
-        String tenantId = TenantContext.requireCurrentTenant();
-        return templateRepository.findActiveByName(name, Long.parseLong(tenantId));
+        Long tenantId = TenantContext.requireCurrentTenant();
+        return templateRepository.findActiveByName(name, tenantId);
     }
     
     /**
@@ -69,8 +69,8 @@ public class TemplateService {
      */
     @Transactional(readOnly = true)
     public List<Template> getTemplatesByCategory(String category) {
-        String tenantId = TenantContext.requireCurrentTenant();
-        return templateRepository.findActiveByCategory(category, Long.parseLong(tenantId));
+        Long tenantId = TenantContext.requireCurrentTenant();
+        return templateRepository.findActiveByCategory(category, tenantId);
     }
     
     /**
@@ -78,8 +78,8 @@ public class TemplateService {
      */
     @Transactional(readOnly = true)
     public List<String> getAllCategories() {
-        String tenantId = TenantContext.requireCurrentTenant();
-        return templateRepository.findAllCategories(Long.parseLong(tenantId));
+        Long tenantId = TenantContext.requireCurrentTenant();
+        return templateRepository.findAllCategories(tenantId);
     }
     
     /**
@@ -87,8 +87,8 @@ public class TemplateService {
      */
     @Transactional(readOnly = true)
     public List<Template> searchTemplates(String search) {
-        String tenantId = TenantContext.requireCurrentTenant();
-        return templateRepository.searchActiveTemplates(search, Long.parseLong(tenantId));
+        Long tenantId = TenantContext.requireCurrentTenant();
+        return templateRepository.searchActiveTemplates(search, tenantId);
     }
     
     /**
@@ -97,8 +97,8 @@ public class TemplateService {
     public Template createTemplate(Template template) {
         validateTemplate(template);
         
-        String tenantId = TenantContext.requireCurrentTenant();
-        if (templateRepository.existsByNameAndTenantId(template.getName(), Long.parseLong(tenantId))) {
+        Long tenantId = TenantContext.requireCurrentTenant();
+        if (templateRepository.existsByNameAndTenantId(template.getName(), tenantId)) {
             throw new IllegalArgumentException("Template with name '" + template.getName() + "' already exists");
         }
         
@@ -110,7 +110,7 @@ public class TemplateService {
      * Update existing template
      */
     public Template updateTemplate(Long id, Template templateUpdate) {
-        String tenantId = TenantContext.requireCurrentTenant();
+        Long tenantId = TenantContext.requireCurrentTenant();
         Template existingTemplate = templateRepository.findActiveById(id)
             .orElseThrow(() -> new IllegalArgumentException("Template not found with ID: " + id));
         
@@ -118,7 +118,7 @@ public class TemplateService {
         
         // Check if name is being changed and if new name already exists
         if (!existingTemplate.getName().equals(templateUpdate.getName()) &&
-            templateRepository.existsByNameAndTenantIdAndIdNot(templateUpdate.getName(), id, Long.parseLong(tenantId))) {
+            templateRepository.existsByNameAndTenantIdAndIdNot(templateUpdate.getName(), id, tenantId)) {
             throw new IllegalArgumentException("Template with name '" + templateUpdate.getName() + "' already exists");
         }
         
@@ -139,7 +139,7 @@ public class TemplateService {
      * Delete template (soft delete)
      */
     public void deleteTemplate(Long id) {
-        String tenantId = TenantContext.requireCurrentTenant();
+        Long tenantId = TenantContext.requireCurrentTenant();
         Template template = templateRepository.findActiveById(id)
             .orElseThrow(() -> new IllegalArgumentException("Template not found with ID: " + id));
         
@@ -153,7 +153,7 @@ public class TemplateService {
      * Activate/Deactivate template
      */
     public Template toggleTemplateStatus(Long id) {
-        String tenantId = TenantContext.requireCurrentTenant();
+        Long tenantId = TenantContext.requireCurrentTenant();
         Template template = templateRepository.findActiveById(id)
             .orElseThrow(() -> new IllegalArgumentException("Template not found with ID: " + id));
         

@@ -23,7 +23,7 @@ public class MediaFileResponse {
     
     public MediaFileResponse(MediaFile mediaFile) {
         this.id = mediaFile.getId();
-        this.tenantId = mediaFile.getTenantId() != null ? Long.parseLong(mediaFile.getTenantId()) : null;
+        this.tenantId = mediaFile.getTenantId();
         this.key = mediaFile.getKey();
         this.url = mediaFile.getUrl();
         this.type = mediaFile.getType();

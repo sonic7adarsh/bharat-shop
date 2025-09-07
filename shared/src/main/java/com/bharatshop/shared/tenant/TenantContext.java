@@ -13,14 +13,14 @@ public class TenantContext {
     
     private static final Logger log = LoggerFactory.getLogger(TenantContext.class);
     
-    private static final ThreadLocal<String> currentTenant = new ThreadLocal<>();
+    private static final ThreadLocal<Long> currentTenant = new ThreadLocal<>();
     
     /**
      * Set the current tenant ID for the current thread
      * 
      * @param tenantId the tenant ID to set
      */
-    public static void setCurrentTenant(String tenantId) {
+    public static void setCurrentTenant(Long tenantId) {
         log.debug("Setting current tenant to: {}", tenantId);
         currentTenant.set(tenantId);
     }
@@ -30,7 +30,7 @@ public class TenantContext {
      * 
      * @return the current tenant ID, or null if not set
      */
-    public static String getCurrentTenant() {
+    public static Long getCurrentTenant() {
         return currentTenant.get();
     }
     
@@ -57,8 +57,8 @@ public class TenantContext {
      * @return the current tenant ID
      * @throws IllegalStateException if no tenant is set
      */
-    public static String requireCurrentTenant() {
-        String tenantId = getCurrentTenant();
+    public static Long requireCurrentTenant() {
+        Long tenantId = getCurrentTenant();
         if (tenantId == null) {
             throw new IllegalStateException("No tenant context is set for the current thread");
         }

@@ -7,14 +7,14 @@ public class TenantContext {
     
     private static final Logger log = LoggerFactory.getLogger(TenantContext.class);
     
-    private static final ThreadLocal<String> CURRENT_TENANT = new ThreadLocal<>();
+    private static final ThreadLocal<Long> CURRENT_TENANT = new ThreadLocal<>();
     
-    public static void setTenantId(String tenantId) {
+    public static void setTenantId(Long tenantId) {
         log.debug("Setting tenant context to: {}", tenantId);
         CURRENT_TENANT.set(tenantId);
     }
     
-    public static String getTenantId() {
+    public static Long getTenantId() {
         return CURRENT_TENANT.get();
     }
     

@@ -32,7 +32,7 @@ public class Cart {
     private Long customerId;
     
     @Column(nullable = false)
-    private String tenantId;
+    private Long tenantId;
     
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<CartItem> items;
