@@ -31,6 +31,6 @@ public interface PaymentGatewayRepository extends JpaRepository<PaymentGateway, 
         Long tenantId, 
         PaymentGateway.GatewayType gatewayType
     ) {
-        return findByTenantIdAndGatewayTypeAndIsActiveTrue(tenantId, gatewayType);
+        return findByTenantIdAndGatewayTypeAndIsActiveTrue(tenantId.toString(), gatewayType);
     }
 }

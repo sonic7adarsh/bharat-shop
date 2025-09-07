@@ -42,15 +42,15 @@ class ReservationServiceConcurrencyTest {
 
     private ReservationService reservationService;
 
-    private UUID tenantId;
-    private UUID productVariantId;
+    private Long tenantId;
+    private Long productVariantId;
     private ProductVariant productVariant;
 
     @BeforeEach
     void setUp() {
         reservationService = new ReservationService(reservationRepository, productVariantRepository);
-        tenantId = UUID.randomUUID();
-        productVariantId = UUID.randomUUID();
+        tenantId = 1L;
+        productVariantId = 1L;
         
         productVariant = ProductVariant.builder()
                 .id(productVariantId)
@@ -388,7 +388,7 @@ class ReservationServiceConcurrencyTest {
     @Test
     void testDeadlockPrevention() throws InterruptedException {
         // Setup: Two products to test cross-product reservations
-        UUID productVariantId2 = UUID.randomUUID();
+        Long productVariantId2 = 2L;
         ProductVariant productVariant2 = ProductVariant.builder()
                 .id(productVariantId2)
                 .tenantId(tenantId)

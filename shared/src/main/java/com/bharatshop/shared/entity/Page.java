@@ -284,7 +284,7 @@ public class Page extends BaseEntity {
     }
     
     public void setTenantId(Long tenantId) {
-        this.tenantId = tenantId;
+        this.tenantId = tenantId != null ? tenantId : null;
     }
     
 

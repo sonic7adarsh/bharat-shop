@@ -17,55 +17,55 @@ public interface OptionRepository extends TenantAwareRepository<Option> {
      * Find all active options for current tenant
      */
     @Query(value = "SELECT * FROM options WHERE is_active = true AND tenant_id = :tenantId AND deleted_at IS NULL ORDER BY sort_order ASC", nativeQuery = true)
-    List<Option> findAllActive(@Param("tenantId") String tenantId);
+    List<Option> findAllActive(@Param("tenantId") Long tenantId);
     
     /**
      * Find active option by name for current tenant
      */
     @Query(value = "SELECT * FROM options WHERE name = :name AND is_active = true AND tenant_id = :tenantId AND deleted_at IS NULL", nativeQuery = true)
-    Optional<Option> findActiveByName(@Param("name") String name, @Param("tenantId") String tenantId);
+    Optional<Option> findActiveByName(@Param("name") String name, @Param("tenantId") Long tenantId);
     
     /**
      * Find options by type for current tenant
      */
     @Query(value = "SELECT * FROM options WHERE type = :type AND is_active = true AND tenant_id = :tenantId AND deleted_at IS NULL ORDER BY sort_order ASC", nativeQuery = true)
-    List<Option> findActiveByType(@Param("type") String type, @Param("tenantId") String tenantId);
+    List<Option> findActiveByType(@Param("type") String type, @Param("tenantId") Long tenantId);
     
     /**
      * Find required options for current tenant
      */
     @Query(value = "SELECT * FROM options WHERE is_required = true AND is_active = true AND tenant_id = :tenantId AND deleted_at IS NULL ORDER BY sort_order ASC", nativeQuery = true)
-    List<Option> findRequiredOptions(@Param("tenantId") String tenantId);
+    List<Option> findRequiredOptions(@Param("tenantId") Long tenantId);
     
     /**
      * Check if option name exists for current tenant (excluding current option)
      */
     @Query(value = "SELECT COUNT(*) > 0 FROM options WHERE name = :name AND tenant_id = :tenantId AND id != :excludeId AND deleted_at IS NULL", nativeQuery = true)
-    boolean existsByNameAndTenantIdAndIdNot(@Param("name") String name, @Param("excludeId") Long excludeId, @Param("tenantId") String tenantId);
+    boolean existsByNameAndTenantIdAndIdNot(@Param("name") String name, @Param("excludeId") Long excludeId, @Param("tenantId") Long tenantId);
     
     /**
      * Check if option name exists for current tenant
      */
     @Query(value = "SELECT COUNT(*) > 0 FROM options WHERE name = :name AND tenant_id = :tenantId AND deleted_at IS NULL", nativeQuery = true)
-    boolean existsByNameAndTenantId(@Param("name") String name, @Param("tenantId") String tenantId);
+    boolean existsByNameAndTenantId(@Param("name") String name, @Param("tenantId") Long tenantId);
     
     /**
      * Search options by name or display name for current tenant
      */
     @Query(value = "SELECT * FROM options WHERE is_active = true AND tenant_id = :tenantId AND deleted_at IS NULL AND (LOWER(name) LIKE LOWER(CONCAT('%', :search, '%')) OR LOWER(display_name) LIKE LOWER(CONCAT('%', :search, '%'))) ORDER BY sort_order ASC", nativeQuery = true)
-    List<Option> searchActiveOptions(@Param("search") String search, @Param("tenantId") String tenantId);
+    List<Option> searchActiveOptions(@Param("search") String search, @Param("tenantId") Long tenantId);
     
     /**
      * Find active option by ID for current tenant
      */
     @Query(value = "SELECT * FROM options WHERE id = :id AND is_active = true AND tenant_id = :tenantId AND deleted_at IS NULL", nativeQuery = true)
-    Optional<Option> findActiveById(@Param("id") Long id, @Param("tenantId") String tenantId);
+    Optional<Option> findActiveById(@Param("id") Long id, @Param("tenantId") Long tenantId);
     
     /**
      * Find options by IDs for current tenant
      */
     @Query(value = "SELECT * FROM options WHERE id IN :ids AND is_active = true AND tenant_id = :tenantId AND deleted_at IS NULL ORDER BY sort_order ASC", nativeQuery = true)
-    List<Option> findActiveByIds(@Param("ids") List<Long> ids, @Param("tenantId") String tenantId);
+    List<Option> findActiveByIds(@Param("ids") List<Long> ids, @Param("tenantId") Long tenantId);
     
     /**
      * Find all active options by tenant ID
@@ -108,12 +108,6 @@ public interface OptionRepository extends TenantAwareRepository<Option> {
      */
     @Query(value = "SELECT * FROM options WHERE is_active = true AND tenant_id = :tenantId AND deleted_at IS NULL AND (LOWER(name) LIKE LOWER(CONCAT('%', :keyword, '%')) OR LOWER(display_name) LIKE LOWER(CONCAT('%', :keyword, '%'))) ORDER BY sort_order ASC", nativeQuery = true)
     Page<Option> searchActiveByTenantIdAndKeywordWithPagination(@Param("tenantId") Long tenantId, @Param("keyword") String keyword, Pageable pageable);
-    
-    /**
-     * Check if option name exists for tenant
-     */
-    @Query(value = "SELECT COUNT(*) > 0 FROM options WHERE name = :name AND tenant_id = :tenantId AND deleted_at IS NULL", nativeQuery = true)
-    boolean existsByNameAndTenantId(@Param("name") String name, @Param("tenantId") Long tenantId);
     
     /**
      * Count active options by tenant ID

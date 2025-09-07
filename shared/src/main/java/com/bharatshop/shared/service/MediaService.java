@@ -156,7 +156,7 @@ public class MediaService {
      */
     @Transactional(readOnly = true)
     public Optional<MediaFile> getMediaFile(Long id, String tenantId) {
-        return mediaFileRepository.findByIdAndTenantIdAndNotDeleted(id, tenantId);
+        return mediaFileRepository.findByIdAndTenantIdAndNotDeleted(id, Long.parseLong(tenantId));
     }
     
     /**
@@ -164,7 +164,7 @@ public class MediaService {
      */
     @Transactional(readOnly = true)
     public Page<MediaFile> getMediaFiles(String tenantId, Pageable pageable) {
-        return mediaFileRepository.findByTenantIdAndNotDeleted(tenantId, pageable);
+        return mediaFileRepository.findByTenantIdAndNotDeleted(Long.parseLong(tenantId), pageable);
     }
     
     /**
@@ -172,14 +172,14 @@ public class MediaService {
      */
     @Transactional(readOnly = true)
     public Page<MediaFile> getMediaFilesByType(String tenantId, MediaFile.MediaType type, Pageable pageable) {
-        return mediaFileRepository.findByTenantIdAndTypeAndNotDeleted(tenantId, type, pageable);
+        return mediaFileRepository.findByTenantIdAndTypeAndNotDeleted(Long.parseLong(tenantId), type, pageable);
     }
     
     /**
      * Delete MediaFile (soft delete)
      */
     public void deleteMediaFile(Long id, String tenantId) {
-        Optional<MediaFile> mediaFileOpt = mediaFileRepository.findByIdAndTenantIdAndNotDeleted(id, tenantId);
+        Optional<MediaFile> mediaFileOpt = mediaFileRepository.findByIdAndTenantIdAndNotDeleted(id, Long.parseLong(tenantId));
         
         if (mediaFileOpt.isEmpty()) {
             throw new RuntimeException("MediaFile not found");
@@ -197,12 +197,13 @@ public class MediaService {
      */
     @Transactional(readOnly = true)
     public StorageUsage getStorageUsage(String tenantId) {
-        long totalFiles = mediaFileRepository.countByTenantIdAndNotDeleted(tenantId);
-        long totalSize = mediaFileRepository.calculateTotalSizeByTenantIdAndNotDeleted(tenantId);
+        Long tenantIdLong = Long.parseLong(tenantId);
+        long totalFiles = mediaFileRepository.countByTenantIdAndNotDeleted(tenantIdLong);
+        long totalSize = mediaFileRepository.calculateTotalSizeByTenantIdAndNotDeleted(tenantIdLong);
         
         Map<MediaFile.MediaType, Long> typeCount = new HashMap<>();
         for (MediaFile.MediaType type : MediaFile.MediaType.values()) {
-            long count = mediaFileRepository.countByTenantIdAndTypeAndNotDeleted(tenantId, type);
+            long count = mediaFileRepository.countByTenantIdAndTypeAndNotDeleted(tenantIdLong, type);
             if (count > 0) {
                 typeCount.put(type, count);
             }
@@ -236,7 +237,7 @@ public class MediaService {
     private String generateFileKey(String tenantId, MediaFile.MediaType mediaType, String filename) {
         String extension = getFileExtension(filename);
         String uuid = UUID.randomUUID().toString();
-        return String.format("tenant-%d/%s/%s%s", tenantId, mediaType.name().toLowerCase(), uuid, extension);
+        return String.format("tenant-%s/%s/%s%s", tenantId, mediaType.name().toLowerCase(), uuid, extension);
     }
     
     private String getFileExtension(String filename) {

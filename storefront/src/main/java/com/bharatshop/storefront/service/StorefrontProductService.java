@@ -261,7 +261,7 @@ public class StorefrontProductService {
     
     private ProductResponseDto mapToResponseDto(Product product) {
         // Get product variants
-        List<ProductVariantDto> variants = productVariantService.getVariantsByProduct(product.getId(), product.getTenantId());
+        List<ProductVariantDto> variants = productVariantService.getVariantsByProduct(product.getId(), Long.parseLong(product.getTenantId()));
         
         // Get default variant (first variant or null if no variants)
         ProductVariantDto defaultVariant = variants.isEmpty() ? null : 
@@ -271,7 +271,7 @@ public class StorefrontProductService {
                 .orElse(variants.get(0));
         
         // Get product options
-        List<ProductOptionDto> options = productOptionService.getProductOptions(product.getId(), product.getTenantId());
+        List<ProductOptionDto> options = productOptionService.getProductOptions(product.getId(), Long.parseLong(product.getTenantId()));
         
         // Use variant data for price and stock if available, otherwise use product data
         ProductResponseDto.ProductResponseDtoBuilder builder = ProductResponseDto.builder()

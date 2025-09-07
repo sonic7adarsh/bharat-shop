@@ -12,7 +12,7 @@ public class MediaFile {
     private Long id;
     
     @Column(name = "tenant_id", nullable = false)
-    private Long tenantId;
+    private String tenantId;
     
     @Column(name = "file_key", nullable = false, unique = true)
     private String key;
@@ -52,7 +52,7 @@ public class MediaFile {
         this.status = MediaStatus.PENDING;
     }
     
-    public MediaFile(Long tenantId, String key, String url, MediaType type, Long size) {
+    public MediaFile(String tenantId, String key, String url, MediaType type, Long size) {
         this();
         this.tenantId = tenantId;
         this.key = key;
@@ -70,11 +70,11 @@ public class MediaFile {
         this.id = id;
     }
     
-    public Long getTenantId() {
+    public String getTenantId() {
         return tenantId;
     }
     
-    public void setTenantId(Long tenantId) {
+    public void setTenantId(String tenantId) {
         this.tenantId = tenantId;
     }
     

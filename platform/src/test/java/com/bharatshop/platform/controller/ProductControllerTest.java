@@ -42,19 +42,19 @@ class ProductControllerTest {
     @MockBean
     private ProductOptionService productOptionService;
 
-    private UUID tenantId;
-    private UUID productId;
-    private UUID variantId;
-    private UUID optionId;
+    private Long tenantId;
+    private Long productId;
+    private Long variantId;
+    private Long optionId;
     private ProductVariantDto productVariantDto;
     private ProductOptionDto productOptionDto;
 
     @BeforeEach
     void setUp() {
-        tenantId = UUID.randomUUID();
-        productId = UUID.randomUUID();
-        variantId = UUID.randomUUID();
-        optionId = UUID.randomUUID();
+        tenantId = 1L;
+        productId = 1L;
+        variantId = 1L;
+        optionId = 1L;
 
         productVariantDto = ProductVariantDto.builder()
                 .id(variantId)
@@ -74,7 +74,7 @@ class ProductControllerTest {
                 .build();
 
         productOptionDto = ProductOptionDto.builder()
-                .id(UUID.randomUUID())
+                .id(2L)
                 .productId(productId)
                 .optionId(optionId)
                 .option(optionDto)
@@ -96,7 +96,7 @@ class ProductControllerTest {
         variantRequest.put("isDefault", true);
         
         Map<String, String> optionValues = new HashMap<>();
-        optionValues.put(optionId.toString(), UUID.randomUUID().toString());
+        optionValues.put(optionId.toString(), "2");
         variantRequest.put("optionValues", optionValues);
 
         when(productVariantService.createVariant(org.mockito.ArgumentMatchers.any(ProductVariantDto.class), org.mockito.ArgumentMatchers.any(Map.class), eq(tenantId)))
@@ -187,7 +187,7 @@ class ProductControllerTest {
         updateRequest.put("isDefault", true);
         
         Map<String, String> optionValues = new HashMap<>();
-        optionValues.put(optionId.toString(), UUID.randomUUID().toString());
+        optionValues.put(optionId.toString(), "3");
         updateRequest.put("optionValues", optionValues);
 
         when(productVariantService.updateVariant(eq(variantId), org.mockito.ArgumentMatchers.any(ProductVariantDto.class), org.mockito.ArgumentMatchers.any(Map.class), eq(tenantId)))
@@ -377,7 +377,7 @@ class ProductControllerTest {
         variantRequest.put("stockQuantity", 5);
         
         Map<String, String> optionValues = new HashMap<>();
-        optionValues.put(optionId.toString(), UUID.randomUUID().toString());
+        optionValues.put(optionId.toString(), "4");
         variantRequest.put("optionValues", optionValues);
 
         when(productVariantService.createVariant(org.mockito.ArgumentMatchers.any(ProductVariantDto.class), org.mockito.ArgumentMatchers.any(Map.class), eq(tenantId)))
@@ -396,7 +396,7 @@ class ProductControllerTest {
     void shouldFindVariantByOptionValues() throws Exception {
         // Given
         Map<String, String> optionValues = Map.of(
-                optionId.toString(), UUID.randomUUID().toString()
+                optionId.toString(), "5"
         );
         
         when(productVariantService.findVariantByOptionValues(eq(productId), org.mockito.ArgumentMatchers.any(Map.class), eq(tenantId)))
@@ -416,7 +416,7 @@ class ProductControllerTest {
     void shouldReturn404WhenVariantNotFoundByOptionValues() throws Exception {
         // Given
         Map<String, String> optionValues = Map.of(
-                optionId.toString(), UUID.randomUUID().toString()
+                optionId.toString(), "6"
         );
         
         when(productVariantService.findVariantByOptionValues(eq(productId), org.mockito.ArgumentMatchers.any(Map.class), eq(tenantId)))

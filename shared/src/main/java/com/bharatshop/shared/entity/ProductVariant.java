@@ -124,9 +124,6 @@ public class ProductVariant extends BaseEntity {
     }
     
     // Manual getter and setter methods to bypass Lombok issues
-    public Long getTenantId() {
-        return tenantId;
-    }
     
     public int getStock() {
         return stock;

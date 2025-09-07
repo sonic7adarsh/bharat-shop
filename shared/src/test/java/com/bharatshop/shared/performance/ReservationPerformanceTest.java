@@ -42,22 +42,22 @@ class ReservationPerformanceTest {
     @Autowired
     private ReservationRepository reservationRepository;
 
-    private UUID tenantId;
+    private Long tenantId;
     private List<ProductVariant> testVariants;
     private static final int NUM_PRODUCTS = 100;
     private static final int STOCK_PER_PRODUCT = 1000;
 
     @BeforeEach
     void setUp() {
-        tenantId = UUID.randomUUID();
+        tenantId = 1L;
         testVariants = new ArrayList<>();
         
         // Create multiple product variants for testing
         for (int i = 0; i < NUM_PRODUCTS; i++) {
             ProductVariant variant = ProductVariant.builder()
-                    .id(UUID.randomUUID())
+                    .id((long) (i + 1))
                     .tenantId(tenantId)
-                    .productId(UUID.randomUUID())
+                    .productId((long) (i + 1))
                     .sku("PERF-TEST-" + i)
                     .stock(STOCK_PER_PRODUCT)
                     .reservedStock(0)

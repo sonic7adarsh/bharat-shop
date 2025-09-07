@@ -54,7 +54,7 @@ public class MediaController {
                        tenantId, request.getFilename());
             
             MediaService.PresignedUploadResponse serviceResponse = mediaService.generatePresignedUploadUrl(
-                tenantId, 
+                tenantId.toString(), 
                 request.getFilename(), 
                 request.getContentType(), 
                 request.getFileSize()
@@ -97,7 +97,7 @@ public class MediaController {
                     .body(new ErrorResponse("Tenant ID not found"));
             }
             
-            Optional<MediaFile> mediaFileOpt = mediaService.getMediaFile(id, tenantId);
+            Optional<MediaFile> mediaFileOpt = mediaService.getMediaFile(id, tenantId.toString());
             
             if (mediaFileOpt.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -144,13 +144,13 @@ public class MediaController {
             if (type != null && !type.isEmpty()) {
                 try {
                     MediaFile.MediaType mediaType = MediaFile.MediaType.valueOf(type.toUpperCase());
-                    mediaFiles = mediaService.getMediaFilesByType(tenantId, mediaType, pageable);
+                    mediaFiles = mediaService.getMediaFilesByType(tenantId.toString(), mediaType, pageable);
                 } catch (IllegalArgumentException e) {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body(new ErrorResponse("Invalid media type: " + type));
                 }
             } else {
-                mediaFiles = mediaService.getMediaFiles(tenantId, pageable);
+                mediaFiles = mediaService.getMediaFiles(tenantId.toString(), pageable);
             }
             
             Page<MediaFileResponse> response = mediaFiles.map(MediaFileResponse::from);
@@ -213,7 +213,7 @@ public class MediaController {
                     .body(new ErrorResponse("Tenant ID not found"));
             }
             
-            mediaService.deleteMediaFile(id, tenantId);
+            mediaService.deleteMediaFile(id, tenantId.toString());
             
             return ResponseEntity.ok(new SuccessResponse("Media file deleted successfully"));
             
@@ -243,7 +243,7 @@ public class MediaController {
                     .body(new ErrorResponse("Tenant ID not found"));
             }
             
-            MediaService.StorageUsage storageUsage = mediaService.getStorageUsage(tenantId);
+            MediaService.StorageUsage storageUsage = mediaService.getStorageUsage(tenantId.toString());
             StorageUsageResponse response = StorageUsageResponse.from(storageUsage);
             
             return ResponseEntity.ok(response);

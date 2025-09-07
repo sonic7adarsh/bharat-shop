@@ -238,7 +238,7 @@ public class CartService {
     private Cart createNewCart(Long customerId, String tenantId) {
         Cart cart = Cart.builder()
                 .customerId(customerId)
-                .tenantId(Long.parseLong(tenantId))
+                .tenantId(tenantId)
                 .items(new ArrayList<>())
                 .build();
         

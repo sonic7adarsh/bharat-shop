@@ -48,18 +48,18 @@ class ProductVariantServiceIntegrationTest extends BaseIntegrationTest {
     @Autowired
     private ProductRepository productRepository;
 
-    private UUID tenantId;
-    private UUID productId;
-    private UUID sizeOptionId;
-    private UUID colorOptionId;
-    private UUID smallSizeValueId;
-    private UUID largeSizeValueId;
-    private UUID redColorValueId;
-    private UUID blueColorValueId;
+    private Long tenantId;
+    private Long productId;
+    private Long sizeOptionId;
+    private Long colorOptionId;
+    private Long smallSizeValueId;
+    private Long largeSizeValueId;
+    private Long redColorValueId;
+    private Long blueColorValueId;
 
     @BeforeEach
     void setUpTestData() {
-        tenantId = UUID.randomUUID();
+        tenantId = 1L;
         
         // Create a test product
         Product product = Product.builder()
@@ -136,7 +136,7 @@ class ProductVariantServiceIntegrationTest extends BaseIntegrationTest {
                 .isDefault(true)
                 .build();
 
-        Map<UUID, UUID> optionValues = new HashMap<>();
+        Map<Long, Long> optionValues = new HashMap<>();
         optionValues.put(sizeOptionId, smallSizeValueId);
         optionValues.put(colorOptionId, redColorValueId);
 
@@ -165,7 +165,7 @@ class ProductVariantServiceIntegrationTest extends BaseIntegrationTest {
                 .stock(5)
                 .build();
 
-        Map<UUID, UUID> optionValues = new HashMap<>();
+        Map<Long, Long> optionValues = new HashMap<>();
         optionValues.put(sizeOptionId, smallSizeValueId);
         optionValues.put(colorOptionId, redColorValueId);
 
@@ -214,7 +214,7 @@ class ProductVariantServiceIntegrationTest extends BaseIntegrationTest {
     @DisplayName("Should update variant successfully")
     void shouldUpdateVariantSuccessfully() {
         // Given
-        UUID variantId = createTestVariant("TEST-001-SM-RED", smallSizeValueId, redColorValueId, true);
+        Long variantId = createTestVariant("TEST-001-SM-RED", smallSizeValueId, redColorValueId, true);
 
         ProductVariantDto updateDto = ProductVariantDto.builder()
                 .id(variantId)
@@ -225,7 +225,7 @@ class ProductVariantServiceIntegrationTest extends BaseIntegrationTest {
                 .isDefault(true)
                 .build();
 
-        Map<UUID, UUID> newOptionValues = new HashMap<>();
+        Map<Long, Long> newOptionValues = new HashMap<>();
         newOptionValues.put(sizeOptionId, largeSizeValueId); // Change size to Large
         newOptionValues.put(colorOptionId, redColorValueId);
 
@@ -242,7 +242,7 @@ class ProductVariantServiceIntegrationTest extends BaseIntegrationTest {
     @DisplayName("Should delete variant successfully")
     void shouldDeleteVariantSuccessfully() {
         // Given
-        UUID variantId = createTestVariant("TEST-001-SM-RED", smallSizeValueId, redColorValueId, true);
+        Long variantId = createTestVariant("TEST-001-SM-RED", smallSizeValueId, redColorValueId, true);
 
         // When
         productVariantService.deleteVariant(variantId, tenantId);
@@ -256,8 +256,8 @@ class ProductVariantServiceIntegrationTest extends BaseIntegrationTest {
     @DisplayName("Should set default variant")
     void shouldSetDefaultVariant() {
         // Given
-        UUID variant1Id = createTestVariant("TEST-001-SM-RED", smallSizeValueId, redColorValueId, true);
-        UUID variant2Id = createTestVariant("TEST-001-SM-BLUE", smallSizeValueId, blueColorValueId, false);
+        Long variant1Id = createTestVariant("TEST-001-SM-RED", smallSizeValueId, redColorValueId, true);
+        Long variant2Id = createTestVariant("TEST-001-SM-BLUE", smallSizeValueId, blueColorValueId, false);
 
         // When
         productVariantService.setDefaultVariant(variant2Id, tenantId);
@@ -276,7 +276,7 @@ class ProductVariantServiceIntegrationTest extends BaseIntegrationTest {
     @DisplayName("Should update variant stock")
     void shouldUpdateVariantStock() {
         // Given
-        UUID variantId = createTestVariant("TEST-001-SM-RED", smallSizeValueId, redColorValueId, true);
+        Long variantId = createTestVariant("TEST-001-SM-RED", smallSizeValueId, redColorValueId, true);
 
         // When
         productVariantService.updateVariantStock(variantId, 15, tenantId);
@@ -294,12 +294,12 @@ class ProductVariantServiceIntegrationTest extends BaseIntegrationTest {
         createTestVariant("TEST-001-SM-RED", smallSizeValueId, redColorValueId, true);
         createTestVariant("TEST-001-LG-BLUE", largeSizeValueId, blueColorValueId, false);
 
-        Map<UUID, UUID> searchOptionValues = new HashMap<>();
+        Map<Long, Long> searchOptionValues = new HashMap<>();
         searchOptionValues.put(sizeOptionId, largeSizeValueId);
         searchOptionValues.put(colorOptionId, blueColorValueId);
 
         // When
-        Optional<UUID> variantIdResult = productVariantService.findVariantByOptionValues(
+        Optional<Long> variantIdResult = productVariantService.findVariantByOptionValues(
                 productId, searchOptionValues, tenantId);
         
         // Then
@@ -326,7 +326,7 @@ class ProductVariantServiceIntegrationTest extends BaseIntegrationTest {
         assertThat(count).isEqualTo(3);
     }
 
-    private UUID createTestVariant(String sku, UUID sizeValueId, UUID colorValueId, boolean isDefault) {
+    private Long createTestVariant(String sku, Long sizeValueId, Long colorValueId, boolean isDefault) {
         ProductVariantDto variantDto = ProductVariantDto.builder()
                 .productId(productId)
                 .sku(sku)
@@ -335,7 +335,7 @@ class ProductVariantServiceIntegrationTest extends BaseIntegrationTest {
                 .isDefault(isDefault)
                 .build();
 
-        Map<UUID, UUID> optionValues = new HashMap<>();
+        Map<Long, Long> optionValues = new HashMap<>();
         optionValues.put(sizeOptionId, sizeValueId);
         optionValues.put(colorOptionId, colorValueId);
 

@@ -58,18 +58,18 @@ class ProductControllerIntegrationTest extends BaseIntegrationTest {
     @Autowired
     private ProductRepository productRepository;
 
-    private UUID tenantId;
-    private UUID productId;
-    private UUID sizeOptionId;
-    private UUID colorOptionId;
-    private UUID smallSizeValueId;
-    private UUID largeSizeValueId;
-    private UUID redColorValueId;
-    private UUID blueColorValueId;
+    private Long tenantId;
+    private Long productId;
+    private Long sizeOptionId;
+    private Long colorOptionId;
+    private Long smallSizeValueId;
+    private Long largeSizeValueId;
+    private Long redColorValueId;
+    private Long blueColorValueId;
 
     @BeforeEach
     void setUpTestData() {
-        tenantId = UUID.randomUUID();
+        tenantId = 1L;
         
         // Create a test product
         Product product = Product.builder()
@@ -188,7 +188,7 @@ class ProductControllerIntegrationTest extends BaseIntegrationTest {
     @DisplayName("Should update product variant via API")
     void shouldUpdateProductVariantViaAPI() throws Exception {
         // Given
-        UUID variantId = createTestVariant("TEST-001-SM-RED", smallSizeValueId, redColorValueId, true);
+        Long variantId = createTestVariant("TEST-001-SM-RED", smallSizeValueId, redColorValueId, true);
 
         Map<String, Object> updateRequest = new HashMap<>();
         updateRequest.put("sku", "TEST-001-SM-RED-UPDATED");
@@ -216,7 +216,7 @@ class ProductControllerIntegrationTest extends BaseIntegrationTest {
     @DisplayName("Should delete product variant via API")
     void shouldDeleteProductVariantViaAPI() throws Exception {
         // Given
-        UUID variantId = createTestVariant("TEST-001-SM-RED", smallSizeValueId, redColorValueId, true);
+        Long variantId = createTestVariant("TEST-001-SM-RED", smallSizeValueId, redColorValueId, true);
 
         // When & Then
         mockMvc.perform(delete("/api/products/{productId}/variants/{variantId}", productId, variantId)
@@ -233,8 +233,7 @@ class ProductControllerIntegrationTest extends BaseIntegrationTest {
     @DisplayName("Should set default variant via API")
     void shouldSetDefaultVariantViaAPI() throws Exception {
         // Given
-        UUID variant1Id = createTestVariant("TEST-001-SM-RED", smallSizeValueId, redColorValueId, true);
-        UUID variant2Id = createTestVariant("TEST-001-LG-BLUE", largeSizeValueId, blueColorValueId, false);
+        Long variant2Id = createTestVariant("TEST-001-LG-BLUE", largeSizeValueId, blueColorValueId, false);
 
         // When & Then
         mockMvc.perform(patch("/api/products/{productId}/variants/{variantId}/default", productId, variant2Id)
@@ -252,7 +251,7 @@ class ProductControllerIntegrationTest extends BaseIntegrationTest {
     @DisplayName("Should update variant stock via API")
     void shouldUpdateVariantStockViaAPI() throws Exception {
         // Given
-        UUID variantId = createTestVariant("TEST-001-SM-RED", smallSizeValueId, redColorValueId, true);
+        Long variantId = createTestVariant("TEST-001-SM-RED", smallSizeValueId, redColorValueId, true);
 
         Map<String, Object> stockRequest = new HashMap<>();
         stockRequest.put("stock", 15);
@@ -275,7 +274,7 @@ class ProductControllerIntegrationTest extends BaseIntegrationTest {
                 .type(Option.OptionType.MATERIAL)
                 .isRequired(false)
                 .build();
-        UUID materialOptionId = optionService.createOption(materialOption, tenantId).getId();
+        Long materialOptionId = optionService.createOption(materialOption, tenantId).getId();
 
         Map<String, Object> optionRequest = new HashMap<>();
         optionRequest.put("optionId", materialOptionId.toString());
@@ -362,7 +361,7 @@ class ProductControllerIntegrationTest extends BaseIntegrationTest {
                 .andExpect(status().isConflict());
     }
 
-    private UUID createTestVariant(String sku, UUID sizeValueId, UUID colorValueId, boolean isDefault) {
+    private Long createTestVariant(String sku, Long sizeValueId, Long colorValueId, boolean isDefault) {
         ProductVariantDto variantDto = ProductVariantDto.builder()
                 .productId(productId)
                 .sku(sku)
@@ -371,7 +370,7 @@ class ProductControllerIntegrationTest extends BaseIntegrationTest {
                 .isDefault(isDefault)
                 .build();
 
-        Map<UUID, UUID> optionValues = new HashMap<>();
+        Map<Long, Long> optionValues = new HashMap<>();
         optionValues.put(sizeOptionId, sizeValueId);
         optionValues.put(colorOptionId, colorValueId);
 

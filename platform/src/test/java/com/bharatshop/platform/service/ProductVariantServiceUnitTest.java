@@ -46,13 +46,13 @@ class ProductVariantServiceUnitTest {
     @InjectMocks
     private ProductVariantService productVariantService;
 
-    private UUID tenantId;
-    private UUID productId;
-    private UUID variantId;
-    private UUID optionId1;
-    private UUID optionId2;
-    private UUID optionValueId1;
-    private UUID optionValueId2;
+    private Long tenantId;
+    private Long productId;
+    private Long variantId;
+    private Long optionId1;
+    private Long optionId2;
+    private Long optionValueId1;
+    private Long optionValueId2;
     private Product product;
     private ProductVariant productVariant;
     private ProductVariantDto productVariantDto;
@@ -61,13 +61,13 @@ class ProductVariantServiceUnitTest {
 
     @BeforeEach
     void setUp() {
-        tenantId = UUID.randomUUID();
-        productId = UUID.randomUUID();
-        variantId = UUID.randomUUID();
-        optionId1 = UUID.randomUUID();
-        optionId2 = UUID.randomUUID();
-        optionValueId1 = UUID.randomUUID();
-        optionValueId2 = UUID.randomUUID();
+        tenantId = 1L;
+        productId = 2L;
+        variantId = 3L;
+        optionId1 = 4L;
+        optionId2 = 5L;
+        optionValueId1 = 6L;
+        optionValueId2 = 7L;
 
         // Create test entities
         product = new Product();
@@ -110,7 +110,7 @@ class ProductVariantServiceUnitTest {
     @DisplayName("Should create variant successfully")
     void shouldCreateVariantSuccessfully() {
         // Given
-        Map<UUID, UUID> optionValues = Map.of(optionId1, optionValueId1, optionId2, optionValueId2);
+        Map<Long, Long> optionValues = Map.of(optionId1, optionValueId1, optionId2, optionValueId2);
         
 
         when(variantOptionValueService.findVariantByOptionValues(productId, optionValues, tenantId))

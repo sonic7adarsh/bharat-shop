@@ -36,7 +36,7 @@ public abstract class BaseEntity {
     protected LocalDateTime deletedAt;
     
     @Column(name = "tenant_id")
-    protected String tenantId;
+    protected Long tenantId;
     
     @PrePersist
     protected void onCreate() {

@@ -47,13 +47,13 @@ class ProductVariantServiceTest {
     @InjectMocks
     private ProductVariantService productVariantService;
 
-    private UUID tenantId;
-    private UUID productId;
-    private UUID variantId;
-    private UUID optionId1;
-    private UUID optionId2;
-    private UUID optionValueId1;
-    private UUID optionValueId2;
+    private Long tenantId;
+    private Long productId;
+    private Long variantId;
+    private Long optionId1;
+    private Long optionId2;
+    private Long optionValueId1;
+    private Long optionValueId2;
     private Product product;
     private ProductVariant productVariant;
     private ProductVariantDto productVariantDto;
@@ -62,13 +62,13 @@ class ProductVariantServiceTest {
 
     @BeforeEach
     void setUp() {
-        tenantId = UUID.randomUUID();
-        productId = UUID.randomUUID();
-        variantId = UUID.randomUUID();
-        optionId1 = UUID.randomUUID();
-        optionId2 = UUID.randomUUID();
-        optionValueId1 = UUID.randomUUID();
-        optionValueId2 = UUID.randomUUID();
+        tenantId = 1L;
+        productId = 2L;
+        variantId = 3L;
+        optionId1 = 4L;
+        optionId2 = 5L;
+        optionValueId1 = 6L;
+        optionValueId2 = 7L;
 
         product = Product.builder()
                 .id(productId)
@@ -112,7 +112,7 @@ class ProductVariantServiceTest {
     @DisplayName("Should create variant successfully")
     void shouldCreateVariantSuccessfully() {
         // Given
-        Map<UUID, UUID> optionValues = Map.of(
+        Map<Long, Long> optionValues = Map.of(
                 optionId1, optionValueId1,
                 optionId2, optionValueId2
         );
@@ -135,14 +135,14 @@ class ProductVariantServiceTest {
         assertThat(result).isNotNull();
         assertThat(result.getSku()).isEqualTo("TEST-001-SM-RED");
         verify(productVariantRepository).save(productVariant);
-        verify(variantOptionValueService).setVariantOptionValues(any(UUID.class), eq(optionValues), eq(tenantId));
+        verify(variantOptionValueService).setVariantOptionValues(any(Long.class), eq(optionValues), eq(tenantId));
     }
 
     @Test
     @DisplayName("Should throw exception when product not found")
     void shouldThrowExceptionWhenProductNotFound() {
         // Given
-        Map<UUID, UUID> optionValues = Map.of(optionId1, optionValueId1);
+        Map<Long, Long> optionValues = Map.of(optionId1, optionValueId1);
         when(productVariantRepository.existsBySkuAndTenantId(productVariantDto.getSku(), tenantId))
                 .thenReturn(true);
 
@@ -157,9 +157,9 @@ class ProductVariantServiceTest {
     @DisplayName("Should throw exception when variant combination already exists")
     void shouldThrowExceptionWhenVariantCombinationExists() {
         // Given
-        Map<UUID, UUID> optionValues = Map.of(optionId1, optionValueId1);
+        Map<Long, Long> optionValues = Map.of(optionId1, optionValueId1);
         when(variantOptionValueService.findVariantByOptionValues(productId, optionValues, tenantId))
-                .thenReturn(Optional.of(UUID.randomUUID()));
+                .thenReturn(Optional.of(3L));
 
         // When & Then
         assertThatThrownBy(() -> 
@@ -207,7 +207,7 @@ class ProductVariantServiceTest {
     @DisplayName("Should update variant successfully")
     void shouldUpdateVariantSuccessfully() {
         // Given
-        Map<UUID, UUID> newOptionValues = Map.of(optionId1, optionValueId2);
+        Map<Long, Long> newOptionValues = Map.of(optionId1, optionValueId2);
         ProductVariant updatedVariant = ProductVariant.builder()
                 .id(variantId)
                 .product(product)
@@ -321,12 +321,12 @@ class ProductVariantServiceTest {
     @DisplayName("Should find variant by option values")
     void shouldFindVariantByOptionValues() {
         // Given
-        Map<UUID, UUID> searchOptionValues = Map.of(optionId1, optionValueId1);
+        Map<Long, Long> searchOptionValues = Map.of(optionId1, optionValueId1);
         when(variantOptionValueService.findVariantByOptionValues(productId, searchOptionValues, tenantId))
                 .thenReturn(Optional.of(variantId));
 
         // When
-        Optional<UUID> result = productVariantService.findVariantByOptionValues(
+        Optional<Long> result = productVariantService.findVariantByOptionValues(
                 productId, searchOptionValues, tenantId);
 
         // Then
@@ -370,7 +370,7 @@ class ProductVariantServiceTest {
     @DisplayName("Should validate option values exist")
     void shouldValidateOptionValuesExist() {
         // Given
-        Map<UUID, UUID> optionValues = Map.of(optionId1, optionValueId1, optionId2, optionValueId2);
+        Map<Long, Long> optionValues = Map.of(optionId1, optionValueId1, optionId2, optionValueId2);
         when(variantOptionValueService.findVariantByOptionValues(productId, optionValues, tenantId))
                 .thenReturn(Optional.empty());
         when(productVariantMapper.toEntity(productVariantDto))
@@ -385,7 +385,7 @@ class ProductVariantServiceTest {
 
         // Then
         assertThat(result).isNotNull();
-        verify(variantOptionValueService).setVariantOptionValues(any(UUID.class), eq(optionValues), eq(tenantId));
+        verify(variantOptionValueService).setVariantOptionValues(any(Long.class), eq(optionValues), eq(tenantId));
     }
 
     @Test

@@ -90,9 +90,7 @@ public class Plan extends BaseEntity {
         return this.deletedAt;
     }
     
-    public Long getTenantId() {
-        return this.tenantId;
-    }
+
     
     // Manual setter methods for compilation compatibility
     public void setId(Long id) {
@@ -112,7 +110,7 @@ public class Plan extends BaseEntity {
     }
     
     public void setTenantId(Long tenantId) {
-        this.tenantId = tenantId;
+        this.tenantId = tenantId != null ? tenantId : null;
     }
     
     public void setActive(Boolean active) {

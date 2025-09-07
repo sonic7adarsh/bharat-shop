@@ -99,10 +99,7 @@ public class Subscription extends BaseEntity {
     public LocalDateTime getDeletedAt() {
         return this.deletedAt;
     }
-    
-    public Long getTenantId() {
-        return this.tenantId;
-    }
+
 
     public LocalDateTime getStartDate() {
         return startDate;
