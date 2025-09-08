@@ -48,7 +48,7 @@ public class StorefrontOrderController {
             
             Orders order = orderService.createOrderFromCart(
                     customerId, 
-                    tenantId.toString(), 
+                    tenantId, 
                     request.getAddressId(), 
                     request.getNotes()
             );
@@ -84,7 +84,7 @@ public class StorefrontOrderController {
             Long tenantId = extractTenantId(httpRequest);
             
             // Verify that the order belongs to the customer
-            Optional<Orders> existingOrder = orderService.getOrderById(id, customerId, tenantId.toString());
+            Optional<Orders> existingOrder = orderService.getOrderById(id, customerId, tenantId);
             
             if (existingOrder.isEmpty()) {
                 return ResponseEntity.badRequest().body(
@@ -123,7 +123,7 @@ public class StorefrontOrderController {
             
             // Verify that the order belongs to the customer
             Optional<Orders> existingOrder = orderService.getOrderById(
-                    request.getOrderId(), customerId, tenantId.toString());
+                    request.getOrderId(), customerId, tenantId);
             
             if (existingOrder.isEmpty()) {
                 return ResponseEntity.badRequest().body(
@@ -174,14 +174,14 @@ public class StorefrontOrderController {
             Page<Orders> orders;
             
             if (status != null) {
-                List<Orders> orderList = orderService.getCustomerOrdersByStatus(customerId, tenantId.toString(), status);
+                List<Orders> orderList = orderService.getCustomerOrdersByStatus(customerId, tenantId, status);
                 // Convert List to Page for consistent response
                 int start = (int) pageable.getOffset();
                 int end = Math.min((start + pageable.getPageSize()), orderList.size());
                 List<Orders> pageContent = orderList.subList(start, end);
                 orders = new PageImpl<>(pageContent, pageable, orderList.size());
             } else {
-                orders = orderService.getCustomerOrders(customerId, tenantId.toString(), pageable);
+                orders = orderService.getCustomerOrders(customerId, tenantId, pageable);
             }
             
             Page<OrderResponse> response = orders.map(OrderResponse::fromEntity);
@@ -211,7 +211,7 @@ public class StorefrontOrderController {
             Long customerId = extractCustomerId(httpRequest);
             Long tenantId = extractTenantId(httpRequest);
             
-            Optional<Orders> order = orderService.getOrderById(id, customerId, tenantId.toString());
+            Optional<Orders> order = orderService.getOrderById(id, customerId, tenantId);
             
             if (order.isEmpty()) {
                 return ResponseEntity.notFound().build();
@@ -247,7 +247,7 @@ public class StorefrontOrderController {
             
             String cancellationReason = reason != null ? reason : "Cancelled by customer";
             
-            Orders order = orderService.cancelOrder(id, customerId, tenantId.toString(), cancellationReason);
+            Orders order = orderService.cancelOrder(id, customerId, tenantId, cancellationReason);
             OrderResponse response = OrderResponse.fromEntity(order);
             
             log.info("Order cancelled: {} by customer: {}", order.getOrderNumber(), customerId);

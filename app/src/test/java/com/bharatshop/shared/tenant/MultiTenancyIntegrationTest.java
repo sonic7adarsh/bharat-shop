@@ -19,8 +19,8 @@ class MultiTenancyIntegrationTest {
     @Test
     void testTenantContextCleanup() {
         UUID testTenantId = UUID.randomUUID();
-        TenantContext.setCurrentTenant(testTenantId.toString());
-        assertThat(TenantContext.getCurrentTenant()).isEqualTo(testTenantId.toString());
+        TenantContext.setCurrentTenant(testTenantId.getMostSignificantBits());
+        assertThat(TenantContext.getCurrentTenant()).isEqualTo(testTenantId.getMostSignificantBits());
         
         TenantContext.clear();
         assertThat(TenantContext.getCurrentTenant()).isNull();
@@ -33,7 +33,7 @@ class MultiTenancyIntegrationTest {
         assertThat(TenantContext.hasTenant()).isFalse();
         
         // Test when tenant is set
-        TenantContext.setCurrentTenant("test-tenant");
+        TenantContext.setCurrentTenant(12345L);
         assertThat(TenantContext.hasTenant()).isTrue();
         
         // Clean up

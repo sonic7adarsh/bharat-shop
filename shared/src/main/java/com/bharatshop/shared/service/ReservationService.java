@@ -50,8 +50,8 @@ public class ReservationService {
         LocalDateTime expiresAt = LocalDateTime.now().plusMinutes(timeout);
         LocalDateTime now = LocalDateTime.now();
         
-        // Get product variant with lock to prevent concurrent modifications
-        Optional<ProductVariant> variantOpt = productVariantRepository.findByIdWithLock(productVariantId);
+        // Get product variant
+        Optional<ProductVariant> variantOpt = productVariantRepository.findByIdAndDeletedAtIsNull(productVariantId);
         if (variantOpt.isEmpty()) {
             throw new IllegalArgumentException("Product variant not found: " + productVariantId);
         }
@@ -131,7 +131,7 @@ public class ReservationService {
     @Transactional
     public void commitReservations(Long tenantId, List<Long> reservationIds, Long orderId) {
         for (Long reservationId : reservationIds) {
-            Optional<Reservation> reservationOpt = reservationRepository.findByIdAndTenantIdWithLock(reservationId, tenantId);
+            Optional<Reservation> reservationOpt = reservationRepository.findByIdAndTenantId(reservationId, tenantId);
             
             if (reservationOpt.isEmpty()) {
                 log.warn("Reservation not found: {} for tenant {}", reservationId, tenantId);
@@ -145,8 +145,8 @@ public class ReservationService {
                 continue;
             }
             
-            // Get product variant with lock
-            Optional<ProductVariant> variantOpt = productVariantRepository.findByIdWithLock(reservation.getProductVariantId());
+            // Get product variant
+            Optional<ProductVariant> variantOpt = productVariantRepository.findByIdAndDeletedAtIsNull(reservation.getProductVariantId());
             if (variantOpt.isEmpty()) {
                 log.error("Product variant not found for reservation: {}", reservationId);
                 continue;
@@ -180,7 +180,7 @@ public class ReservationService {
      */
     @Transactional
     public void releaseReservation(Long tenantId, Long reservationId) {
-        Optional<Reservation> reservationOpt = reservationRepository.findByIdAndTenantIdWithLock(reservationId, tenantId);
+        Optional<Reservation> reservationOpt = reservationRepository.findByIdAndTenantId(reservationId, tenantId);
         
         if (reservationOpt.isEmpty()) {
             log.warn("Reservation not found: {} for tenant {}", reservationId, tenantId);

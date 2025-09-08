@@ -151,6 +151,7 @@ com\bharatshop\shared\controller\MediaController$ErrorResponse.class
 com\bharatshop\shared\service\NotificationService$1.class
 com\bharatshop\shared\entity\Reservation$ReservationStatus.class
 com\bharatshop\shared\entity\BaseEntity$BaseEntityBuilder.class
+com\bharatshop\shared\dto\media\MediaFileResponse.class
 com\bharatshop\shared\entity\Wishlist.class
 com\bharatshop\shared\dto\OptionDto$OptionDtoBuilder.class
 com\bharatshop\shared\controller\MediaController$SuccessResponse.class

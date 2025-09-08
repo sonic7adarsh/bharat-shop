@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
  * Handles session-based authentication with email or phone+OTP login.
  */
 @RestController
-@RequestMapping("/api/storefront/auth")
+@RequestMapping("/api/app/storefront/auth")
 @RequiredArgsConstructor
 @Slf4j
 public class AppStorefrontAuthController {

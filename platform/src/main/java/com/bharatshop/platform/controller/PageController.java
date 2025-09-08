@@ -37,7 +37,7 @@ public class PageController {
     private final PageService pageService;
     private final FeatureFlagService featureFlagService;
     
-    public PageController(@Qualifier("sharedPageService") PageService pageService, FeatureFlagService featureFlagService) {
+    public PageController(PageService pageService, FeatureFlagService featureFlagService) {
         this.pageService = pageService;
         this.featureFlagService = featureFlagService;
     }
@@ -111,7 +111,7 @@ public class PageController {
         try {
             Long tenantId = TenantContext.getCurrentTenant();
             
-            List<PageResponseDto> pages = pageService.getPagesByType(pageType, tenantId);
+            List<PageResponseDto> pages = pageService.getPagesByType(pageType, tenantId.toString());
             return ResponseEntity.ok(ApiResponse.success(pages));
             
         } catch (Exception e) {
@@ -137,7 +137,7 @@ public class PageController {
             // Enforce advanced features access for page creation
             featureFlagService.enforceFeatureAccess(tenantId, "advancedFeatures");
             
-            PageResponseDto createdPage = pageService.createPage(pageRequest, tenantId);
+            PageResponseDto createdPage = pageService.createPage(pageRequest, tenantId.toString());
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(ApiResponse.success(createdPage));
                     
@@ -172,7 +172,7 @@ public class PageController {
             // Enforce advanced features access for page updates
             featureFlagService.enforceFeatureAccess(tenantId, "advancedFeatures");
             
-            PageResponseDto updatedPage = pageService.updatePage(id, pageRequest, tenantId);
+            PageResponseDto updatedPage = pageService.updatePage(id, pageRequest, tenantId.toString());
             return ResponseEntity.ok(ApiResponse.success(updatedPage));
             
         } catch (IllegalArgumentException e) {

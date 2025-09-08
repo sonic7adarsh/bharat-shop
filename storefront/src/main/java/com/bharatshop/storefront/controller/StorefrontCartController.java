@@ -42,7 +42,7 @@ public class StorefrontCartController {
             
             Cart cart = cartService.addItemToCart(
                     customerId, 
-                    tenantId.toString(), 
+                    tenantId, 
                     request.getProductId(), 
                     request.getQuantity()
             );
@@ -75,7 +75,7 @@ public class StorefrontCartController {
             Long customerId = extractCustomerId(httpRequest);
             Long tenantId = extractTenantId(httpRequest);
             
-            Cart cart = cartService.getOrCreateCart(customerId, tenantId.toString());
+            Cart cart = cartService.getOrCreateCart(customerId, tenantId);
             CartResponse response = CartResponse.fromEntity(cart);
             
             return ResponseEntity.ok(
@@ -105,7 +105,7 @@ public class StorefrontCartController {
             
             Cart cart = cartService.updateCartItemQuantity(
                     customerId, 
-                    tenantId.toString(), 
+                    tenantId, 
                     request.getProductId(), 
                     request.getQuantity()
             );
@@ -140,7 +140,7 @@ public class StorefrontCartController {
             Long customerId = extractCustomerId(httpRequest);
             Long tenantId = extractTenantId(httpRequest);
 
-            Cart cart = cartService.removeItemFromCart(customerId, tenantId.toString(), productId);
+            Cart cart = cartService.removeItemFromCart(customerId, tenantId, productId);
             CartResponse response = CartResponse.fromEntity(cart);
             
             log.info("Item removed from cart successfully for customer: {}, product: {}", 
@@ -169,7 +169,7 @@ public class StorefrontCartController {
             Long customerId = extractCustomerId(httpRequest);
             Long tenantId = extractTenantId(httpRequest);
 
-            cartService.clearCart(customerId, tenantId.toString());
+            cartService.clearCart(customerId, tenantId);
             
             log.info("Cart cleared successfully for customer: {}", customerId);
             
@@ -196,7 +196,7 @@ public class StorefrontCartController {
             Long customerId = extractCustomerId(httpRequest);
             Long tenantId = extractTenantId(httpRequest);
 
-            BigDecimal total = cartService.getCartTotal(customerId, tenantId.toString());
+            BigDecimal total = cartService.getCartTotal(customerId, tenantId);
             
             return ResponseEntity.ok(
                     ApiResponse.success(total, "Cart total retrieved successfully")
@@ -221,7 +221,7 @@ public class StorefrontCartController {
             Long customerId = extractCustomerId(httpRequest);
             Long tenantId = extractTenantId(httpRequest);
 
-            Integer count = cartService.getCartItemCount(customerId, tenantId.toString());
+            Integer count = cartService.getCartItemCount(customerId, tenantId);
             
             return ResponseEntity.ok(
                     ApiResponse.success(count, "Cart item count retrieved successfully")

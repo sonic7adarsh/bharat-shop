@@ -2,7 +2,7 @@ package com.bharatshop.modules.auth.service;
 
 import com.bharatshop.modules.auth.dto.StorefrontAuthDto;
 import com.bharatshop.shared.entity.User;
-import com.bharatshop.storefront.repository.StorefrontUserRepository;
+import com.bharatshop.shared.repository.SharedStorefrontUserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -22,8 +22,7 @@ import java.util.Optional;
 public class StorefrontAuthBridgeService {
     
     @Autowired
-    @Qualifier("storefrontUserRepository")
-    private StorefrontUserRepository userRepository;
+    private SharedStorefrontUserRepository userRepository;
     
     @Autowired
     private PasswordEncoder passwordEncoder;

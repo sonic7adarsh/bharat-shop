@@ -43,7 +43,9 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     "com.bharatshop.platform.repository"
 })
 @EntityScan(basePackages = {
-    "com.bharatshop.shared.entity"
+    "com.bharatshop.shared.entity",
+    "com.bharatshop.platform.model",
+    "com.bharatshop.storefront.model"
 })
 public class BharatShopApplication {
 

@@ -23,16 +23,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
      * Find all active reservations for a specific product variant with pessimistic lock
      * This ensures atomic operations when checking/updating stock
      */
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query(value = "SELECT * FROM reservation WHERE tenant_id = ?1 " +
-           "AND product_variant_id = ?2 " +
-           "AND status = 'ACTIVE' " +
-           "AND expires_at > ?3", nativeQuery = true)
-    List<Reservation> findActiveReservationsForVariantWithLock(
-        Long tenantId,
-        Long productVariantId,
-        LocalDateTime now
-    );
+
     
     /**
      * Calculate total reserved quantity for a product variant
@@ -112,11 +103,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
         Long tenantId
     );
     
-    /**
-     * Find reservation by ID with lock for atomic updates
-     */
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
-    Optional<Reservation> findByIdAndTenantIdWithLock(Long id, Long tenantId);
+
     
     /**
      * Find stale reservations across all tenants

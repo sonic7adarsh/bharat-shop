@@ -141,7 +141,7 @@ public class OrderService {
             // Release any reservations that were created before the failure
             for (Reservation reservation : reservations) {
                 try {
-                    reservationService.releaseReservation(reservation.getId(), Long.parseLong(tenantId));
+                    reservationService.releaseReservation(tenantId, reservation.getId());
                 } catch (Exception releaseException) {
                     log.error("Failed to release reservation {} during rollback", reservation.getId(), releaseException);
                 }

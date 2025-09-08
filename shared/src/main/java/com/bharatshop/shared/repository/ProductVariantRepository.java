@@ -262,13 +262,7 @@ public interface ProductVariantRepository extends TenantAwareRepository<ProductV
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     Optional<ProductVariant> findByIdAndDeletedAtIsNull(Long id);
     
-    /**
-     * Find variant by ID with pessimistic lock (alias method)
-     */
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
-    default Optional<ProductVariant> findByIdWithLock(Long id) {
-        return findByIdAndDeletedAtIsNull(id);
-    }
+
     
     /**
      * Count active variants by tenant ID

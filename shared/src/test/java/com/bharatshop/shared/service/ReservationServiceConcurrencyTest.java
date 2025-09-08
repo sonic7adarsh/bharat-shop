@@ -63,7 +63,7 @@ class ReservationServiceConcurrencyTest {
     @Test
     void testConcurrentReservationsPreventsOversell() throws InterruptedException {
         // Setup: Product has 10 items in stock
-        when(productVariantRepository.findByIdWithLock(productVariantId))
+        when(productVariantRepository.findByIdAndDeletedAtIsNull(productVariantId))
                 .thenReturn(Optional.of(productVariant));
         
         // Mock repository to simulate concurrent access
@@ -139,7 +139,7 @@ class ReservationServiceConcurrencyTest {
     void testConcurrentReservationAndRelease() throws InterruptedException {
         // Setup: Product has 5 items in stock
         productVariant.setStock(5);
-        when(productVariantRepository.findByIdWithLock(productVariantId))
+        when(productVariantRepository.findByIdAndDeletedAtIsNull(productVariantId))
                 .thenReturn(Optional.of(productVariant));
         
         AtomicInteger totalReserved = new AtomicInteger(0);
@@ -229,7 +229,7 @@ class ReservationServiceConcurrencyTest {
     void testReservationExpiryUnderConcurrency() throws InterruptedException {
         // Setup: Product with limited stock
         productVariant.setStock(3);
-        when(productVariantRepository.findByIdWithLock(productVariantId))
+        when(productVariantRepository.findByIdAndDeletedAtIsNull(productVariantId))
                 .thenReturn(Optional.of(productVariant));
         
         List<Reservation> expiredReservations = new ArrayList<>();
@@ -315,7 +315,7 @@ class ReservationServiceConcurrencyTest {
     void testHighConcurrencyStressTest() throws InterruptedException {
         // Setup: Product with moderate stock
         productVariant.setStock(50);
-        when(productVariantRepository.findByIdWithLock(productVariantId))
+        when(productVariantRepository.findByIdAndDeletedAtIsNull(productVariantId))
                 .thenReturn(Optional.of(productVariant));
         
         AtomicInteger totalReserved = new AtomicInteger(0);
@@ -396,9 +396,9 @@ class ReservationServiceConcurrencyTest {
                 .reservedStock(0)
                 .build();
         
-        when(productVariantRepository.findByIdWithLock(productVariantId))
+        when(productVariantRepository.findByIdAndDeletedAtIsNull(productVariantId))
                 .thenReturn(Optional.of(productVariant));
-        when(productVariantRepository.findByIdWithLock(productVariantId2))
+        when(productVariantRepository.findByIdAndDeletedAtIsNull(productVariantId2))
                 .thenReturn(Optional.of(productVariant2));
         
         AtomicInteger totalReserved1 = new AtomicInteger(0);

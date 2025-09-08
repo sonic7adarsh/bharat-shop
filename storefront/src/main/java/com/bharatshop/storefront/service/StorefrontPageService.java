@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
  * Service for managing CMS pages in the storefront.
  * Provides read-only operations for customer-facing page content.
  */
-@Service
+@Service("storefrontPageService")
 @RequiredArgsConstructor
 @Transactional
 public class StorefrontPageService {
@@ -93,8 +93,7 @@ public class StorefrontPageService {
      */
     @Transactional(readOnly = true)
     public Optional<PageRenderData> getPageRenderData(String slug) {
-        String tenantIdStr = TenantContext.getCurrentTenant();
-        Long tenantId = Long.parseLong(tenantIdStr);
+        Long tenantId = TenantContext.getCurrentTenant();
         Optional<Page> pageOpt = pageRepository.findBySlugAndActiveAndPublishedAndTenantIdAndDeletedAtIsNull(slug, true, true, tenantId);
         
         if (pageOpt.isEmpty()) {
