@@ -13,7 +13,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
  * Interceptor for rate limiting API requests
  */
 @Slf4j
-@Component
+// @Component - Temporarily disabled due to Redis dependency
 @RequiredArgsConstructor
 public class RateLimitInterceptor implements HandlerInterceptor {
 

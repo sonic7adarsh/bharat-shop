@@ -6,7 +6,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -74,7 +73,7 @@ public interface MediaFileRepository extends JpaRepository<MediaFile, Long> {
     }
     
     // Calculate total size by tenant and not deleted
-    @Query(value = "SELECT COALESCE(SUM(size), 0) FROM media_file WHERE tenant_id = ?1 AND deleted_at IS NULL", nativeQuery = true)
+    @Query(value = "SELECT COALESCE(SUM(size), 0) FROM media_files WHERE tenant_id = ?1 AND deleted_at IS NULL", nativeQuery = true)
     long calculateTotalSizeByTenantIdAndNotDeleted(Long tenantId);
     
     // Find files older than specified date for cleanup
@@ -82,21 +81,21 @@ public interface MediaFileRepository extends JpaRepository<MediaFile, Long> {
     
     // Soft delete by setting deletedAt
     @Modifying
-    @Query(value = "UPDATE media_file SET deleted_at = ?3 WHERE id = ?1 AND tenant_id = ?2", nativeQuery = true)
+    @Query(value = "UPDATE media_files SET deleted_at = ?3 WHERE id = ?1 AND tenant_id = ?2", nativeQuery = true)
     void softDeleteByIdAndTenantId(Long id, Long tenantId, LocalDateTime deletedAt);
     
     // Soft delete by key
     @Modifying
-    @Query(value = "UPDATE media_file SET deleted_at = ?3 WHERE key = ?1 AND tenant_id = ?2", nativeQuery = true)
+    @Query(value = "UPDATE media_files SET deleted_at = ?3 WHERE key = ?1 AND tenant_id = ?2", nativeQuery = true)
     void softDeleteByKeyAndTenantId(String key, Long tenantId, LocalDateTime deletedAt);
     
     // Update status
     @Modifying
-    @Query(value = "UPDATE media_file SET status = ?2, updated_at = ?3 WHERE id = ?1", nativeQuery = true)
+    @Query(value = "UPDATE media_files SET status = ?2, updated_at = ?3 WHERE id = ?1", nativeQuery = true)
     void updateStatus(Long id, MediaFile.MediaStatus status, LocalDateTime updatedAt);
     
     // Update URL after successful upload
     @Modifying
-    @Query(value = "UPDATE media_file SET url = ?2, status = ?3, updated_at = ?4 WHERE key = ?1", nativeQuery = true)
+    @Query(value = "UPDATE media_files SET url = ?2, status = ?3, updated_at = ?4 WHERE key = ?1", nativeQuery = true)
     void updateUrlAndStatusByKey(String key, String url, MediaFile.MediaStatus status, LocalDateTime updatedAt);
 }

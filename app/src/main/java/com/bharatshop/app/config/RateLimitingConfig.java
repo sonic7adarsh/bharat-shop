@@ -27,7 +27,7 @@ import java.util.function.Supplier;
  * Configuration for rate limiting using Bucket4j with Redis
  */
 @Slf4j
-@Configuration
+// @Configuration - Temporarily disabled due to Redis dependency
 @RequiredArgsConstructor
 @EnableConfigurationProperties(RateLimitProperties.class)
 public class RateLimitingConfig {

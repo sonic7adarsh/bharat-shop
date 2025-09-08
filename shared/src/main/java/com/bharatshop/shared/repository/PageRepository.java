@@ -31,37 +31,37 @@ public interface PageRepository extends TenantAwareRepository<Page> {
     /**
      * Find all active pages by page type for current tenant
      */
-    @Query(value = "SELECT * FROM shared_page WHERE page_type = ?1 AND active = true AND tenant_id = ?2 AND deleted_at IS NULL ORDER BY sort_order ASC", nativeQuery = true)
+    @Query(value = "SELECT * FROM pages WHERE page_type = ?1 AND active = true AND tenant_id = ?2 AND deleted_at IS NULL ORDER BY sort_order ASC", nativeQuery = true)
     List<Page> findActiveByPageType(PageType pageType, Long tenantId);
     
     /**
      * Find all active and published pages by page type for current tenant
      */
-    @Query(value = "SELECT * FROM shared_page WHERE page_type = ?1 AND active = true AND published = true AND tenant_id = ?2 AND deleted_at IS NULL ORDER BY sort_order ASC", nativeQuery = true)
+    @Query(value = "SELECT * FROM pages WHERE page_type = ?1 AND active = true AND published = true AND tenant_id = ?2 AND deleted_at IS NULL ORDER BY sort_order ASC", nativeQuery = true)
     List<Page> findActivePublishedByPageType(PageType pageType, Long tenantId);
     
     /**
      * Find all active and published pages for current tenant
      */
-    @Query(value = "SELECT * FROM shared_page WHERE active = true AND published = true AND tenant_id = ?1 AND deleted_at IS NULL ORDER BY sort_order ASC", nativeQuery = true)
+    @Query(value = "SELECT * FROM pages WHERE active = true AND published = true AND tenant_id = ?1 AND deleted_at IS NULL ORDER BY sort_order ASC", nativeQuery = true)
     List<Page> findAllActivePublished(Long tenantId);
     
     /**
      * Find all active and published pages for current tenant with pagination
      */
-    @Query(value = "SELECT * FROM shared_page WHERE active = true AND published = true AND tenant_id = ?1 AND deleted_at IS NULL ORDER BY sort_order ASC", nativeQuery = true)
+    @Query(value = "SELECT * FROM pages WHERE active = true AND published = true AND tenant_id = ?1 AND deleted_at IS NULL ORDER BY sort_order ASC", nativeQuery = true)
     org.springframework.data.domain.Page<Page> findAllActivePublished(Long tenantId, Pageable pageable);
     
     /**
      * Find pages by template for current tenant
      */
-    @Query(value = "SELECT * FROM shared_page WHERE template = ?1 AND active = true AND tenant_id = ?2 AND deleted_at IS NULL ORDER BY sort_order ASC", nativeQuery = true)
+    @Query(value = "SELECT * FROM pages WHERE template = ?1 AND active = true AND tenant_id = ?2 AND deleted_at IS NULL ORDER BY sort_order ASC", nativeQuery = true)
     List<Page> findActiveByTemplate(String template, Long tenantId);
     
     /**
      * Find pages by template ID for current tenant
      */
-    @Query(value = "SELECT * FROM shared_page WHERE template_id = ?1 AND active = true AND tenant_id = ?2 AND deleted_at IS NULL ORDER BY sort_order ASC", nativeQuery = true)
+    @Query(value = "SELECT * FROM pages WHERE template_id = ?1 AND active = true AND tenant_id = ?2 AND deleted_at IS NULL ORDER BY sort_order ASC", nativeQuery = true)
     List<Page> findActiveByTemplateId(String templateId, Long tenantId);
     
     /**
@@ -77,24 +77,24 @@ public interface PageRepository extends TenantAwareRepository<Page> {
     /**
      * Find pages by status for current tenant
      */
-    @Query(value = "SELECT * FROM shared_page WHERE status = ?1 AND active = true AND tenant_id = ?2 AND deleted_at IS NULL ORDER BY sort_order ASC", nativeQuery = true)
+    @Query(value = "SELECT * FROM pages WHERE status = ?1 AND active = true AND tenant_id = ?2 AND deleted_at IS NULL ORDER BY sort_order ASC", nativeQuery = true)
     List<Page> findActiveByStatus(String status, Long tenantId);
     
     /**
      * Find pages by author for current tenant
      */
-    @Query(value = "SELECT * FROM shared_page WHERE author = ?1 AND active = true AND tenant_id = ?2 AND deleted_at IS NULL ORDER BY sort_order ASC", nativeQuery = true)
+    @Query(value = "SELECT * FROM pages WHERE author = ?1 AND active = true AND tenant_id = ?2 AND deleted_at IS NULL ORDER BY sort_order ASC", nativeQuery = true)
     List<Page> findActiveByAuthor(String author, Long tenantId);
     
     /**
      * Search pages by title or content for current tenant
      */
-    @Query(value = "SELECT * FROM shared_page WHERE (LOWER(title) LIKE LOWER(CONCAT('%', ?1, '%')) OR LOWER(content) LIKE LOWER(CONCAT('%', ?1, '%'))) AND active = true AND tenant_id = ?2 AND deleted_at IS NULL ORDER BY sort_order ASC", nativeQuery = true)
+    @Query(value = "SELECT * FROM pages WHERE (LOWER(title) LIKE LOWER(CONCAT('%', ?1, '%')) OR LOWER(content) LIKE LOWER(CONCAT('%', ?1, '%'))) AND active = true AND tenant_id = ?2 AND deleted_at IS NULL ORDER BY sort_order ASC", nativeQuery = true)
     List<Page> searchActiveByKeyword(String keyword, Long tenantId);
     
     /**
      * Search published pages by title or content for current tenant
      */
-    @Query(value = "SELECT * FROM shared_page WHERE (LOWER(title) LIKE LOWER(CONCAT('%', ?1, '%')) OR LOWER(content) LIKE LOWER(CONCAT('%', ?1, '%'))) AND active = true AND published = true AND tenant_id = ?2 AND deleted_at IS NULL ORDER BY sort_order ASC", nativeQuery = true)
+    @Query(value = "SELECT * FROM pages WHERE (LOWER(title) LIKE LOWER(CONCAT('%', ?1, '%')) OR LOWER(content) LIKE LOWER(CONCAT('%', ?1, '%'))) AND active = true AND published = true AND tenant_id = ?2 AND deleted_at IS NULL ORDER BY sort_order ASC", nativeQuery = true)
     List<Page> searchActivePublishedByKeyword(String keyword, Long tenantId);
 }

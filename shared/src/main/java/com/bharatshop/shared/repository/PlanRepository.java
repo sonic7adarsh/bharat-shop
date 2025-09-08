@@ -29,17 +29,15 @@ public interface PlanRepository extends JpaRepository<Plan, Long> {
     // Find popular plans
     List<Plan> findByIsPopularTrueAndActiveTrueAndDeletedAtIsNullOrderByDisplayOrderAsc();
 
-    // Find plans with specific feature
-    @Query(value = "SELECT * FROM plans p WHERE p.active = true AND p.deleted_at IS NULL AND JSON_EXTRACT(p.features, :featurePath) IS NOT NULL ORDER BY p.display_order ASC", nativeQuery = true)
-    List<Plan> findActiveWithFeature(@Param("featurePath") String featurePath);
-
-    // Find plans with minimum product limit
-    @Query(value = "SELECT * FROM plans p WHERE p.active = true AND p.deleted_at IS NULL AND JSON_EXTRACT(p.features, '$.maxProducts') >= :minProducts ORDER BY p.price ASC", nativeQuery = true)
-    List<Plan> findActiveWithMinProducts(@Param("minProducts") Integer minProducts);
-
-    // Find plans with minimum storage limit
-    @Query(value = "SELECT * FROM plans p WHERE p.active = true AND p.deleted_at IS NULL AND JSON_EXTRACT(p.features, '$.storageLimit') >= :minStorage ORDER BY p.price ASC", nativeQuery = true)
-    List<Plan> findActiveWithMinStorage(@Param("minStorage") Long minStorage);
+    // Find plans with specific feature - using JPA method instead of JSON_EXTRACT
+    // Note: These methods will be implemented in the service layer using Plan.hasFeature() helper method
+    // to avoid H2 database JSON_EXTRACT compatibility issues
+    
+    // Find plans with minimum product limit - replaced with service layer implementation
+    // @Query removed to avoid H2 JSON_EXTRACT issues
+    
+    // Find plans with minimum storage limit - replaced with service layer implementation  
+    // @Query removed to avoid H2 JSON_EXTRACT issues
 
     // Check if plan name exists (excluding specific plan)
     boolean existsByNameAndIdNotAndDeletedAtIsNull(String name, Long excludeId);

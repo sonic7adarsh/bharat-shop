@@ -28,7 +28,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     /**
      * Calculate total reserved quantity for a product variant
      */
-    @Query(value = "SELECT COALESCE(SUM(quantity), 0) FROM reservation " +
+    @Query(value = "SELECT COALESCE(SUM(quantity), 0) FROM reservations " +
            "WHERE tenant_id = ?1 " +
            "AND product_variant_id = ?2 " +
            "AND status = 'ACTIVE' " +
@@ -47,14 +47,14 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     /**
      * Find expired reservations for cleanup
      */
-    @Query(value = "SELECT * FROM reservation WHERE status = 'ACTIVE' " +
+    @Query(value = "SELECT * FROM reservations WHERE status = 'ACTIVE' " +
            "AND expires_at <= ?1", nativeQuery = true)
     List<Reservation> findExpiredReservations(LocalDateTime now);
     
     /**
      * Find stale reservations (active but older than threshold)
      */
-    @Query(value = "SELECT * FROM reservation WHERE tenant_id = ?1 " +
+    @Query(value = "SELECT * FROM reservations WHERE tenant_id = ?1 " +
            "AND status = 'ACTIVE' " +
            "AND created_at <= ?2", nativeQuery = true)
     List<Reservation> findStaleReservations(
@@ -66,7 +66,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
      * Bulk update expired reservations to RELEASED status
      */
     @Modifying
-    @Query(value = "UPDATE reservation SET status = 'RELEASED', updated_at = ?1 " +
+    @Query(value = "UPDATE reservations SET status = 'RELEASED', updated_at = ?1 " +
            "WHERE status = 'ACTIVE' AND expires_at <= ?1", nativeQuery = true)
     int releaseExpiredReservations(LocalDateTime now);
     
@@ -108,7 +108,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     /**
      * Find stale reservations across all tenants
      */
-    @Query(value = "SELECT * FROM reservation WHERE status = 'ACTIVE' " +
+    @Query(value = "SELECT * FROM reservations WHERE status = 'ACTIVE' " +
            "AND created_at <= ?1", nativeQuery = true)
     List<Reservation> findStaleReservationsAllTenants(
         LocalDateTime threshold
@@ -117,7 +117,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     /**
      * Count active reservations for a tenant
      */
-    @Query(value = "SELECT COUNT(*) FROM reservation WHERE tenant_id = ?1 " +
+    @Query(value = "SELECT COUNT(*) FROM reservations WHERE tenant_id = ?1 " +
            "AND status = 'ACTIVE' AND expires_at > ?2", nativeQuery = true)
     long countActiveReservations(
         Long tenantId,

@@ -12,7 +12,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,7 +85,9 @@ public class PlanService {
     @Transactional(readOnly = true)
     public List<Plan> getPlansWithMinProducts(Integer minProducts) {
         log.debug("Fetching plans with minimum products: {}", minProducts);
-        return planRepository.findActiveWithMinProducts(minProducts);
+        return planRepository.findAllActive().stream()
+                .filter(plan -> plan.getMaxProducts() >= minProducts)
+                .toList();
     }
 
     /**
@@ -95,7 +96,9 @@ public class PlanService {
     @Transactional(readOnly = true)
     public List<Plan> getPlansWithMinStorage(Long minStorage) {
         log.debug("Fetching plans with minimum storage: {} bytes", minStorage);
-        return planRepository.findActiveWithMinStorage(minStorage);
+        return planRepository.findAllActive().stream()
+                .filter(plan -> plan.getStorageLimit() >= minStorage)
+                .toList();
     }
 
     /**

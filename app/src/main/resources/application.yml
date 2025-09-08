@@ -7,6 +7,9 @@ spring:
   main:
     allow-bean-definition-overriding: true
     allow-circular-references: true
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
   
   # Database Configuration
   datasource:
