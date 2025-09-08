@@ -42,3 +42,7 @@ logs/
 
 # Node modules (if any)
 node_modules/
+
+# Redis installation files
+Redis-x64-*.msi
+redis/
