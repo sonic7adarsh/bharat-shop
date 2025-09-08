@@ -22,7 +22,7 @@ public class BharatShopHealthIndicator { // implements HealthIndicator {
     //@Autowired
     //private DataSource dataSource;
 
-    //@Autowired
+    //@Autowired(required = false)
     //private RedisTemplate<String, Object> redisTemplate;
 
     //@Override
@@ -72,6 +72,9 @@ public class BharatShopHealthIndicator { // implements HealthIndicator {
     
     private boolean checkRedisHealth() {
         try {
+            if (redisTemplate == null) {
+                return false;
+            }
             redisTemplate.opsForValue().set("health:check", "ping");
             String result = (String) redisTemplate.opsForValue().get("health:check");
             redisTemplate.delete("health:check");

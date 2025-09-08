@@ -23,6 +23,24 @@ public class RateLimitProperties {
     public int getDefaultDuration() {
         return api.getWindow();
     }
+    
+    // Auth rate limit settings
+    public int getAuthLimit() {
+        return auth.getRequests();
+    }
+    
+    public int getAuthDuration() {
+        return auth.getWindow();
+    }
+    
+    // Admin rate limit settings
+    public int getAdminLimit() {
+        return admin.getRequests();
+    }
+    
+    public int getAdminDuration() {
+        return admin.getWindow();
+    }
 
     @Data
     public static class ApiLimit {
