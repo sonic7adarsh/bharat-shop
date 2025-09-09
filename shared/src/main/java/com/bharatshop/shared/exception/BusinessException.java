@@ -105,4 +105,20 @@ public class BusinessException extends RuntimeException {
             HttpStatus.TOO_MANY_REQUESTS
         );
     }
+    
+    public static BusinessException invalidState(String entity, String message) {
+        return new BusinessException(
+            String.format("%s: %s", entity, message),
+            "INVALID_STATE",
+            HttpStatus.BAD_REQUEST
+        );
+    }
+    
+    public static BusinessException invalidInput(String message) {
+        return new BusinessException(
+            message,
+            "INVALID_INPUT",
+            HttpStatus.BAD_REQUEST
+        );
+    }
 }

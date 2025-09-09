@@ -11,6 +11,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 // import java.util.UUID; // Replaced with Long
 
 @Entity(name = "SharedOrder")
@@ -126,6 +127,9 @@ public class Orders {
     private LocalDateTime cancelledAt;
     
     @Column
+    private LocalDateTime confirmedAt;
+    
+    @Column
     private LocalDateTime packedAt;
     
     @Column
@@ -137,16 +141,67 @@ public class Orders {
     @Column(length = 100)
     private String courierPartner;
     
+    @Column(length = 500)
+    private String cancellationReason;
+    
     // Enums
     public enum OrderStatus {
-        DRAFT,
-        PENDING,
-        CONFIRMED,
-        PACKED,
-        SHIPPED,
-        DELIVERED,
-        CANCELLED,
-        RETURNED
+        // Main flow states
+        PENDING_PAYMENT,    // Initial state when order is created
+        CONFIRMED,          // Payment successful, order confirmed
+        PACKED,             // Order items packed and ready for shipping
+        SHIPPED,            // Order shipped to customer
+        DELIVERED,          // Order delivered to customer
+        
+        // Branch states
+        CANCELLED,          // Order cancelled (can happen from PENDING_PAYMENT, CONFIRMED, PACKED)
+        RETURN_REQUESTED,   // Customer requested return (from DELIVERED)
+        RETURNED,           // Items physically returned
+        REFUNDED;           // Refund processed
+        
+        /**
+         * Get allowed next states from current state
+         */
+        public Set<OrderStatus> getAllowedTransitions() {
+            return switch (this) {
+                case PENDING_PAYMENT -> Set.of(CONFIRMED, CANCELLED);
+                case CONFIRMED -> Set.of(PACKED, CANCELLED);
+                case PACKED -> Set.of(SHIPPED, CANCELLED);
+                case SHIPPED -> Set.of(DELIVERED);
+                case DELIVERED -> Set.of(RETURN_REQUESTED);
+                case RETURN_REQUESTED -> Set.of(RETURNED, DELIVERED); // Can reject return
+                case RETURNED -> Set.of(REFUNDED);
+                case CANCELLED, REFUNDED -> Set.of(); // Terminal states
+            };
+        }
+        
+        /**
+         * Check if transition to target state is allowed
+         */
+        public boolean canTransitionTo(OrderStatus targetStatus) {
+            return getAllowedTransitions().contains(targetStatus);
+        }
+        
+        /**
+         * Check if this is a terminal state (no further transitions allowed)
+         */
+        public boolean isTerminal() {
+            return this == CANCELLED || this == REFUNDED || this == DELIVERED;
+        }
+        
+        /**
+         * Check if order can be cancelled from this state
+         */
+        public boolean canBeCancelled() {
+            return this == PENDING_PAYMENT || this == CONFIRMED || this == PACKED;
+        }
+        
+        /**
+         * Check if order can be returned from this state
+         */
+        public boolean canBeReturned() {
+            return this == DELIVERED;
+        }
     }
     
     public enum PaymentStatus {
@@ -173,10 +228,7 @@ public class Orders {
     }
     
     public boolean canBeCancelled() {
-        return status == OrderStatus.DRAFT || 
-               status == OrderStatus.PENDING || 
-               status == OrderStatus.CONFIRMED || 
-               status == OrderStatus.PACKED;
+        return status != null && status.canBeCancelled();
     }
     
     public boolean isPaymentCompleted() {

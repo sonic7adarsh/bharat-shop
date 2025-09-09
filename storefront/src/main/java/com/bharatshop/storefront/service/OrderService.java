@@ -10,6 +10,7 @@ import com.bharatshop.storefront.repository.StorefrontProductRepository;
 import com.bharatshop.shared.repository.ProductVariantRepository;
 import com.bharatshop.shared.service.FeatureFlagService;
 import com.bharatshop.shared.service.ReservationService;
+import com.bharatshop.shared.service.OrderStateMachineService;
 import com.bharatshop.shared.entity.Cart;
 import com.bharatshop.storefront.repository.StorefrontOrderItemRepository;
 import com.bharatshop.storefront.repository.StorefrontOrderRepository;
@@ -55,6 +56,7 @@ public class OrderService {
     private final CustomerAddressRepository customerAddressRepository;
     private final FeatureFlagService featureFlagService;
     private final ReservationService reservationService;
+    private final OrderStateMachineService orderStateMachineService;
     
     /**
      * Create order from cart (checkout)
@@ -91,7 +93,7 @@ public class OrderService {
         Orders order = Orders.builder()
                 .tenantId(tenantId)
                 .customerId(customerId)
-                .status(Orders.OrderStatus.PENDING)
+                .status(Orders.OrderStatus.PENDING_PAYMENT)
                 .totalAmount(totalAmount)
                 .discountAmount(BigDecimal.ZERO)
                 .taxAmount(taxAmount)
@@ -222,7 +224,9 @@ public class OrderService {
             order.setPaymentGatewayPaymentId(razorpayPaymentId);
             order.setPaymentGatewaySignature(razorpaySignature);
             order.setPaymentStatus(Orders.PaymentStatus.COMPLETED);
-            order.setStatus(Orders.OrderStatus.CONFIRMED);
+            
+            // Use state machine to transition to CONFIRMED
+            order = orderStateMachineService.confirmOrder(order.getId(), order.getTenantId());
             
             // Commit reservations - convert to actual stock decrements
             try {
@@ -285,7 +289,8 @@ public class OrderService {
             throw new RuntimeException("Cannot confirm cancelled order: " + order.getOrderNumber());
         }
         
-        order.setStatus(Orders.OrderStatus.CONFIRMED);
+        // Use state machine to transition to CONFIRMED
+        order = orderStateMachineService.confirmOrder(orderId, order.getTenantId());
         order.setPaymentStatus(Orders.PaymentStatus.COMPLETED);
         
         log.info("Order confirmed after payment: {}", order.getOrderNumber());
@@ -327,7 +332,8 @@ public class OrderService {
             // Continue with cancellation even if reservation release fails
         }
         
-        order.markAsCancelled();
+        // Use state machine to transition to CANCELLED
+        order = orderStateMachineService.cancelOrder(orderId, tenantId, reason);
         order.setNotes(order.getNotes() + "\nCancellation reason: " + reason);
         
         log.info("Order cancelled: {} for customer: {}", order.getOrderNumber(), customerId);
@@ -339,18 +345,16 @@ public class OrderService {
      * Mark order as packed
      */
     public Orders markOrderAsPacked(Long orderId, String tenantId) {
-        Orders order = orderRepository.findByIdAndTenantId(orderId, Long.parseLong(tenantId))
+        Long tenantIdLong = Long.parseLong(tenantId);
+        Orders order = orderRepository.findByIdAndTenantId(orderId, tenantIdLong)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
         
-        if (!order.canBePacked()) {
-            throw new RuntimeException("Order cannot be packed in current status: " + order.getStatus());
-        }
-        
-        order.markAsPacked();
+        // Use state machine to transition to PACKED
+        order = orderStateMachineService.packOrder(orderId, tenantIdLong);
         
         log.info("Order marked as packed: {}", order.getOrderNumber());
         
-        return orderRepository.save(order);
+        return order;
     }
     
     /**
@@ -360,15 +364,12 @@ public class OrderService {
         Orders order = orderRepository.findByIdAndTenantId(orderId, tenantId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
         
-        if (!order.canBeShipped()) {
-            throw new RuntimeException("Order cannot be shipped in current status: " + order.getStatus());
-        }
-        
-        order.markAsShipped(trackingNumber, courierPartner);
+        // Use state machine to transition to SHIPPED
+        order = orderStateMachineService.shipOrder(orderId, tenantId, trackingNumber, courierPartner);
         
         log.info("Order marked as shipped: {} with tracking: {}", order.getOrderNumber(), trackingNumber);
         
-        return orderRepository.save(order);
+        return order;
     }
     
     /**
@@ -378,19 +379,16 @@ public class OrderService {
         Orders order = orderRepository.findByIdAndTenantId(orderId, tenantId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
         
-        if (order.getStatus() != Orders.OrderStatus.SHIPPED) {
-            throw new RuntimeException("Order must be in SHIPPED status to mark as delivered");
-        }
-        
-        order.markAsDelivered();
+        // Use state machine to transition to DELIVERED
+        order = orderStateMachineService.deliverOrder(orderId, tenantId);
         
         log.info("Order marked as delivered: {}", order.getOrderNumber());
         
-        return orderRepository.save(order);
+        return order;
     }
     
     /**
-     * Update order status
+     * Update order status using state machine
      */
     public Orders updateOrderStatus(Long orderId, Long tenantId, Orders.OrderStatus newStatus) {
         Orders order = orderRepository.findByIdAndTenantId(orderId, tenantId)
@@ -398,32 +396,39 @@ public class OrderService {
         
         Orders.OrderStatus currentStatus = order.getStatus();
         
-        // Validate status transition
-        if (!isValidStatusTransition(currentStatus, newStatus)) {
-            throw new RuntimeException("Invalid status transition from " + currentStatus + " to " + newStatus);
-        }
-        
-        order.setStatus(newStatus);
-        
-        // Set appropriate timestamps based on status
+        // Use state machine for transitions
         switch (newStatus) {
+            case CONFIRMED:
+                order = orderStateMachineService.confirmOrder(orderId, tenantId);
+                break;
             case PACKED:
-                order.setPackedAt(LocalDateTime.now());
+                order = orderStateMachineService.packOrder(orderId, tenantId);
                 break;
             case SHIPPED:
-                order.setShippedAt(LocalDateTime.now());
-                break;
+                // Note: This requires tracking info, should use markOrderAsShipped instead
+                throw new RuntimeException("Use markOrderAsShipped method for SHIPPED status with tracking info");
             case DELIVERED:
-                order.setDeliveredAt(LocalDateTime.now());
+                order = orderStateMachineService.deliverOrder(orderId, tenantId);
                 break;
             case CANCELLED:
-                order.setCancelledAt(LocalDateTime.now());
+                order = orderStateMachineService.cancelOrder(orderId, tenantId, "Status update");
                 break;
+            case RETURN_REQUESTED:
+                order = orderStateMachineService.requestReturn(orderId, tenantId, "Return requested");
+                break;
+            case RETURNED:
+                order = orderStateMachineService.markAsReturned(orderId, tenantId);
+                break;
+            case REFUNDED:
+                order = orderStateMachineService.refundOrder(orderId, tenantId);
+                break;
+            default:
+                throw new RuntimeException("Unsupported status transition to " + newStatus);
         }
         
         log.info("Order status updated: {} from {} to {}", order.getOrderNumber(), currentStatus, newStatus);
         
-        return orderRepository.save(order);
+        return order;
     }
     
     /**
@@ -499,22 +504,13 @@ public class OrderService {
         return "ORD-" + System.currentTimeMillis() + "-" + Long.toHexString(System.nanoTime()).substring(0, 8).toUpperCase();
     }
     
+    /**
+     * @deprecated Use OrderStateMachineService for status transitions instead
+     */
+    @Deprecated
     private boolean isValidStatusTransition(Orders.OrderStatus from, Orders.OrderStatus to) {
-        switch (from) {
-            case PENDING:
-                return to == Orders.OrderStatus.CONFIRMED || to == Orders.OrderStatus.CANCELLED;
-            case CONFIRMED:
-                return to == Orders.OrderStatus.PACKED || to == Orders.OrderStatus.CANCELLED;
-            case PACKED:
-                return to == Orders.OrderStatus.SHIPPED || to == Orders.OrderStatus.CANCELLED;
-            case SHIPPED:
-                return to == Orders.OrderStatus.DELIVERED;
-            case DELIVERED:
-            case CANCELLED:
-                return false; // Terminal states
-            default:
-                return false;
-        }
+        // Delegate to the OrderStatus enum's canTransitionTo method
+        return from.canTransitionTo(to);
     }
     
     // Inner class for order statistics

@@ -45,7 +45,7 @@ public class VendorAnalyticsService {
                 .totalInactiveProducts(getTotalInactiveProducts(tenantId))
                 .ordersByStatus(getOrdersByStatus(tenantId, fromDate, toDate))
                 .totalOrders(getTotalOrders(tenantId, fromDate, toDate))
-                .pendingOrders(getOrdersByStatus(tenantId, Orders.OrderStatus.PENDING, fromDate, toDate))
+                .pendingOrders(getOrdersByStatus(tenantId, Orders.OrderStatus.PENDING_PAYMENT, fromDate, toDate))
                 .processingOrders(getOrdersByStatus(tenantId, Orders.OrderStatus.CONFIRMED, fromDate, toDate))
                 .shippedOrders(getOrdersByStatus(tenantId, Orders.OrderStatus.SHIPPED, fromDate, toDate))
                 .deliveredOrders(getOrdersByStatus(tenantId, Orders.OrderStatus.DELIVERED, fromDate, toDate))

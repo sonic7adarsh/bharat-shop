@@ -99,6 +99,7 @@ public class Payment {
         AUTHORIZED,
         CAPTURED,
         REFUNDED,
+        PARTIALLY_REFUNDED,
         FAILED,
         CANCELLED
     }

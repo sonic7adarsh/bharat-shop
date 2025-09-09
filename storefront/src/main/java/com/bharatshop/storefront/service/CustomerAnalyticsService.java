@@ -52,7 +52,7 @@ public class CustomerAnalyticsService {
                 .totalSpent(getTotalSpent(customerId, tenantId))
                 .averageOrderValue(getAverageOrderValue(customerId, tenantId))
                 .recentOrders(getRecentOrders(customerId, tenantId, 10))
-                .draftOrders(getOrdersByStatus(customerId, tenantId, Orders.OrderStatus.DRAFT))
+                .draftOrders(getOrdersByStatus(customerId, tenantId, Orders.OrderStatus.PENDING_PAYMENT))
                 .confirmedOrders(getOrdersByStatus(customerId, tenantId, Orders.OrderStatus.CONFIRMED))
                 .packedOrders(getOrdersByStatus(customerId, tenantId, Orders.OrderStatus.PACKED))
                 .shippedOrders(getOrdersByStatus(customerId, tenantId, Orders.OrderStatus.SHIPPED))
@@ -86,7 +86,7 @@ public class CustomerAnalyticsService {
      * Get number of pending orders for customer
      */
     private Long getPendingOrders(Long customerId, String tenantId) {
-        return orderRepository.countByCustomerIdAndTenantIdAndStatus(customerId, Long.parseLong(tenantId), Orders.OrderStatus.PENDING);
+        return orderRepository.countByCustomerIdAndTenantIdAndStatus(customerId, Long.parseLong(tenantId), Orders.OrderStatus.PENDING_PAYMENT);
     }
     
     /**
