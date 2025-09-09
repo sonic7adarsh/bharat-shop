@@ -70,6 +70,17 @@ public class Product extends BaseEntity {
     @Column(name = "attributes", columnDefinition = "JSON")
     private String attributes;
 
+    // Tax-related fields
+    @Column(name = "hsn_code", length = 10)
+    private String hsnCode;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tax_preference", nullable = false)
+    private TaxPreference taxPreference = TaxPreference.TAXABLE;
+
+    @Column(name = "is_tax_inclusive", nullable = false)
+    private Boolean isTaxInclusive = false;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private ProductStatus status;
@@ -87,6 +98,11 @@ public class Product extends BaseEntity {
         INACTIVE,
         OUT_OF_STOCK,
         DISCONTINUED
+    }
+
+    public enum TaxPreference {
+        TAXABLE,
+        EXEMPT
     }
 
     /**

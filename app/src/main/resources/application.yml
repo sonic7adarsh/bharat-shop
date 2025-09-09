@@ -46,6 +46,22 @@ spring:
   flyway:
     enabled: false
   
+  # Email Configuration
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:dummy@example.com}
+    password: ${MAIL_PASSWORD:dummy-password}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          connectiontimeout: 5000
+          timeout: 3000
+          writetimeout: 5000
+  
   # Actuator
   management:
     endpoints:
@@ -59,7 +75,7 @@ spring:
       defaults:
         enabled: true
       redis:
-        enabled: true  # Enable Redis health indicator to test connectivity
+        enabled: true  # Enable Redis health indicator now that Redis is running
 
 # Multi-tenancy configuration
 app:
@@ -75,6 +91,15 @@ app:
       key-secret: ${RAZORPAY_KEY_SECRET:test_secret_key}
       webhook-secret: ${RAZORPAY_WEBHOOK_SECRET:webhook_secret}
       currency: INR
+
+# Razorpay Configuration
+razorpay:
+  key:
+    id: ${RAZORPAY_KEY_ID:rzp_test_1234567890}
+    secret: ${RAZORPAY_KEY_SECRET:test_secret_key}
+  sandbox: ${RAZORPAY_SANDBOX:true}
+  webhook:
+    secret: ${RAZORPAY_WEBHOOK_SECRET:webhook_secret}
   
   # Rate limiting configuration
   rate-limit:
@@ -98,6 +123,16 @@ aws:
     bucket-name: ${AWS_S3_BUCKET_NAME:bharatshop-dev}
     path-style-access: ${AWS_S3_PATH_STYLE_ACCESS:false}
 
+# Webhook Configuration
+bharatshop:
+  webhooks:
+    enabled: ${BHARATSHOP_WEBHOOKS_ENABLED:true}
+    secret: ${BHARATSHOP_WEBHOOKS_SECRET:default-webhook-secret}
+    timeout: ${BHARATSHOP_WEBHOOKS_TIMEOUT:5000}
+    retry:
+      max-attempts: ${BHARATSHOP_WEBHOOKS_RETRY_MAX_ATTEMPTS:3}
+    endpoints: ${BHARATSHOP_WEBHOOKS_ENDPOINTS:}
+
   # Monitoring Configuration
 management:
   endpoints:
@@ -112,6 +147,11 @@ management:
     metrics:
       enabled: true
     prometheus:
+      enabled: true
+  health:
+    db:
+      enabled: true
+    redis:
       enabled: true
   metrics:
     export:

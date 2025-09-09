@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Reminder</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .email-container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 300;
+        }
+        .header p {
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+            font-size: 16px;
+        }
+        .content {
+            padding: 30px 20px;
+        }
+        .greeting {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        .reminder-notice {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 6px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .reminder-notice h3 {
+            margin: 0 0 10px 0;
+            color: #856404;
+            font-size: 20px;
+        }
+        .reminder-notice p {
+            margin: 5px 0;
+            color: #856404;
+        }
+        .overdue-notice {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 6px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .overdue-notice h3 {
+            margin: 0 0 10px 0;
+            color: #721c24;
+            font-size: 20px;
+        }
+        .overdue-notice p {
+            margin: 5px 0;
+            color: #721c24;
+        }
+        .invoice-details {
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #f39c12;
+        }
+        .invoice-details h3 {
+            margin: 0 0 15px 0;
+            color: #2c3e50;
+            font-size: 18px;
+        }
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding: 5px 0;
+        }
+        .detail-label {
+            font-weight: 600;
+            color: #555;
+        }
+        .detail-value {
+            color: #333;
+        }
+        .amount-highlight {
+            background-color: #fff3cd;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: center;
+            border: 2px solid #f39c12;
+        }
+        .amount-highlight .amount {
+            font-size: 28px;
+            font-weight: 700;
+            color: #e67e22;
+        }
+        .amount-highlight .label {
+            font-size: 16px;
+            color: #856404;
+            margin-bottom: 5px;
+        }
+        .urgency-high {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+        }
+        .urgency-high .amount {
+            color: #dc3545;
+        }
+        .urgency-high .label {
+            color: #721c24;
+        }
+        .action-buttons {
+            text-align: center;
+            margin: 30px 0;
+        }
+        .btn {
+            display: inline-block;
+            padding: 15px 30px;
+            margin: 0 10px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        .btn-primary {
+            background-color: #f39c12;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #e67e22;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        .contact-info {
+            background-color: #e3f2fd;
+            border-radius: 6px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .contact-info h4 {
+            margin: 0 0 10px 0;
+            color: #1565c0;
+        }
+        .footer {
+            background-color: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid #dee2e6;
+        }
+        .footer p {
+            margin: 5px 0;
+            color: #6c757d;
+            font-size: 14px;
+        }
+        .footer a {
+            color: #f39c12;
+            text-decoration: none;
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            .content {
+                padding: 20px 15px;
+            }
+            .detail-row {
+                flex-direction: column;
+            }
+            .detail-label {
+                margin-bottom: 2px;
+            }
+            .btn {
+                display: block;
+                margin: 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <h1 th:text="${companyName}">BharatShop</h1>
+            <p>Payment Reminder</p>
+        </div>
+        
+        <div class="content">
+            <div class="greeting">
+                <p>Dear <span th:text="${customerName}">Customer</span>,</p>
+            </div>
+            
+            <div th:if="${!isOverdue}" class="reminder-notice">
+                <h3>⏰ Payment Reminder</h3>
+                <p>This is a friendly reminder that your invoice payment is due soon.</p>
+            </div>
+            
+            <div th:if="${isOverdue}" class="overdue-notice">
+                <h3>🚨 Payment Overdue</h3>
+                <p>Your invoice payment is now <strong th:text="${daysOverdue}">0</strong> day(s) overdue.</p>
+                <p>Please make the payment as soon as possible to avoid any inconvenience.</p>
+            </div>
+            
+            <div class="invoice-details">
+                <h3>Invoice Details</h3>
+                <div class="detail-row">
+                    <span class="detail-label">Invoice Number:</span>
+                    <span class="detail-value" th:text="${invoiceNumber}">INV-001</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Invoice Date:</span>
+                    <span class="detail-value" th:text="${invoiceDate}">01 Jan 2024</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Due Date:</span>
+                    <span class="detail-value" th:text="${dueDate}">15 Jan 2024</span>
+                </div>
+                <div th:if="${isOverdue}" class="detail-row">
+                    <span class="detail-label">Days Overdue:</span>
+                    <span class="detail-value" style="color: #dc3545; font-weight: bold;" th:text="${daysOverdue}">5</span>
+                </div>
+            </div>
+            
+            <div class="amount-highlight" th:classappend="${isOverdue} ? 'urgency-high' : ''">
+                <div class="label">Outstanding Amount</div>
+                <div class="amount">
+                    <span th:text="${currency}">₹</span> <span th:text="${#numbers.formatDecimal(totalAmount, 1, 2)}">1,000.00</span>
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <a href="#" class="btn btn-primary">💳 Make Payment Now</a>
+                <a href="#" class="btn btn-secondary">📄 View Invoice</a>
+            </div>
+            
+            <div th:if="${!isOverdue}">
+                <p>To avoid any late fees or service interruptions, please ensure your payment is made by the due date mentioned above.</p>
+            </div>
+            
+            <div th:if="${isOverdue}">
+                <p><strong>Important:</strong> Your payment is overdue. Please make the payment immediately to avoid any additional charges or service disruptions.</p>
+            </div>
+            
+            <div class="contact-info">
+                <h4>Need Help?</h4>
+                <p>If you have already made the payment, please ignore this reminder. If you have any questions or need assistance with your payment, please don't hesitate to contact us.</p>
+                <p>You can reach us at <a th:href="'mailto:' + ${supportEmail}" th:text="${supportEmail}">support@bharatshop.com</a></p>
+            </div>
+            
+            <p>The original invoice is attached to this email for your reference.</p>
+            
+            <p>Thank you for your prompt attention to this matter.</p>
+            
+            <p>Best regards,<br>
+            <strong th:text="${companyName}">BharatShop</strong> Accounts Team</p>
+        </div>
+        
+        <div class="footer">
+            <p><strong th:text="${companyName}">BharatShop</strong></p>
+            <p>
+                <a th:href="${companyWebsite}" th:text="${companyWebsite}">https://bharatshop.com</a> | 
+                <a th:href="'mailto:' + ${supportEmail}" th:text="${supportEmail}">support@bharatshop.com</a>
+            </p>
+            <p>This is an automated reminder. Please do not reply to this message.</p>
+        </div>
+    </div>
+</body>
+</html>

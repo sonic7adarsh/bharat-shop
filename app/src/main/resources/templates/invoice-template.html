@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>GST Invoice</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            line-height: 1.4;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .invoice-container {
+            max-width: 800px;
+            margin: 0 auto;
+            border: 1px solid #ddd;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            color: #333;
+        }
+        
+        .header h2 {
+            margin: 5px 0;
+            font-size: 18px;
+            color: #666;
+        }
+        
+        .invoice-details {
+            display: table;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        
+        .invoice-left, .invoice-right {
+            display: table-cell;
+            width: 50%;
+            vertical-align: top;
+            padding: 10px;
+        }
+        
+        .invoice-left {
+            border-right: 1px solid #ddd;
+        }
+        
+        .section-title {
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 10px;
+            color: #333;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+        
+        .detail-row {
+            margin-bottom: 5px;
+        }
+        
+        .detail-label {
+            font-weight: bold;
+            display: inline-block;
+            width: 120px;
+        }
+        
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        .items-table th, .items-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        
+        .items-table th {
+            background-color: #f5f5f5;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .items-table .text-right {
+            text-align: right;
+        }
+        
+        .items-table .text-center {
+            text-align: center;
+        }
+        
+        .tax-summary {
+            margin-top: 20px;
+        }
+        
+        .tax-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+        
+        .tax-table th, .tax-table td {
+            border: 1px solid #ddd;
+            padding: 6px;
+            text-align: right;
+        }
+        
+        .tax-table th {
+            background-color: #f5f5f5;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .total-section {
+            margin-top: 20px;
+            border-top: 2px solid #333;
+            padding-top: 10px;
+        }
+        
+        .total-row {
+            display: table;
+            width: 100%;
+            margin-bottom: 5px;
+        }
+        
+        .total-label {
+            display: table-cell;
+            width: 70%;
+            text-align: right;
+            font-weight: bold;
+            padding-right: 10px;
+        }
+        
+        .total-value {
+            display: table-cell;
+            width: 30%;
+            text-align: right;
+            font-weight: bold;
+        }
+        
+        .grand-total {
+            font-size: 16px;
+            border-top: 1px solid #333;
+            padding-top: 5px;
+            margin-top: 10px;
+        }
+        
+        .amount-words {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            font-weight: bold;
+        }
+        
+        .footer {
+            margin-top: 30px;
+            border-top: 1px solid #ddd;
+            padding-top: 15px;
+        }
+        
+        .signature-section {
+            display: table;
+            width: 100%;
+            margin-top: 30px;
+        }
+        
+        .signature-left, .signature-right {
+            display: table-cell;
+            width: 50%;
+            vertical-align: top;
+            padding: 10px;
+        }
+        
+        .signature-right {
+            text-align: right;
+        }
+        
+        .qr-code {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .qr-code img {
+            max-width: 150px;
+            max-height: 150px;
+        }
+        
+        .terms {
+            margin-top: 20px;
+            font-size: 10px;
+            color: #666;
+        }
+        
+        .page-break {
+            page-break-before: always;
+        }
+        
+        @media print {
+            body {
+                margin: 0;
+                padding: 10px;
+            }
+            
+            .invoice-container {
+                border: none;
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="invoice-container">
+        <!-- Header -->
+        <div class="header">
+            <h1>TAX INVOICE</h1>
+            <h2 th:text="${invoice.sellerName}">Seller Name</h2>
+        </div>
+        
+        <!-- Invoice Details -->
+        <div class="invoice-details">
+            <div class="invoice-left">
+                <div class="section-title">Seller Details</div>
+                <div class="detail-row">
+                    <span class="detail-label">Name:</span>
+                    <span th:text="${invoice.sellerName}">Seller Name</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Address:</span>
+                    <span th:text="${invoice.sellerAddress}">Seller Address</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">GSTIN:</span>
+                    <span th:text="${invoice.sellerGstin}">Seller GSTIN</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">PAN:</span>
+                    <span th:text="${invoice.sellerPan}">Seller PAN</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">State Code:</span>
+                    <span th:text="${invoice.sellerStateCode}">State Code</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Email:</span>
+                    <span th:text="${invoice.sellerEmail}">Seller Email</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Phone:</span>
+                    <span th:text="${invoice.sellerPhone}">Seller Phone</span>
+                </div>
+            </div>
+            
+            <div class="invoice-right">
+                <div class="section-title">Buyer Details</div>
+                <div class="detail-row">
+                    <span class="detail-label">Name:</span>
+                    <span th:text="${invoice.buyerName}">Buyer Name</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Address:</span>
+                    <span th:text="${invoice.buyerAddress}">Buyer Address</span>
+                </div>
+                <div class="detail-row" th:if="${invoice.buyerGstin}">
+                    <span class="detail-label">GSTIN:</span>
+                    <span th:text="${invoice.buyerGstin}">Buyer GSTIN</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">State Code:</span>
+                    <span th:text="${invoice.buyerStateCode}">State Code</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Email:</span>
+                    <span th:text="${invoice.buyerEmail}">Buyer Email</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Phone:</span>
+                    <span th:text="${invoice.buyerPhone}">Buyer Phone</span>
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <div class="detail-row">
+                        <span class="detail-label">Invoice No:</span>
+                        <span th:text="${invoice.invoiceNumber}">Invoice Number</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Invoice Date:</span>
+                        <span th:text="${invoiceDate}">Invoice Date</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Due Date:</span>
+                        <span th:text="${dueDate}">Due Date</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Place of Supply:</span>
+                        <span th:text="${invoice.placeOfSupply}">Place of Supply</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Items Table -->
+        <table class="items-table">
+            <thead>
+                <tr>
+                    <th>S.No</th>
+                    <th>Product Description</th>
+                    <th>HSN/SAC</th>
+                    <th>Qty</th>
+                    <th>Unit</th>
+                    <th>Rate</th>
+                    <th>Amount</th>
+                    <th th:if="${isIntraState}">CGST Rate</th>
+                    <th th:if="${isIntraState}">CGST Amount</th>
+                    <th th:if="${isIntraState}">SGST Rate</th>
+                    <th th:if="${isIntraState}">SGST Amount</th>
+                    <th th:if="${isInterState}">IGST Rate</th>
+                    <th th:if="${isInterState}">IGST Amount</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="item, iterStat : ${items}">
+                    <td class="text-center" th:text="${iterStat.count}">1</td>
+                    <td>
+                        <div th:text="${item.productName}">Product Name</div>
+                        <div th:if="${item.productDescription}" 
+                             style="font-size: 10px; color: #666;" 
+                             th:text="${item.productDescription}">Product Description</div>
+                    </td>
+                    <td class="text-center" th:text="${item.hsnCode}">HSN Code</td>
+                    <td class="text-center" th:text="${item.quantity}">Qty</td>
+                    <td class="text-center" th:text="${item.unit}">Unit</td>
+                    <td class="text-right" th:text="${currencySymbol} + ' ' + ${#numbers.formatDecimal(item.unitPrice, 1, 2)}">Rate</td>
+                    <td class="text-right" th:text="${currencySymbol} + ' ' + ${#numbers.formatDecimal(item.netAmount, 1, 2)}">Amount</td>
+                    
+                    <!-- CGST/SGST for Intra-state -->
+                    <td th:if="${isIntraState}" class="text-right" 
+                        th:text="${item.cgstRate != null ? #numbers.formatDecimal(item.cgstRate, 1, 2) + '%' : '0%'}">CGST Rate</td>
+                    <td th:if="${isIntraState}" class="text-right" 
+                        th:text="${currencySymbol} + ' ' + ${#numbers.formatDecimal(item.cgstAmount ?: 0, 1, 2)}">CGST Amount</td>
+                    <td th:if="${isIntraState}" class="text-right" 
+                        th:text="${item.sgstRate != null ? #numbers.formatDecimal(item.sgstRate, 1, 2) + '%' : '0%'}">SGST Rate</td>
+                    <td th:if="${isIntraState}" class="text-right" 
+                        th:text="${currencySymbol} + ' ' + ${#numbers.formatDecimal(item.sgstAmount ?: 0, 1, 2)}">SGST Amount</td>
+                    
+                    <!-- IGST for Inter-state -->
+                    <td th:if="${isInterState}" class="text-right" 
+                        th:text="${item.igstRate != null ? #numbers.formatDecimal(item.igstRate, 1, 2) + '%' : '0%'}">IGST Rate</td>
+                    <td th:if="${isInterState}" class="text-right" 
+                        th:text="${currencySymbol} + ' ' + ${#numbers.formatDecimal(item.igstAmount ?: 0, 1, 2)}">IGST Amount</td>
+                    
+                    <td class="text-right" th:text="${currencySymbol} + ' ' + ${#numbers.formatDecimal(item.totalAmount, 1, 2)}">Total</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <!-- Tax Summary by HSN -->
+        <div class="tax-summary" th:if="${taxSummaryByHsn.size() > 1}">
+            <div class="section-title">Tax Summary by HSN Code</div>
+            <table class="tax-table">
+                <thead>
+                    <tr>
+                        <th>HSN Code</th>
+                        <th>Taxable Amount</th>
+                        <th th:if="${isIntraState}">CGST</th>
+                        <th th:if="${isIntraState}">SGST</th>
+                        <th th:if="${isInterState}">IGST</th>
+                        <th>Total Tax</th>
+                        <th>Total Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="entry : ${taxSummaryByHsn}">
+                        <td class="text-center" th:text="${entry.key}">HSN</td>
+                        <td th:text="${currencySymbol} + ' ' + ${#numbers.formatDecimal(entry.value.netAmount, 1, 2)}">Net Amount</td>
+                        <td th:if="${isIntraState}" th:text="${currencySymbol} + ' ' + ${#numbers.formatDecimal(entry.value.cgstAmount, 1, 2)}">CGST</td>
+                        <td th:if="${isIntraState}" th:text="${currencySymbol} + ' ' + ${#numbers.formatDecimal(entry.value.sgstAmount, 1, 2)}">SGST</td>
+                        <td th:if="${isInterState}" th:text="${currencySymbol} + ' ' + ${#numbers.formatDecimal(entry.value.igstAmount, 1, 2)}">IGST</td>
+                        <td th:text="${currencySymbol} + ' ' + ${#numbers.formatDecimal(entry.value.totalTaxAmount, 1, 2)}">Total Tax</td>
+                        <td th:text="${currencySymbol} + ' ' + ${#numbers.formatDecimal(entry.value.totalAmount, 1, 2)}">Total</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Total Section -->
+        <div class="total-section">
+            <div class="total-row">
+                <div class="total-label">Subtotal:</div>
+                <div class="total-value" th:text="${currencySymbol} + ' ' + ${#numbers.formatDecimal(invoice.subtotal, 1, 2)}">Subtotal</div>
+            </div>
+            
+            <div class="total-row" th:if="${isIntraState and invoice.totalCgst > 0}">
+                <div class="total-label">Total CGST:</div>
+                <div class="total-value" th:text="${currencySymbol} + ' ' + ${#numbers.formatDecimal(invoice.totalCgst, 1, 2)}">CGST</div>
+            </div>
+            
+            <div class="total-row" th:if="${isIntraState and invoice.totalSgst > 0}">
+                <div class="total-label">Total SGST:</div>
+                <div class="total-value" th:text="${currencySymbol} + ' ' + ${#numbers.formatDecimal(invoice.totalSgst, 1, 2)}">SGST</div>
+            </div>
+            
+            <div class="total-row" th:if="${isInterState and invoice.totalIgst > 0}">
+                <div class="total-label">Total IGST:</div>
+                <div class="total-value" th:text="${currencySymbol} + ' ' + ${#numbers.formatDecimal(invoice.totalIgst, 1, 2)}">IGST</div>
+            </div>
+            
+            <div class="total-row" th:if="${invoice.totalCess > 0}">
+                <div class="total-label">Total Cess:</div>
+                <div class="total-value" th:text="${currencySymbol} + ' ' + ${#numbers.formatDecimal(invoice.totalCess, 1, 2)}">Cess</div>
+            </div>
+            
+            <div class="total-row">
+                <div class="total-label">Total Tax:</div>
+                <div class="total-value" th:text="${currencySymbol} + ' ' + ${#numbers.formatDecimal(invoice.totalTax, 1, 2)}">Total Tax</div>
+            </div>
+            
+            <div class="total-row grand-total">
+                <div class="total-label">Grand Total:</div>
+                <div class="total-value" th:text="${currencySymbol} + ' ' + ${#numbers.formatDecimal(invoice.totalAmount, 1, 2)}">Grand Total</div>
+            </div>
+        </div>
+        
+        <!-- Amount in Words -->
+        <div class="amount-words">
+            <strong>Amount in Words:</strong> <span th:text="${invoice.amountInWords}">Amount in Words</span>
+        </div>
+        
+        <!-- QR Code -->
+        <div class="qr-code" th:if="${hasQrCode}">
+            <div style="font-weight: bold; margin-bottom: 10px;">Scan for Invoice Verification</div>
+            <img th:src="'data:image/png;base64,' + ${qrCode}" alt="QR Code" />
+        </div>
+        
+        <!-- Terms and Conditions -->
+        <div class="terms">
+            <div style="font-weight: bold; margin-bottom: 5px;">Terms and Conditions:</div>
+            <div>1. Payment is due within 30 days of invoice date.</div>
+            <div>2. Interest @ 18% per annum will be charged on overdue amounts.</div>
+            <div>3. All disputes are subject to local jurisdiction only.</div>
+            <div>4. This is a computer generated invoice and does not require physical signature.</div>
+        </div>
+        
+        <!-- Signature Section -->
+        <div class="signature-section">
+            <div class="signature-left">
+                <div>Customer Signature</div>
+                <div style="margin-top: 40px; border-top: 1px solid #333; width: 200px;"></div>
+            </div>
+            <div class="signature-right">
+                <div>For <span th:text="${invoice.sellerName}">Seller Name</span></div>
+                <div style="margin-top: 40px; border-top: 1px solid #333; width: 200px; margin-left: auto;"></div>
+                <div style="margin-top: 5px;">Authorized Signatory</div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <div style="text-align: center; font-size: 10px; color: #666;">
+                This is a system generated invoice. For any queries, please contact us at 
+                <span th:text="${invoice.sellerEmail}">seller@example.com</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

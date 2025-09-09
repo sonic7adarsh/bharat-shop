@@ -62,7 +62,7 @@ class OrderStateMachineServiceTest {
             when(orderRepository.save(any(Orders.class))).thenReturn(testOrder);
 
             // When
-            Orders result = orderStateMachineService.transitionToConfirmed(ORDER_ID, TENANT_ID, TEST_REASON);
+            Orders result = orderStateMachineService.confirmOrder(ORDER_ID, TENANT_ID);
 
             // Then
             assertThat(result.getStatus()).isEqualTo(Orders.OrderStatus.CONFIRMED);
@@ -81,7 +81,7 @@ class OrderStateMachineServiceTest {
             when(orderRepository.save(any(Orders.class))).thenReturn(testOrder);
 
             // When
-            Orders result = orderStateMachineService.transitionToPacked(ORDER_ID, TENANT_ID, TEST_REASON);
+            Orders result = orderStateMachineService.packOrder(ORDER_ID, TENANT_ID);
 
             // Then
             assertThat(result.getStatus()).isEqualTo(Orders.OrderStatus.PACKED);
@@ -99,7 +99,7 @@ class OrderStateMachineServiceTest {
             when(orderRepository.save(any(Orders.class))).thenReturn(testOrder);
 
             // When
-            Orders result = orderStateMachineService.transitionToShipped(ORDER_ID, TENANT_ID, TEST_REASON);
+            Orders result = orderStateMachineService.shipOrder(ORDER_ID, TENANT_ID, "TRACK123", "DHL");
 
             // Then
             assertThat(result.getStatus()).isEqualTo(Orders.OrderStatus.SHIPPED);
@@ -117,7 +117,7 @@ class OrderStateMachineServiceTest {
             when(orderRepository.save(any(Orders.class))).thenReturn(testOrder);
 
             // When
-            Orders result = orderStateMachineService.transitionToDelivered(ORDER_ID, TENANT_ID, TEST_REASON);
+            Orders result = orderStateMachineService.deliverOrder(ORDER_ID, TENANT_ID);
 
             // Then
             assertThat(result.getStatus()).isEqualTo(Orders.OrderStatus.DELIVERED);
@@ -140,7 +140,7 @@ class OrderStateMachineServiceTest {
             when(orderRepository.save(any(Orders.class))).thenReturn(testOrder);
 
             // When
-            Orders result = orderStateMachineService.transitionToCancelled(ORDER_ID, TENANT_ID, TEST_REASON);
+            Orders result = orderStateMachineService.cancelOrder(ORDER_ID, TENANT_ID, TEST_REASON);
 
             // Then
             assertThat(result.getStatus()).isEqualTo(Orders.OrderStatus.CANCELLED);
@@ -159,7 +159,7 @@ class OrderStateMachineServiceTest {
             when(orderRepository.save(any(Orders.class))).thenReturn(testOrder);
 
             // When
-            Orders result = orderStateMachineService.transitionToCancelled(ORDER_ID, TENANT_ID, TEST_REASON);
+            Orders result = orderStateMachineService.cancelOrder(ORDER_ID, TENANT_ID, TEST_REASON);
 
             // Then
             assertThat(result.getStatus()).isEqualTo(Orders.OrderStatus.CANCELLED);
@@ -176,7 +176,7 @@ class OrderStateMachineServiceTest {
 
             // When & Then
             assertThatThrownBy(() -> 
-                    orderStateMachineService.transitionToCancelled(ORDER_ID, TENANT_ID, TEST_REASON))
+                    orderStateMachineService.cancelOrder(ORDER_ID, TENANT_ID, TEST_REASON))
                     .isInstanceOf(BusinessException.class)
                     .hasMessageContaining("Invalid state transition");
 
@@ -202,7 +202,7 @@ class OrderStateMachineServiceTest {
 
                 // When & Then
                 assertThatThrownBy(() -> 
-                        orderStateMachineService.transitionToCancelled(ORDER_ID, TENANT_ID, TEST_REASON))
+                        orderStateMachineService.cancelOrder(ORDER_ID, TENANT_ID, TEST_REASON))
                         .isInstanceOf(BusinessException.class)
                         .hasMessageContaining("Invalid state transition");
             }
@@ -223,7 +223,7 @@ class OrderStateMachineServiceTest {
             when(orderRepository.save(any(Orders.class))).thenReturn(testOrder);
 
             // When
-            Orders result = orderStateMachineService.transitionToReturnRequested(ORDER_ID, TENANT_ID, TEST_REASON);
+            Orders result = orderStateMachineService.requestReturn(ORDER_ID, TENANT_ID, TEST_REASON);
 
             // Then
             assertThat(result.getStatus()).isEqualTo(Orders.OrderStatus.RETURN_REQUESTED);
@@ -241,7 +241,7 @@ class OrderStateMachineServiceTest {
 
             // When & Then
             assertThatThrownBy(() -> 
-                    orderStateMachineService.transitionToReturnRequested(ORDER_ID, TENANT_ID, TEST_REASON))
+                    orderStateMachineService.requestReturn(ORDER_ID, TENANT_ID, TEST_REASON))
                     .isInstanceOf(BusinessException.class)
                     .hasMessageContaining("Invalid state transition");
         }
@@ -256,7 +256,7 @@ class OrderStateMachineServiceTest {
             when(orderRepository.save(any(Orders.class))).thenReturn(testOrder);
 
             // When
-            Orders result = orderStateMachineService.transitionToReturned(ORDER_ID, TENANT_ID, TEST_REASON);
+            Orders result = orderStateMachineService.markAsReturned(ORDER_ID, TENANT_ID);
 
             // Then
             assertThat(result.getStatus()).isEqualTo(Orders.OrderStatus.RETURNED);
@@ -274,7 +274,7 @@ class OrderStateMachineServiceTest {
             when(orderRepository.save(any(Orders.class))).thenReturn(testOrder);
 
             // When
-            Orders result = orderStateMachineService.transitionToRefunded(ORDER_ID, TENANT_ID, TEST_REASON);
+            Orders result = orderStateMachineService.refundOrder(ORDER_ID, TENANT_ID);
 
             // Then
             assertThat(result.getStatus()).isEqualTo(Orders.OrderStatus.REFUNDED);
@@ -297,7 +297,7 @@ class OrderStateMachineServiceTest {
 
             // When & Then
             assertThatThrownBy(() -> 
-                    orderStateMachineService.transitionToPacked(ORDER_ID, TENANT_ID, TEST_REASON))
+                    orderStateMachineService.packOrder(ORDER_ID, TENANT_ID))
                     .isInstanceOf(BusinessException.class)
                     .hasMessageContaining("Invalid state transition");
         }
@@ -312,7 +312,7 @@ class OrderStateMachineServiceTest {
 
             // When & Then
             assertThatThrownBy(() -> 
-                    orderStateMachineService.transitionToConfirmed(ORDER_ID, TENANT_ID, TEST_REASON))
+                    orderStateMachineService.confirmOrder(ORDER_ID, TENANT_ID))
                     .isInstanceOf(BusinessException.class)
                     .hasMessageContaining("Invalid state transition");
         }
@@ -327,15 +327,15 @@ class OrderStateMachineServiceTest {
 
             // When & Then - try various transitions from terminal state
             assertThatThrownBy(() -> 
-                    orderStateMachineService.transitionToConfirmed(ORDER_ID, TENANT_ID, TEST_REASON))
+                    orderStateMachineService.confirmOrder(ORDER_ID, TENANT_ID))
                     .isInstanceOf(BusinessException.class);
 
             assertThatThrownBy(() -> 
-                    orderStateMachineService.transitionToPacked(ORDER_ID, TENANT_ID, TEST_REASON))
+                    orderStateMachineService.packOrder(ORDER_ID, TENANT_ID))
                     .isInstanceOf(BusinessException.class);
 
             assertThatThrownBy(() -> 
-                    orderStateMachineService.transitionToShipped(ORDER_ID, TENANT_ID, TEST_REASON))
+                    orderStateMachineService.shipOrder(ORDER_ID, TENANT_ID, "TRACK123", "DHL"))
                     .isInstanceOf(BusinessException.class);
         }
     }
@@ -353,7 +353,7 @@ class OrderStateMachineServiceTest {
 
             // When & Then
             assertThatThrownBy(() -> 
-                    orderStateMachineService.transitionToConfirmed(ORDER_ID, TENANT_ID, TEST_REASON))
+                    orderStateMachineService.confirmOrder(ORDER_ID, TENANT_ID))
                     .isInstanceOf(BusinessException.class)
                     .hasMessageContaining("Order not found");
         }
@@ -367,7 +367,7 @@ class OrderStateMachineServiceTest {
 
             // When & Then
             assertThatThrownBy(() -> 
-                    orderStateMachineService.transitionToConfirmed(ORDER_ID, TENANT_ID, TEST_REASON))
+                    orderStateMachineService.confirmOrder(ORDER_ID, TENANT_ID))
                     .isInstanceOf(BusinessException.class);
         }
 
@@ -381,7 +381,7 @@ class OrderStateMachineServiceTest {
             when(orderRepository.save(any(Orders.class))).thenReturn(testOrder);
 
             // When
-            Orders result = orderStateMachineService.transitionToConfirmed(ORDER_ID, TENANT_ID, null);
+            Orders result = orderStateMachineService.confirmOrder(ORDER_ID, TENANT_ID);
 
             // Then
             assertThat(result.getStatus()).isEqualTo(Orders.OrderStatus.CONFIRMED);
@@ -403,7 +403,7 @@ class OrderStateMachineServiceTest {
             when(orderRepository.save(any(Orders.class))).thenReturn(testOrder);
 
             // When
-            orderStateMachineService.transitionToConfirmed(ORDER_ID, TENANT_ID, TEST_REASON);
+            orderStateMachineService.confirmOrder(ORDER_ID, TENANT_ID);
 
             // Then
             verify(eventPublisher).publishEvent(any());
@@ -419,7 +419,7 @@ class OrderStateMachineServiceTest {
 
             // When & Then
             assertThatThrownBy(() -> 
-                    orderStateMachineService.transitionToConfirmed(ORDER_ID, TENANT_ID, TEST_REASON))
+                    orderStateMachineService.confirmOrder(ORDER_ID, TENANT_ID))
                     .isInstanceOf(BusinessException.class);
 
             verify(eventPublisher, never()).publishEvent(any());
