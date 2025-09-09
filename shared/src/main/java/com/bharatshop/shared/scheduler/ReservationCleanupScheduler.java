@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
  * Scheduled job to automatically clean up expired reservations
  * Runs every 5 minutes to release expired reservations and prevent stock leakage
  */
-// @Component - Temporarily disabled to test database startup issues
+@Component
 @RequiredArgsConstructor
 @Slf4j
 public class ReservationCleanupScheduler {
