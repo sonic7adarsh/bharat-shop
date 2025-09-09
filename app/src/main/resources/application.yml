@@ -10,7 +10,7 @@ spring:
   # Redis Configuration
   data:
     redis:
-      host: localhost
+      # host: localhost  # Commented out to disable Redis health indicator
       port: 6379
       timeout: 2000ms
       lettuce:
@@ -31,13 +31,13 @@ spring:
   # JPA Configuration
   jpa:
     hibernate:
-      ddl-auto: create-drop
-    show-sql: true
+      ddl-auto: update
+    show-sql: false
     properties:
       hibernate:
         dialect: org.hibernate.dialect.H2Dialect
-        format_sql: true
-        use_sql_comments: true
+        format_sql: false
+        use_sql_comments: false
         # Enable Hibernate filters for multi-tenancy
         enable_lazy_load_no_trans: true
     open-in-view: false
@@ -75,7 +75,7 @@ spring:
       defaults:
         enabled: true
       redis:
-        enabled: true  # Enable Redis health indicator now that Redis is running
+        enabled: false  # Disable Redis health indicator since Redis is not running
 
 # Multi-tenancy configuration
 app:
@@ -152,7 +152,9 @@ management:
     db:
       enabled: true
     redis:
-      enabled: true
+      enabled: false
+    mail:
+      enabled: false
   metrics:
     export:
       prometheus:
@@ -225,8 +227,8 @@ spring:
   
   jpa:
     hibernate:
-      ddl-auto: create-drop
-    show-sql: true
+      ddl-auto: update
+    show-sql: false
 
 # Server configuration
 server:

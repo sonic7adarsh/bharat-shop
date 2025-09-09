@@ -30,7 +30,7 @@ public interface PaymentGatewayRepository extends JpaRepository<PaymentGateway, 
     default Optional<PaymentGateway> findActiveByTenantIdAndGatewayType(
         Long tenantId, 
         PaymentGateway.GatewayType gatewayType
-    ) {
+ ) {
         return findByTenantIdAndGatewayTypeAndIsActiveTrue(tenantId, gatewayType);
     }
 }
