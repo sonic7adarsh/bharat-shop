@@ -144,6 +144,28 @@ public class Orders {
     @Column(length = 500)
     private String cancellationReason;
     
+    // SLA and Delivery Information
+    @Column(name = "sla_days")
+    private Integer slaDays; // Expected delivery SLA in days
+    
+    @Column(name = "estimated_delivery_date")
+    private LocalDateTime estimatedDeliveryDate; // Calculated delivery date based on SLA
+    
+    @Column(name = "promised_delivery_date")
+    private LocalDateTime promisedDeliveryDate; // Date promised to customer
+    
+    @Column(name = "actual_delivery_date")
+    private LocalDateTime actualDeliveryDate; // Actual delivery date (same as deliveredAt but for clarity)
+    
+    @Column(name = "is_express_delivery")
+    private Boolean isExpressDelivery = false; // Flag for express/priority delivery
+    
+    @Column(name = "delivery_time_slot", length = 50)
+    private String deliveryTimeSlot; // e.g., "9AM-12PM", "2PM-6PM"
+    
+    @Column(name = "service_zone_id")
+    private Long serviceZoneId; // Reference to ServiceZone used for this order
+    
     // Enums
     public enum OrderStatus {
         // Main flow states
@@ -290,5 +312,53 @@ public class Orders {
     public String getShortShippingAddress() {
         if (shippingCity == null) return null;
         return shippingCity + ", " + shippingState + " - " + shippingPincode;
+    }
+    
+    // SLA and Delivery Helper Methods
+    public void calculateEstimatedDeliveryDate() {
+        if (slaDays != null && confirmedAt != null) {
+            estimatedDeliveryDate = confirmedAt.plusDays(slaDays);
+        }
+    }
+    
+    public void setPromisedDeliveryDate(LocalDateTime promisedDate) {
+        this.promisedDeliveryDate = promisedDate;
+        // If no estimated date is set, use promised date as estimate
+        if (estimatedDeliveryDate == null) {
+            estimatedDeliveryDate = promisedDate;
+        }
+    }
+    
+    public boolean isDeliveryDelayed() {
+        if (estimatedDeliveryDate == null || isDelivered()) {
+            return false;
+        }
+        return LocalDateTime.now().isAfter(estimatedDeliveryDate);
+    }
+    
+    public long getDaysDelayed() {
+        if (!isDeliveryDelayed()) {
+            return 0;
+        }
+        return java.time.Duration.between(estimatedDeliveryDate, LocalDateTime.now()).toDays();
+    }
+    
+    public boolean isWithinSLA() {
+        if (actualDeliveryDate == null || estimatedDeliveryDate == null) {
+            return true; // Cannot determine if not delivered or no SLA set
+        }
+        return !actualDeliveryDate.isAfter(estimatedDeliveryDate);
+    }
+    
+    public void markAsDeliveredWithSLA() {
+        markAsDelivered();
+        actualDeliveryDate = deliveredAt;
+    }
+    
+    public long getSLAPerformanceDays() {
+        if (actualDeliveryDate == null || estimatedDeliveryDate == null) {
+            return 0;
+        }
+        return java.time.Duration.between(estimatedDeliveryDate, actualDeliveryDate).toDays();
     }
 }
