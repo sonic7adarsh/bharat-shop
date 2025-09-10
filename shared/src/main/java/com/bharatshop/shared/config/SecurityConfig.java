@@ -64,6 +64,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/platform/auth/register").permitAll()
                         .requestMatchers("/api/platform/auth/login").permitAll()
                         .requestMatchers("/api/platform/auth/refresh").permitAll()
+                        .requestMatchers("/api/platform/auth/phone/**").permitAll()
                         .requestMatchers("/api/platform/health").permitAll()
                         .requestMatchers("/api/platform/swagger-ui/**").permitAll()
                         .requestMatchers("/api/platform/v3/api-docs/**").permitAll()
@@ -91,6 +92,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/storefront/auth/register").permitAll()
                         .requestMatchers("/api/storefront/auth/login/**").permitAll()
+                        .requestMatchers("/api/storefront/auth/phone/**").permitAll()
                         .requestMatchers("/api/storefront/auth/session/check").permitAll()
                         .requestMatchers("/api/storefront/products/**").permitAll()
                         .requestMatchers("/api/storefront/categories/**").permitAll()

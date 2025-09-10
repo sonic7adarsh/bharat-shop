@@ -28,10 +28,12 @@ com\bharatshop\storefront\dto\CheckoutRequest.class
 com\bharatshop\storefront\dto\AddressResponse$AddressResponseBuilder.class
 com\bharatshop\storefront\dto\CartResponse.class
 com\bharatshop\storefront\controller\AddressController.class
+com\bharatshop\storefront\controller\PhoneAuthController$SendOtpRequest.class
 com\bharatshop\storefront\service\StorefrontVendorService.class
 com\bharatshop\storefront\dto\PageResponseDto.class
 com\bharatshop\storefront\dto\auth\EmailLoginRequest$EmailLoginRequestBuilder.class
 com\bharatshop\storefront\dto\ShippingQuoteResponse$ExpressDeliveryOption.class
+com\bharatshop\storefront\controller\PhoneAuthController.class
 com\bharatshop\storefront\repository\StorefrontUserRepository.class
 com\bharatshop\storefront\repository\StorefrontProductRepository.class
 com\bharatshop\storefront\dto\auth\PhoneLoginRequest.class
@@ -43,6 +45,7 @@ com\bharatshop\storefront\service\AddressService.class
 com\bharatshop\storefront\service\OrderService$OrderStatistics$OrderStatisticsBuilder.class
 com\bharatshop\storefront\controller\StorefrontVendorController.class
 com\bharatshop\storefront\dto\ShippingQuoteRequest.class
+com\bharatshop\storefront\controller\PhoneAuthController$VerifyOtpRequest.class
 com\bharatshop\storefront\controller\StorefrontOrderController.class
 com\bharatshop\storefront\dto\AddToCartRequest.class
 com\bharatshop\storefront\dto\AddressResponse.class
