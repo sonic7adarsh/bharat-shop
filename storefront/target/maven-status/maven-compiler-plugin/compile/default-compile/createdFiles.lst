@@ -1,8 +1,10 @@
 com\bharatshop\storefront\dto\CartItemResponse.class
+com\bharatshop\storefront\dto\CouponResponse$CouponResponseBuilder.class
 com\bharatshop\storefront\dto\CartResponse$CartResponseBuilder.class
 com\bharatshop\storefront\repository\StorefrontPageRepository.class
 com\bharatshop\storefront\dto\AddressRequest$AddressRequestBuilder.class
 com\bharatshop\storefront\shared\ApiResponse.class
+com\bharatshop\storefront\dto\CouponResponse.class
 com\bharatshop\storefront\controller\CustomerAnalyticsController.class
 com\bharatshop\storefront\dto\auth\OtpVerificationRequest.class
 com\bharatshop\storefront\service\StorefrontProductService.class
@@ -59,6 +61,7 @@ com\bharatshop\storefront\dto\PaymentResponse.class
 com\bharatshop\storefront\service\ShippingService.class
 com\bharatshop\storefront\shared\ApiResponse$ApiResponseBuilder.class
 com\bharatshop\storefront\controller\StorefrontAuthController.class
+com\bharatshop\storefront\dto\ApplyCouponRequest.class
 com\bharatshop\storefront\controller\StorefrontCartController.class
 com\bharatshop\storefront\controller\StorefrontPaymentController.class
 com\bharatshop\storefront\dto\PageResponseDto$PageResponseDtoBuilder.class

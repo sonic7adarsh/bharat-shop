@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 // import java.util.UUID; // Replaced with Long
@@ -37,6 +38,14 @@ public class Cart {
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<CartItem> items;
     
+    // Coupon fields
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "applied_coupon_id")
+    private Coupon appliedCoupon;
+    
+    @Column(name = "discount_amount", precision = 10, scale = 2)
+    private BigDecimal discountAmount;
+    
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -58,5 +67,24 @@ public class Cart {
         if (items != null) {
             items.clear();
         }
+    }
+    
+    // Coupon helper methods
+    public boolean hasCouponApplied() {
+        return appliedCoupon != null;
+    }
+    
+    public void applyCoupon(Coupon coupon, BigDecimal discountAmount) {
+        this.appliedCoupon = coupon;
+        this.discountAmount = discountAmount;
+    }
+    
+    public void removeCoupon() {
+        this.appliedCoupon = null;
+        this.discountAmount = null;
+    }
+    
+    public BigDecimal getDiscountAmount() {
+        return discountAmount != null ? discountAmount : BigDecimal.ZERO;
     }
 }

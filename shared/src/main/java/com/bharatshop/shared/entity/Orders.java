@@ -51,6 +51,14 @@ public class Orders {
     @Column(precision = 10, scale = 2)
     private BigDecimal discountAmount;
     
+    // Coupon information
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "applied_coupon_id")
+    private Coupon appliedCoupon;
+    
+    @Column(name = "coupon_code", length = 50)
+    private String couponCode;
+    
     @Column(precision = 10, scale = 2)
     private BigDecimal taxAmount;
     

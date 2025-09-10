@@ -4,8 +4,11 @@ import com.bharatshop.storefront.shared.ApiResponse;
 import com.bharatshop.storefront.dto.AddToCartRequest;
 import com.bharatshop.storefront.dto.CartResponse;
 import com.bharatshop.storefront.dto.UpdateCartRequest;
+import com.bharatshop.storefront.dto.ApplyCouponRequest;
+import com.bharatshop.storefront.dto.CouponResponse;
 import com.bharatshop.shared.entity.Cart;
 import com.bharatshop.storefront.service.CartService;
+import com.bharatshop.shared.service.CouponService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +28,7 @@ public class StorefrontCartController {
     private static final Logger log = LoggerFactory.getLogger(StorefrontCartController.class);
     
     private final CartService cartService;
+    private final CouponService couponService;
     
     /**
      * Add item to cart
@@ -234,7 +238,68 @@ public class StorefrontCartController {
             );
         }
     }
-    
+
+    /**
+     * Apply coupon to cart
+     * POST /store/cart/apply-coupon
+     */
+    @PostMapping("/apply-coupon")
+    public ResponseEntity<ApiResponse<CouponResponse>> applyCoupon(
+            @Valid @RequestBody ApplyCouponRequest request,
+            HttpServletRequest httpRequest) {
+        
+        try {
+            Long customerId = extractCustomerId(httpRequest);
+            Long tenantId = extractTenantId(httpRequest);
+            
+            CouponResponse response = cartService.applyCouponToCart(
+                    customerId, 
+                    tenantId, 
+                    request.getCouponCode()
+            );
+            
+            log.info("Coupon applied successfully: {} for customer: {}", 
+                    request.getCouponCode(), customerId);
+            
+            return ResponseEntity.ok(
+                    ApiResponse.success(response, "Coupon applied successfully")
+            );
+            
+        } catch (Exception e) {
+            log.error("Error applying coupon: {}", e.getMessage(), e);
+            return ResponseEntity.badRequest().body(
+                    ApiResponse.error(e.getMessage())
+            );
+        }
+    }
+
+    /**
+     * Remove coupon from cart
+     * DELETE /store/cart/remove-coupon
+     */
+    @DeleteMapping("/remove-coupon")
+    public ResponseEntity<ApiResponse<String>> removeCoupon(HttpServletRequest httpRequest) {
+        
+        try {
+            Long customerId = extractCustomerId(httpRequest);
+            Long tenantId = extractTenantId(httpRequest);
+            
+            cartService.removeCouponFromCart(customerId, tenantId);
+            
+            log.info("Coupon removed successfully for customer: {}", customerId);
+            
+            return ResponseEntity.ok(
+                    ApiResponse.success("Coupon removed successfully", "Coupon removed successfully")
+            );
+            
+        } catch (Exception e) {
+            log.error("Error removing coupon: {}", e.getMessage(), e);
+            return ResponseEntity.badRequest().body(
+                    ApiResponse.error(e.getMessage())
+            );
+        }
+    }
+
     // Helper methods to extract customer and tenant information
     // These would typically extract from JWT token or session
     

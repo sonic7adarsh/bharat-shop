@@ -78,9 +78,14 @@ public class OrderService {
         
         // Calculate order totals
         BigDecimal subtotal = calculateSubtotal(cart);
-        BigDecimal taxAmount = calculateTax(subtotal);
-        BigDecimal shippingAmount = calculateShipping(subtotal);
-        BigDecimal totalAmount = subtotal.add(taxAmount).add(shippingAmount);
+        
+        // Apply cart discount if coupon is applied
+        BigDecimal discountAmount = cart.hasCouponApplied() ? cart.getDiscountAmount() : BigDecimal.ZERO;
+        BigDecimal discountedSubtotal = subtotal.subtract(discountAmount);
+        
+        BigDecimal taxAmount = calculateTax(discountedSubtotal);
+        BigDecimal shippingAmount = calculateShipping(discountedSubtotal);
+        BigDecimal totalAmount = discountedSubtotal.add(taxAmount).add(shippingAmount);
         
         // Get and capture shipping address details
         CustomerAddress shippingAddress = null;
@@ -95,7 +100,9 @@ public class OrderService {
                 .customerId(customerId)
                 .status(Orders.OrderStatus.PENDING_PAYMENT)
                 .totalAmount(totalAmount)
-                .discountAmount(BigDecimal.ZERO)
+                .discountAmount(discountAmount)
+                .appliedCoupon(cart.getAppliedCoupon())
+                .couponCode(cart.hasCouponApplied() ? cart.getAppliedCoupon().getCode() : null)
                 .taxAmount(taxAmount)
                 .shippingAmount(shippingAmount)
                 .paymentStatus(Orders.PaymentStatus.PENDING)

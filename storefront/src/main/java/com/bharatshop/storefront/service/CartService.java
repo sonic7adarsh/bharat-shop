@@ -3,9 +3,12 @@ package com.bharatshop.storefront.service;
 import com.bharatshop.storefront.repository.StorefrontProductRepository;
 import com.bharatshop.shared.entity.Cart;
 import com.bharatshop.shared.entity.CartItem;
+import com.bharatshop.shared.entity.Coupon;
 import com.bharatshop.storefront.repository.StorefrontCartItemRepository;
 import com.bharatshop.storefront.repository.StorefrontCartRepository;
 import com.bharatshop.shared.repository.ProductRepository;
+import com.bharatshop.shared.service.CouponService;
+import com.bharatshop.storefront.dto.CouponResponse;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +21,10 @@ import com.bharatshop.shared.entity.Product.ProductStatus;
 import com.bharatshop.shared.entity.Product;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -35,6 +41,7 @@ public class CartService {
     @Qualifier("storefrontProductRepository")
     private final StorefrontProductRepository storefrontProductRepository;
     private final ProductRepository sharedProductRepository;
+    private final CouponService couponService;
     
     /**
      * Get or create cart for customer
@@ -248,5 +255,97 @@ public class CartService {
     private Cart getOrCreateCartForUpdate(Long customerId, Long tenantId) {
         return cartRepository.findByCustomerIdAndTenantId(customerId, tenantId)
                 .orElseGet(() -> createNewCart(customerId, tenantId));
+    }
+    
+    /**
+     * Apply coupon to cart
+     */
+    @CacheEvict(value = "customerCart", key = "#customerId + '_' + #tenantId")
+    public CouponResponse applyCouponToCart(Long customerId, Long tenantId, String couponCode) {
+        log.debug("Applying coupon {} to cart for customer: {}", couponCode, customerId);
+        
+        Cart cart = getOrCreateCart(customerId, tenantId);
+        
+        if (cart.isEmpty()) {
+            throw new RuntimeException("Cannot apply coupon to empty cart");
+        }
+        
+        // Calculate cart total
+        BigDecimal cartTotal = calculateCartTotal(cart);
+        
+        // Get product and category IDs from cart items
+        List<Long> productIds = cart.getItems().stream()
+                .map(item -> item.getProduct().getId())
+                .collect(Collectors.toList());
+        
+        List<Long> categoryIds = cart.getItems().stream()
+                .flatMap(item -> item.getProduct().getCategories() != null ? 
+                    item.getProduct().getCategories().stream() : java.util.stream.Stream.empty())
+                .distinct()
+                .collect(Collectors.toList());
+        
+        // Validate and apply coupon
+        CouponService.CouponValidationResult validationResult = couponService.validateAndApplyCoupon(
+                couponCode, tenantId, customerId, cartTotal, new HashSet<>(categoryIds), new HashSet<>(productIds), false);
+        
+        if (!validationResult.isValid()) {
+            throw new RuntimeException(validationResult.getErrorMessage());
+        }
+        
+        Coupon coupon = validationResult.getCoupon();
+        BigDecimal discountAmount = validationResult.getDiscountAmount();
+        
+        // Apply coupon to cart
+        cart.applyCoupon(coupon, discountAmount);
+        cartRepository.save(cart);
+        
+        // Apply coupon usage atomically
+        boolean usageApplied = couponService.applyCouponUsage(coupon.getId(), tenantId);
+        if (!usageApplied) {
+            // Rollback cart changes
+            cart.removeCoupon();
+            cartRepository.save(cart);
+            throw new RuntimeException("Coupon usage limit reached");
+        }
+        
+        log.info("Coupon {} applied successfully to cart for customer: {}, discount: {}", 
+                couponCode, customerId, discountAmount);
+        
+        return CouponResponse.fromEntity(coupon, discountAmount);
+    }
+    
+    /**
+     * Remove coupon from cart
+     */
+    @CacheEvict(value = "customerCart", key = "#customerId + '_' + #tenantId")
+    public void removeCouponFromCart(Long customerId, Long tenantId) {
+        log.debug("Removing coupon from cart for customer: {}", customerId);
+        
+        Cart cart = getOrCreateCart(customerId, tenantId);
+        
+        if (!cart.hasCouponApplied()) {
+            throw new RuntimeException("No coupon applied to cart");
+        }
+        
+        Coupon appliedCoupon = cart.getAppliedCoupon();
+        
+        // Remove coupon from cart
+        cart.removeCoupon();
+        cartRepository.save(cart);
+        
+        // Rollback coupon usage
+        couponService.rollbackCouponUsage(appliedCoupon.getId(), tenantId);
+        
+        log.info("Coupon {} removed successfully from cart for customer: {}", 
+                appliedCoupon.getCode(), customerId);
+    }
+    
+    /**
+     * Calculate cart total including items
+     */
+    private BigDecimal calculateCartTotal(Cart cart) {
+        return cart.getItems().stream()
+                .map(CartItem::getTotalPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 }
