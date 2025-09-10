@@ -41,38 +41,34 @@ class PhoneAuthControllerTest {
     @MockBean
     private CaptchaService captchaService;
 
-    private PhoneAuthController.OtpSendRequestDto sendRequest;
-    private PhoneAuthController.OtpVerifyRequestDto verifyRequest;
+    private PhoneAuthController.SendOtpRequest sendRequest;
+    private PhoneAuthController.VerifyOtpRequest verifyRequest;
     private OtpService.OtpSendResult successSendResult;
     private OtpService.OtpSendResult failureSendResult;
-    private OtpService.OtpVerifyResult successVerifyResult;
-    private OtpService.OtpVerifyResult failureVerifyResult;
+    private OtpService.OtpVerificationResult successVerifyResult;
+    private OtpService.OtpVerificationResult failureVerifyResult;
 
     @BeforeEach
     void setUp() {
         // Setup test data
-        sendRequest = new PhoneAuthController.OtpSendRequestDto();
+        sendRequest = new PhoneAuthController.SendOtpRequest();
         sendRequest.setPhoneNumber("+919876543210");
-        sendRequest.setType("LOGIN");
         sendRequest.setDeviceId("device123");
-        sendRequest.setSessionId("session123");
         sendRequest.setLocale("en");
         sendRequest.setTimezone("Asia/Kolkata");
         sendRequest.setAppVersion("1.0.0");
 
-        verifyRequest = new PhoneAuthController.OtpVerifyRequestDto();
+        verifyRequest = new PhoneAuthController.VerifyOtpRequest();
         verifyRequest.setPhoneNumber("+919876543210");
         verifyRequest.setOtpCode("123456");
-        verifyRequest.setType("LOGIN");
         verifyRequest.setDeviceId("device123");
         verifyRequest.setSessionId("session123");
-        verifyRequest.setTimestamp(System.currentTimeMillis());
 
         // Setup mock results
-        successSendResult = new OtpService.OtpSendResult(true, "OTP sent successfully", "msg123", null, null);
-        failureSendResult = new OtpService.OtpSendResult(false, "Rate limit exceeded", null, "RATE_LIMIT_EXCEEDED", null);
-        successVerifyResult = new OtpService.OtpVerifyResult(true, "OTP verified successfully", "+919876543210", null, null);
-        failureVerifyResult = new OtpService.OtpVerifyResult(false, "Invalid OTP", null, "INVALID_OTP", null);
+        successSendResult = OtpService.OtpSendResult.success("OTP sent successfully", 1L);
+        failureSendResult = OtpService.OtpSendResult.failure("Rate limit exceeded");
+        successVerifyResult = OtpService.OtpVerificationResult.success("OTP verified successfully", 1L);
+        failureVerifyResult = OtpService.OtpVerificationResult.failure("Invalid OTP");
     }
 
     @Test
