@@ -109,7 +109,6 @@ class JwksControllerTest {
             .rollingUpgradeWindowHours(24)
             .keyRotationEnabled(true)
             .lastRotationTime(LocalDateTime.now().minusHours(6))
-            .nextScheduledRotation(LocalDateTime.now().plusHours(18))
             .build();
         
         when(jwtKeyRotationService.getKeyRotationStats()).thenReturn(stats);
@@ -125,8 +124,7 @@ class JwksControllerTest {
             .andExpect(jsonPath("$.expiredKeys", is(0)))
             .andExpect(jsonPath("$.rollingUpgradeWindowHours", is(24)))
             .andExpect(jsonPath("$.keyRotationEnabled", is(true)))
-            .andExpect(jsonPath("$.lastRotationTime", notNullValue()))
-            .andExpect(jsonPath("$.nextScheduledRotation", notNullValue()));
+            .andExpect(jsonPath("$.lastRotationTime", notNullValue()));
     }
     
     @Test
@@ -140,7 +138,6 @@ class JwksControllerTest {
             .rollingUpgradeWindowHours(24)
             .keyRotationEnabled(true)
             .lastRotationTime(LocalDateTime.now().minusHours(48))
-            .nextScheduledRotation(null)
             .build();
         
         when(jwtKeyRotationService.getKeyRotationStats()).thenReturn(stats);

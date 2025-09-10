@@ -28,7 +28,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = com.bharatshop.shared.TestConfiguration.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebMvc
 @ActiveProfiles("test")
 @Transactional
@@ -68,7 +68,7 @@ class JwtKeyRotationE2ETest {
     @DisplayName("Should complete full key rotation workflow")
     void shouldCompleteFullKeyRotationWorkflow() throws Exception {
         // Step 1: Generate initial token with first key
-        String initialToken = jwtService.generateToken(testUser);
+        String initialToken = jwtService.generateAccessToken(testUser);
         String initialKid = jwtService.extractKeyId(initialToken);
         
         // Step 2: Verify JWKS endpoint contains the initial key
@@ -87,7 +87,7 @@ class JwtKeyRotationE2ETest {
         String newKid = newKey.getKid();
         
         // Step 5: Generate token with new key
-        String newToken = jwtService.generateToken(testUser);
+        String newToken = jwtService.generateAccessToken(testUser);
         String newTokenKid = jwtService.extractKeyId(newToken);
         
         // Verify new token uses new key
@@ -138,7 +138,7 @@ class JwtKeyRotationE2ETest {
     @DisplayName("Should handle emergency key rotation")
     void shouldHandleEmergencyKeyRotation() throws Exception {
         // Step 1: Generate initial token
-        String initialToken = jwtService.generateToken(testUser);
+        String initialToken = jwtService.generateAccessToken(testUser);
         String initialKid = jwtService.extractKeyId(initialToken);
         
         // Step 2: Verify initial token works
@@ -151,7 +151,7 @@ class JwtKeyRotationE2ETest {
         String emergencyKid = emergencyKey.getKid();
         
         // Step 4: Generate new token with emergency key
-        String emergencyToken = jwtService.generateToken(testUser);
+        String emergencyToken = jwtService.generateAccessToken(testUser);
         String emergencyTokenKid = jwtService.extractKeyId(emergencyToken);
         
         // Verify emergency token uses emergency key
@@ -214,8 +214,8 @@ class JwtKeyRotationE2ETest {
     @DisplayName("Should handle concurrent token validation during key rotation")
     void shouldHandleConcurrentTokenValidationDuringKeyRotation() throws Exception {
         // Step 1: Generate tokens with current key
-        String token1 = jwtService.generateToken(testUser);
-        String token2 = jwtService.generateToken(testUser);
+        String token1 = jwtService.generateAccessToken(testUser);
+        String token2 = jwtService.generateAccessToken(testUser);
         
         // Step 2: Start key rotation in background
         new Thread(() -> {
@@ -239,7 +239,7 @@ class JwtKeyRotationE2ETest {
         // Step 4: Wait for rotation to complete and verify new tokens work
         Thread.sleep(500);
         
-        String newToken = jwtService.generateToken(testUser);
+        String newToken = jwtService.generateAccessToken(testUser);
         mockMvc.perform(get("/api/protected-endpoint")
                 .header("Authorization", "Bearer " + newToken))
             .andExpect(status().isOk());
@@ -299,6 +299,6 @@ class JwtKeyRotationE2ETest {
     private String createTokenWithFakeKid(String fakeKid, UserDetails user) {
         // This would need to be implemented based on your JWT library
         // For now, return a token generated with current key but we'll modify the kid in header
-        return jwtService.generateToken(user);
+        return jwtService.generateAccessToken(user);
     }
 }

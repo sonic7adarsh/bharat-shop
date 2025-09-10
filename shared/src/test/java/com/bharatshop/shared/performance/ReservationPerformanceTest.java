@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * 
  * Run with: -Dperformance.tests.enabled=true
  */
-@SpringBootTest
+@SpringBootTest(classes = com.bharatshop.shared.TestConfiguration.class)
 @ActiveProfiles("test")
 @EnabledIfSystemProperty(named = "performance.tests.enabled", matches = "true")
 class ReservationPerformanceTest {

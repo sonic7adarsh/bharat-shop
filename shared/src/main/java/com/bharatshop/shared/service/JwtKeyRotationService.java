@@ -218,12 +218,20 @@ public class JwtKeyRotationService {
         List<JwksKey> rollingUpgradeKeys = jwksKeyRepository.findKeysInRollingUpgradeWindow(LocalDateTime.now());
         List<JwksKey> expiredKeys = jwksKeyRepository.findExpiredKeys(LocalDateTime.now());
         
+        // Find the most recent rotation time
+        LocalDateTime lastRotationTime = rollingUpgradeKeys.stream()
+            .filter(key -> key.getRotatedAt() != null)
+            .map(JwksKey::getRotatedAt)
+            .max(LocalDateTime::compareTo)
+            .orElse(null);
+        
         return KeyRotationStats.builder()
             .activeSigningKeys(activeKeys)
             .keysInRollingUpgradeWindow(rollingUpgradeKeys.size())
             .expiredKeys(expiredKeys.size())
             .rollingUpgradeWindowHours(rollingUpgradeWindowHours)
             .keyRotationEnabled(keyRotationEnabled)
+            .lastRotationTime(lastRotationTime)
             .build();
     }
     
@@ -273,5 +281,6 @@ public class JwtKeyRotationService {
         private int expiredKeys;
         private int rollingUpgradeWindowHours;
         private boolean keyRotationEnabled;
+        private LocalDateTime lastRotationTime;
     }
 }

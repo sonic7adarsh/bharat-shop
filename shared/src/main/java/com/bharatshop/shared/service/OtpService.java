@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Service
+@Service("simpleOtpService")
 public class OtpService {
 
     private static final Logger log = LoggerFactory.getLogger(OtpService.class);

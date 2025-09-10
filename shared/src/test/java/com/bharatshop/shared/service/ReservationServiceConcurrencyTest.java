@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
  * Tests the ReservationService under high concurrency to ensure stock integrity
  */
 @ExtendWith(MockitoExtension.class)
-@SpringBootTest
+@SpringBootTest(classes = com.bharatshop.shared.TestConfiguration.class)
 @ActiveProfiles("test")
 class ReservationServiceConcurrencyTest {
 
