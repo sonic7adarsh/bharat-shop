@@ -35,14 +35,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 String email = jwtService.extractUsername(token);
                 String role = jwtService.extractClaim(token, claims -> claims.get("role", String.class));
                 
-                UsernamePasswordAuthenticationToken authToken = 
-                        new UsernamePasswordAuthenticationToken(
-                                email, 
-                                null, 
-                                List.of(new SimpleGrantedAuthority("ROLE_" + role))
-                        );
+                // Create a simple UserDetails for validation
+                org.springframework.security.core.userdetails.User userDetails = 
+                    new org.springframework.security.core.userdetails.User(
+                        email, 
+                        "", 
+                        List.of(new SimpleGrantedAuthority("ROLE_" + role))
+                    );
                 
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+                // Validate token with key rotation support
+                if (jwtService.isTokenValidWithKeyRotation(token, userDetails)) {
+                    UsernamePasswordAuthenticationToken authToken = 
+                            new UsernamePasswordAuthenticationToken(
+                                    email, 
+                                    null, 
+                                    List.of(new SimpleGrantedAuthority("ROLE_" + role))
+                            );
+                    
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                }
             } catch (Exception e) {
                 // Invalid token, continue without authentication
             }

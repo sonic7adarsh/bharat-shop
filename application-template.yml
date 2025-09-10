@@ -1,0 +1,201 @@
+# JWT Key Rotation Configuration Template
+# Copy this to application.yml or set as environment variables
+# Remove the template suffix and configure actual values
+
+# JWT Configuration
+jwt:
+  # Algorithm for JWT signing (HS256, HS384, HS512, RS256, etc.)
+  algorithm: ${JWT_ALGORITHM:HS256}
+  
+  # Token expiration times (in milliseconds)
+  access-token:
+    expiration: ${JWT_ACCESS_TOKEN_EXPIRATION:3600000}  # 1 hour
+  refresh-token:
+    expiration: ${JWT_REFRESH_TOKEN_EXPIRATION:604800000}  # 7 days
+  
+  # Key rotation settings
+  key-rotation:
+    enabled: ${JWT_KEY_ROTATION_ENABLED:true}
+    # Rolling upgrade window - how long old keys remain valid after rotation
+    rolling-upgrade-window-hours: ${JWT_ROLLING_UPGRADE_WINDOW_HOURS:24}
+    # Automatically cleanup expired keys
+    cleanup-expired-keys: ${JWT_CLEANUP_EXPIRED_KEYS:true}
+    # Key size in bits (for HMAC algorithms)
+    key-size: ${JWT_KEY_SIZE:256}
+
+# Database Configuration
+spring:
+  datasource:
+    url: ${DATABASE_URL:jdbc:h2:mem:testdb}
+    username: ${DATABASE_USERNAME:sa}
+    password: ${DATABASE_PASSWORD:}
+    driver-class-name: ${DATABASE_DRIVER:org.h2.Driver}
+  
+  jpa:
+    hibernate:
+      ddl-auto: ${JPA_DDL_AUTO:update}
+    show-sql: ${JPA_SHOW_SQL:false}
+    properties:
+      hibernate:
+        dialect: ${JPA_DIALECT:org.hibernate.dialect.H2Dialect}
+        format_sql: true
+  
+  # Redis Configuration (optional - for distributed rate limiting)
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      timeout: ${REDIS_TIMEOUT:2000ms}
+      lettuce:
+        pool:
+          max-active: ${REDIS_POOL_MAX_ACTIVE:8}
+          max-idle: ${REDIS_POOL_MAX_IDLE:8}
+          min-idle: ${REDIS_POOL_MIN_IDLE:0}
+
+# External Service Configuration
+captcha:
+  secret-key: ${CAPTCHA_SECRET_KEY:your-captcha-secret-key}
+  site-key: ${CAPTCHA_SITE_KEY:your-captcha-site-key}
+  enabled: ${CAPTCHA_ENABLED:true}
+  threshold: ${CAPTCHA_THRESHOLD:0.5}
+
+razorpay:
+  key-id: ${RAZORPAY_KEY_ID:your-razorpay-key-id}
+  key-secret: ${RAZORPAY_KEY_SECRET:your-razorpay-key-secret}
+  webhook-secret: ${RAZORPAY_WEBHOOK_SECRET:your-webhook-secret}
+
+# Rate Limiting Configuration
+rate-limit:
+  # Requests per minute per IP
+  requests-per-minute: ${RATE_LIMIT_REQUESTS_PER_MINUTE:60}
+  # OTP requests per phone number per hour
+  otp-requests-per-hour: ${RATE_LIMIT_OTP_REQUESTS_PER_HOUR:5}
+  # Login attempts per IP per hour
+  login-attempts-per-hour: ${RATE_LIMIT_LOGIN_ATTEMPTS_PER_HOUR:10}
+
+# Logging Configuration
+logging:
+  level:
+    com.bharatshop: ${LOG_LEVEL_BHARATSHOP:INFO}
+    org.springframework.security: ${LOG_LEVEL_SECURITY:WARN}
+    org.hibernate.SQL: ${LOG_LEVEL_SQL:WARN}
+    org.hibernate.type.descriptor.sql.BasicBinder: ${LOG_LEVEL_SQL_PARAMS:WARN}
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+# Server Configuration
+server:
+  port: ${SERVER_PORT:8080}
+  servlet:
+    context-path: ${SERVER_CONTEXT_PATH:}
+  error:
+    include-message: always
+    include-binding-errors: always
+
+# Management/Actuator Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: ${MANAGEMENT_ENDPOINTS:health,info,metrics}
+  endpoint:
+    health:
+      show-details: ${MANAGEMENT_HEALTH_SHOW_DETAILS:when-authorized}
+
+# Application-specific Configuration
+app:
+  # CORS configuration
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:8080}
+    allowed-methods: ${CORS_ALLOWED_METHODS:GET,POST,PUT,DELETE,OPTIONS}
+    allowed-headers: ${CORS_ALLOWED_HEADERS:*}
+    allow-credentials: ${CORS_ALLOW_CREDENTIALS:true}
+  
+  # Session configuration
+  session:
+    timeout: ${SESSION_TIMEOUT:1800}  # 30 minutes
+    cookie-name: ${SESSION_COOKIE_NAME:BHARATSHOP_SESSION}
+  
+  # File upload configuration
+  upload:
+    max-file-size: ${UPLOAD_MAX_FILE_SIZE:10MB}
+    max-request-size: ${UPLOAD_MAX_REQUEST_SIZE:10MB}
+    temp-dir: ${UPLOAD_TEMP_DIR:${java.io.tmpdir}}
+
+---
+# Production Profile
+spring:
+  config:
+    activate:
+      on-profile: production
+  
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/bharatshop}
+    username: ${DATABASE_USERNAME:bharatshop_user}
+    password: ${DATABASE_PASSWORD:your-secure-password}
+    driver-class-name: org.postgresql.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+logging:
+  level:
+    com.bharatshop: INFO
+    org.springframework.security: WARN
+    org.hibernate: WARN
+  file:
+    name: ${LOG_FILE_PATH:/var/log/bharatshop/application.log}
+
+---
+# Development Profile
+spring:
+  config:
+    activate:
+      on-profile: development
+  
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+logging:
+  level:
+    com.bharatshop: DEBUG
+    org.springframework.security: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+---
+# Test Profile
+spring:
+  config:
+    activate:
+      on-profile: test
+  
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+
+jwt:
+  key-rotation:
+    enabled: false  # Disable key rotation in tests for consistency
+
+logging:
+  level:
+    com.bharatshop: DEBUG
+    org.springframework.security: DEBUG

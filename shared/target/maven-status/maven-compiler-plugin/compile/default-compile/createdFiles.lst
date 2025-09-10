@@ -50,6 +50,7 @@ com\bharatshop\shared\entity\MediaFile.class
 com\bharatshop\shared\dto\VendorAnalyticsDto$MonthlyRevenueData.class
 com\bharatshop\shared\dto\VendorAnalyticsDto.class
 com\bharatshop\shared\entity\TaxRate$TaxRateStatus.class
+com\bharatshop\shared\entity\JwksKey$KeyUsage.class
 com\bharatshop\shared\entity\Wishlist$WishlistBuilder.class
 com\bharatshop\shared\filter\SessionAuthenticationFilter.class
 com\bharatshop\shared\service\ReturnRequestEvents$ReturnRequestCompletedEvent.class
@@ -109,6 +110,7 @@ com\bharatshop\shared\entity\InvoiceNumberSequence$InvoiceNumberSequenceBuilderI
 com\bharatshop\shared\entity\TaxRate.class
 com\bharatshop\shared\service\NumberToWordsService.class
 com\bharatshop\shared\dto\ProductDto$ProductImageDto.class
+com\bharatshop\shared\repository\JwksKeyRepository.class
 com\bharatshop\shared\entity\BaseEntity.class
 com\bharatshop\shared\entity\Product$TaxPreference.class
 com\bharatshop\shared\service\SubscriptionService.class
@@ -141,6 +143,8 @@ com\bharatshop\shared\entity\User$UserBuilder.class
 com\bharatshop\shared\entity\ServiceZone$ServiceZoneBuilder.class
 com\bharatshop\shared\entity\ReturnRequestItem.class
 com\bharatshop\shared\entity\User$UserBuilderImpl.class
+com\bharatshop\shared\config\JwtConfigValidator.class
+com\bharatshop\shared\config\JwtConfigValidator$ConfigSummary$ConfigSummaryBuilder.class
 com\bharatshop\shared\dto\ProductDto.class
 com\bharatshop\shared\dto\CategoryDto.class
 com\bharatshop\shared\entity\Plan$PlanBuilderImpl.class
@@ -233,6 +237,7 @@ com\bharatshop\shared\service\PriceCalculationService$PriceBreakdown.class
 com\bharatshop\shared\entity\Shipment$ShipmentBuilder.class
 com\bharatshop\shared\dto\TaxCalculationResponse.class
 com\bharatshop\shared\repository\ProductRepository.class
+com\bharatshop\shared\service\JwtKeyRotationService$KeyRotationStats.class
 com\bharatshop\shared\service\ShipmentTrackingService$TrackingEvent$TrackingEventBuilder.class
 com\bharatshop\shared\dto\PagedResponse.class
 com\bharatshop\shared\entity\OptionValue.class
@@ -240,6 +245,7 @@ com\bharatshop\shared\dto\TaxRateDto$TaxRateDtoBuilder.class
 com\bharatshop\shared\filter\JwtAuthenticationFilter.class
 com\bharatshop\shared\repository\PhoneAuthRequestRepository.class
 com\bharatshop\shared\util\FileUploadValidator$ValidationResult.class
+com\bharatshop\shared\entity\JwksKey.class
 com\bharatshop\shared\dto\CustomerAnalyticsDto$WishlistItemData$WishlistItemDataBuilder.class
 com\bharatshop\shared\dto\PlanResponseDto$PlanResponseDtoBuilder.class
 com\bharatshop\shared\entity\InvoiceNumberSequence.class
@@ -247,6 +253,7 @@ com\bharatshop\shared\entity\Orders$OrderStatus.class
 com\bharatshop\shared\entity\Shipment$1.class
 com\bharatshop\shared\dto\ProductVariantDto$ProductVariantDtoBuilder.class
 com\bharatshop\shared\entity\Payment$PaymentStatus.class
+com\bharatshop\shared\service\JwtKeyRotationService$KeyRotationStats$KeyRotationStatsBuilder.class
 com\bharatshop\shared\entity\OrderItem.class
 com\bharatshop\shared\entity\ProductOption.class
 com\bharatshop\shared\entity\Coupon$CouponBuilderImpl.class
@@ -266,6 +273,7 @@ com\bharatshop\shared\repository\ReturnRequestRepository.class
 com\bharatshop\shared\service\NotificationService.class
 com\bharatshop\shared\entity\Shipment.class
 com\bharatshop\shared\util\SlugUtils.class
+com\bharatshop\shared\entity\JwksKey$JwksKeyBuilder.class
 com\bharatshop\shared\controller\MediaController.class
 com\bharatshop\shared\entity\Template$TemplateBuilderImpl.class
 com\bharatshop\shared\entity\InvoiceItem$InvoiceItemBuilderImpl.class
@@ -329,11 +337,14 @@ com\bharatshop\shared\util\FileUploadValidator$1.class
 com\bharatshop\shared\service\auth\CaptchaService$CaptchaValidationRequest.class
 com\bharatshop\shared\dto\PagedResponse$PagedResponseBuilder.class
 com\bharatshop\shared\service\auth\RefreshTokenService$TokenLimitResult.class
+com\bharatshop\shared\service\JwtKeyRotationService.class
+com\bharatshop\shared\controller\JwksController.class
 com\bharatshop\shared\entity\Subscription.class
 com\bharatshop\shared\dto\media\StorageUsageResponse.class
 com\bharatshop\shared\entity\Category.class
 com\bharatshop\shared\entity\MediaFile$MediaStatus.class
 com\bharatshop\shared\entity\Subscription$SubscriptionBuilderImpl.class
+com\bharatshop\shared\config\JwtConfigValidator$ConfigSummary.class
 com\bharatshop\shared\dto\CustomerDto$Gender.class
 com\bharatshop\shared\service\auth\OtpSendRequest.class
 com\bharatshop\shared\config\PasswordConfig.class
