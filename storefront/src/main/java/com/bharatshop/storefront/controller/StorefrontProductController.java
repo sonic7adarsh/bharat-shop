@@ -1,5 +1,6 @@
 package com.bharatshop.storefront.controller;
 
+import com.bharatshop.shared.service.HttpCacheService;
 import com.bharatshop.storefront.dto.ProductResponseDto;
 import com.bharatshop.storefront.service.StorefrontProductService;
 import com.bharatshop.storefront.shared.ApiResponse;
@@ -13,9 +14,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 
 /**
@@ -31,6 +34,7 @@ public class StorefrontProductController {
     private static final Logger log = LoggerFactory.getLogger(StorefrontProductController.class);
     
     private final StorefrontProductService storefrontProductService;
+    private final HttpCacheService httpCacheService;
     
     /**
      * Get products with filtering and pagination
@@ -63,7 +67,8 @@ public class StorefrontProductController {
             @Parameter(description = "Sort direction (asc/desc)")
             @RequestParam(defaultValue = "desc") String sortDir,
             
-            @RequestHeader(value = "X-Tenant-Domain", required = false) String tenantDomain) {
+            @RequestHeader(value = "X-Tenant-Domain", required = false) String tenantDomain,
+            HttpServletRequest request) {
         
         try {
             // Create pageable with sorting
@@ -81,7 +86,18 @@ public class StorefrontProductController {
             Page<ProductResponseDto> products = storefrontProductService.getCustomerProducts(
                     category, search, minPriceDouble, maxPriceDouble, pageable);
             
-            return ResponseEntity.ok(ApiResponse.success(products));
+            ApiResponse<Page<ProductResponseDto>> response = ApiResponse.success(products);
+            
+            // Check for conditional requests
+            String etag = httpCacheService.generateETag(response);
+            if (httpCacheService.hasMatchingETag(request, etag)) {
+                return ResponseEntity.status(HttpStatus.NOT_MODIFIED)
+                        .eTag(etag)
+                        .build();
+            }
+            
+            // Return with caching headers
+            return httpCacheService.createCachedResponse(response, HttpCacheService.CacheConfig.shortTerm());
             
         } catch (Exception e) {
             log.error("Error fetching products", e);
@@ -100,14 +116,26 @@ public class StorefrontProductController {
             @Parameter(description = "Product slug")
             @PathVariable String slug,
             
-            @RequestHeader(value = "X-Tenant-Domain", required = false) String tenantDomain) {
+            @RequestHeader(value = "X-Tenant-Domain", required = false) String tenantDomain,
+            HttpServletRequest request) {
         
         try {
             log.info("Fetching product by slug: {}", slug);
             
             ProductResponseDto product = storefrontProductService.getCustomerProductBySlug(slug);
             
-            return ResponseEntity.ok(ApiResponse.success(product));
+            ApiResponse<ProductResponseDto> response = ApiResponse.success(product);
+            
+            // Check for conditional requests
+            String etag = httpCacheService.generateETag(response);
+            if (httpCacheService.hasMatchingETag(request, etag)) {
+                return ResponseEntity.status(HttpStatus.NOT_MODIFIED)
+                        .eTag(etag)
+                        .build();
+            }
+            
+            // Return with caching headers (longer cache for individual products)
+            return httpCacheService.createCachedResponse(response, HttpCacheService.CacheConfig.longTerm());
             
         } catch (RuntimeException e) {
             log.warn("Product not found with slug: {}", slug);
@@ -153,7 +181,8 @@ public class StorefrontProductController {
             @Parameter(description = "Sort direction (asc/desc)")
             @RequestParam(defaultValue = "desc") String sortDir,
             
-            @RequestHeader(value = "X-Tenant-Domain", required = false) String tenantDomain) {
+            @RequestHeader(value = "X-Tenant-Domain", required = false) String tenantDomain,
+            HttpServletRequest request) {
         
         try {
             Pageable pageable = PageRequest.of(page, size, 
@@ -171,7 +200,18 @@ public class StorefrontProductController {
                 products = storefrontProductService.searchCustomerProducts(query, pageable);
             }
             
-            return ResponseEntity.ok(ApiResponse.success(products));
+            ApiResponse<Page<ProductResponseDto>> response = ApiResponse.success(products);
+            
+            // Check for conditional requests
+            String etag = httpCacheService.generateETag(response);
+            if (httpCacheService.hasMatchingETag(request, etag)) {
+                return ResponseEntity.status(HttpStatus.NOT_MODIFIED)
+                        .eTag(etag)
+                        .build();
+            }
+            
+            // Return with caching headers
+            return httpCacheService.createCachedResponse(response, HttpCacheService.CacheConfig.shortTerm());
             
         } catch (Exception e) {
             log.error("Error searching products", e);
@@ -187,11 +227,24 @@ public class StorefrontProductController {
     @GetMapping("/brands")
     @Operation(summary = "Get brands", description = "Retrieve all available product brands")
     public ResponseEntity<ApiResponse<java.util.List<String>>> getBrands(
-            @RequestHeader(value = "X-Tenant-Domain", required = false) String tenantDomain) {
+            @RequestHeader(value = "X-Tenant-Domain", required = false) String tenantDomain,
+            HttpServletRequest request) {
         
         try {
             java.util.List<String> brands = storefrontProductService.getCustomerBrands();
-            return ResponseEntity.ok(ApiResponse.success(brands));
+            
+            ApiResponse<java.util.List<String>> response = ApiResponse.success(brands);
+            
+            // Check for conditional requests
+            String etag = httpCacheService.generateETag(response);
+            if (httpCacheService.hasMatchingETag(request, etag)) {
+                return ResponseEntity.status(HttpStatus.NOT_MODIFIED)
+                    .eTag(etag)
+                    .build();
+            }
+            
+            // Return with caching headers (longer cache for brands list)
+            return httpCacheService.createCachedResponse(response, HttpCacheService.CacheConfig.longTerm());
             
         } catch (Exception e) {
             log.error("Error fetching brands", e);
@@ -216,12 +269,25 @@ public class StorefrontProductController {
             @Parameter(description = "Page size")
             @RequestParam(defaultValue = "20") int size,
             
-            @RequestHeader(value = "X-Tenant-Domain", required = false) String tenantDomain) {
+            @RequestHeader(value = "X-Tenant-Domain", required = false) String tenantDomain,
+            HttpServletRequest request) {
         
         try {
             Pageable pageable = PageRequest.of(page, size);
             Page<ProductResponseDto> products = storefrontProductService.getCustomerTopRatedProducts(minRating, pageable);
-            return ResponseEntity.ok(ApiResponse.success(products));
+            
+            ApiResponse<Page<ProductResponseDto>> response = ApiResponse.success(products);
+            
+            // Check for conditional requests
+            String etag = httpCacheService.generateETag(response);
+            if (httpCacheService.hasMatchingETag(request, etag)) {
+                return ResponseEntity.status(HttpStatus.NOT_MODIFIED)
+                        .eTag(etag)
+                        .build();
+            }
+            
+            // Return with caching headers
+            return httpCacheService.createCachedResponse(response, HttpCacheService.CacheConfig.shortTerm());
             
         } catch (Exception e) {
             log.error("Error fetching top-rated products", e);

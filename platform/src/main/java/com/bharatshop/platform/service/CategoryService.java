@@ -2,6 +2,7 @@ package com.bharatshop.platform.service;
 
 import com.bharatshop.shared.entity.Category;
 import com.bharatshop.shared.repository.CategoryRepository;
+import com.bharatshop.shared.service.CacheService;
 import com.bharatshop.shared.service.FeatureFlagService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +26,7 @@ public class CategoryService {
 
     private final CategoryRepository categoryRepository;
     private final FeatureFlagService featureFlagService;
+    private final CacheService cacheService;
 
     public List<Category> getAllCategoriesByTenant(Long tenantId) {
         return categoryRepository.findByTenantIdAndDeletedAtIsNullOrderBySortOrderAsc(tenantId);
@@ -85,7 +87,9 @@ public class CategoryService {
         }
         
         log.info("Creating category: {} for tenant: {}", category.getName(), tenantId);
-        return categoryRepository.save(category);
+        Category savedCategory = categoryRepository.save(category);
+        cacheService.invalidateCategoryCaches();
+        return savedCategory;
     }
 
     public Category updateCategory(Long id, Category categoryUpdates, Long tenantId) {
@@ -128,7 +132,9 @@ public class CategoryService {
         existingCategory.setUpdatedAt(LocalDateTime.now());
         
         log.info("Updating category: {} for tenant: {}", existingCategory.getName(), tenantId);
-        return categoryRepository.save(existingCategory);
+        Category updatedCategory = categoryRepository.save(existingCategory);
+        cacheService.invalidateCategoryCaches();
+        return updatedCategory;
     }
 
     public void deleteCategory(Long id, Long tenantId) {
@@ -146,6 +152,7 @@ public class CategoryService {
         
         log.info("Deleting category: {} for tenant: {}", category.getName(), tenantId);
         categoryRepository.save(category);
+        cacheService.invalidateCategoryCaches();
     }
 
     public Category updateCategoryStatus(Long id, Boolean isActive, Long tenantId) {
@@ -156,7 +163,9 @@ public class CategoryService {
         category.setUpdatedAt(LocalDateTime.now());
         
         log.info("Updating category status: {} to {} for tenant: {}", category.getName(), isActive, tenantId);
-        return categoryRepository.save(category);
+        Category updatedCategory = categoryRepository.save(category);
+        cacheService.invalidateCategoryCaches();
+        return updatedCategory;
     }
 
     public List<Category> reorderCategories(Long tenantId, Long parentId, List<Long> categoryIds) {

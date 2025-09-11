@@ -3,6 +3,8 @@ package com.bharatshop.storefront.service;
 import com.bharatshop.storefront.dto.ProductResponseDto;
 import com.bharatshop.shared.entity.Product;
 import com.bharatshop.storefront.repository.StorefrontProductRepository;
+import com.bharatshop.shared.repository.ProductImageRepository;
+import com.bharatshop.shared.entity.ProductImage;
 import com.bharatshop.shared.dto.ProductVariantDto;
 import com.bharatshop.shared.dto.ProductOptionDto;
 import com.bharatshop.platform.service.ProductVariantService;
@@ -20,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import java.util.stream.Collectors;
 
 /**
@@ -37,6 +38,7 @@ public class StorefrontProductService {
     private static final Logger log = LoggerFactory.getLogger(StorefrontProductService.class);
     
     private final StorefrontProductRepository productRepository;
+    private final ProductImageRepository productImageRepository;
     private final ProductVariantService productVariantService;
     private final ProductOptionService productOptionService;
     
@@ -273,6 +275,18 @@ public class StorefrontProductService {
         // Get product options
         List<ProductOptionDto> options = productOptionService.getProductOptions(product.getId(), product.getTenantId());
         
+        // Get product images with thumbnails and srcset data
+        List<ProductImage> productImages = productImageRepository.findActiveByProductIdOrderBySortOrder(product.getId());
+        List<String> imageUrls = productImages.stream()
+                .map(ProductImage::getImageUrl)
+                .collect(Collectors.toList());
+        List<java.util.Map<String, String>> thumbnailUrls = productImages.stream()
+                .map(ProductImage::getThumbnailUrls)
+                .collect(Collectors.toList());
+        List<String> srcsets = productImages.stream()
+                .map(ProductImage::getSrcset)
+                .collect(Collectors.toList());
+        
         // Use variant data for price and stock if available, otherwise use product data
         ProductResponseDto.ProductResponseDtoBuilder builder = ProductResponseDto.builder()
                 .id(product.getId())
@@ -280,7 +294,9 @@ public class StorefrontProductService {
                 .description(product.getDescription())
                 .category(null) // Category will be handled by categories list
                 .brand(null) // Brand not available in shared Product
-                .imageUrls(product.getImages())
+                .imageUrls(imageUrls)
+                .thumbnailUrls(thumbnailUrls)
+                .srcsets(srcsets)
                 .featured(false) // Default value
                 .active(product.getStatus() == Product.ProductStatus.ACTIVE)
                 .rating(java.math.BigDecimal.ZERO) // Default rating

@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.util.Map;
 // import java.util.UUID; // Replaced with Long
 
 @Entity
@@ -35,6 +36,18 @@ public class ProductImage extends BaseEntity {
 
     @Column(name = "is_primary")
     private Boolean isPrimary = false;
+
+    // Thumbnail URLs for different sizes (400px, 800px, 1200px)
+    @ElementCollection
+    @CollectionTable(name = "product_image_thumbnails", 
+                    joinColumns = @JoinColumn(name = "product_image_id"))
+    @MapKeyColumn(name = "size")
+    @Column(name = "url")
+    private Map<String, String> thumbnailUrls;
+
+    // Responsive image srcset for HTML img elements
+    @Column(name = "srcset", length = 1000)
+    private String srcset;
 
     // Relationship with Product
     @ManyToOne(fetch = FetchType.LAZY)

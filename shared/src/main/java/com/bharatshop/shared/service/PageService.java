@@ -5,6 +5,7 @@ import com.bharatshop.shared.dto.PageResponseDto;
 import com.bharatshop.shared.entity.Page;
 import com.bharatshop.shared.enums.PageType;
 import com.bharatshop.shared.repository.PageRepository;
+import com.bharatshop.shared.service.CacheService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -32,6 +33,7 @@ public class PageService {
     private static final Logger log = LoggerFactory.getLogger(PageService.class);
     
     private final PageRepository pageRepository;
+    private final CacheService cacheService;
     
     /**
      * Get all pages with pagination
@@ -80,6 +82,7 @@ public class PageService {
         
         Page page = mapToEntity(pageRequest);
         Page savedPage = pageRepository.save(page);
+        cacheService.invalidatePageCaches();
         return mapToResponseDto(savedPage);
     }
     
@@ -101,6 +104,7 @@ public class PageService {
         
         updateEntityFromRequest(existingPage, pageRequest);
         Page updatedPage = pageRepository.save(existingPage);
+        cacheService.invalidatePageCaches();
         return mapToResponseDto(updatedPage);
     }
     
@@ -167,6 +171,7 @@ public class PageService {
         
         page.setDeletedAt(LocalDateTime.now());
         pageRepository.save(page);
+        cacheService.invalidatePageCaches();
     }
     
     /**

@@ -4,7 +4,9 @@ import com.bharatshop.shared.entity.Product;
 import com.bharatshop.shared.entity.ProductImage;
 import com.bharatshop.shared.repository.ProductImageRepository;
 import com.bharatshop.shared.repository.ProductRepository;
+import com.bharatshop.shared.service.CacheService;
 import com.bharatshop.shared.service.FeatureFlagService;
+import com.bharatshop.shared.service.ImageProcessingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -33,6 +36,8 @@ public class ProductImageService {
     private final ProductImageRepository productImageRepository;
     private final ProductRepository productRepository;
     private final FeatureFlagService featureFlagService;
+    private final ImageProcessingService imageProcessingService;
+    private final CacheService cacheService;
     
     // Configuration - these should be externalized to application.properties
     private static final String UPLOAD_DIR = "uploads/products";
@@ -77,7 +82,7 @@ public class ProductImageService {
             Long tenantId, 
             MultipartFile file, 
             String altText, 
-            Boolean isPrimary) throws IOException {
+            Boolean isPrimary) throws IOException, InterruptedException, java.util.concurrent.ExecutionException {
         
         // Verify product belongs to tenant
         Optional<Product> productOpt = productRepository.findByIdAndTenantIdAndDeletedAtIsNull(productId, tenantId);
@@ -109,12 +114,24 @@ public class ProductImageService {
         Path filePath = uploadPath.resolve(filename);
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
         
+        // Process image and generate thumbnails
+        ImageProcessingService.ImageProcessingResult processingResult = 
+            imageProcessingService.processImage(file, "products").get();
+        
         // Create ProductImage entity
         ProductImage productImage = new ProductImage();
         productImage.setProductId(productId);
-        productImage.setImageUrl("/" + UPLOAD_DIR + "/" + filename);
+        productImage.setImageUrl(processingResult.getOriginalUrl());
         productImage.setAltText(altText != null ? altText : product.getName());
         productImage.setIsPrimary(isPrimary != null ? isPrimary : false);
+        
+        // Store thumbnail URLs and srcset data
+        // Convert Map<Integer, String> to Map<String, String>
+        Map<String, String> thumbnailUrls = new HashMap<>();
+        processingResult.getThumbnails().forEach((size, url) -> 
+            thumbnailUrls.put(size.toString(), url));
+        productImage.setThumbnailUrls(thumbnailUrls);
+        productImage.setSrcset(imageProcessingService.generateSrcSet(processingResult));
         
         // Set sort order
         Integer maxSortOrder = productImageRepository.findMaxSortOrderByProductId(productId);
@@ -127,6 +144,10 @@ public class ProductImageService {
         
         // Save and return
         ProductImage savedImage = productImageRepository.save(productImage);
+        
+        // Invalidate product and image caches
+        cacheService.invalidateProductCaches();
+        cacheService.invalidateImageCaches();
         
         log.info("Uploaded image for product {}: {}", productId, filename);
         return savedImage;

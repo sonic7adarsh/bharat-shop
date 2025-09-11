@@ -53,6 +53,7 @@ com\bharatshop\storefront\service\CartService.class
 com\bharatshop\storefront\service\CustomerAnalyticsService.class
 com\bharatshop\storefront\controller\StorefrontPageController.class
 com\bharatshop\storefront\service\PaymentService.class
+com\bharatshop\storefront\service\StorefrontCategoryService.class
 com\bharatshop\storefront\service\StorefrontPageService.class
 com\bharatshop\storefront\dto\ProductResponseDto.class
 com\bharatshop\storefront\controller\StorefrontShippingController.class

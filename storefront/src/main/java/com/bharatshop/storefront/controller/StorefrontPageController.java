@@ -3,16 +3,19 @@ package com.bharatshop.storefront.controller;
 import com.bharatshop.storefront.dto.PageResponseDto;
 import com.bharatshop.storefront.service.StorefrontPageService;
 import com.bharatshop.storefront.shared.ApiResponse;
+import com.bharatshop.shared.service.HttpCacheService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 // import java.util.UUID; // Replaced with Long
 
@@ -28,9 +31,11 @@ public class StorefrontPageController {
     private static final Logger log = LoggerFactory.getLogger(StorefrontPageController.class);
     
     private final StorefrontPageService pageService;
+    private final HttpCacheService httpCacheService;
     
-    public StorefrontPageController(@Qualifier("storefrontPageService") StorefrontPageService pageService) {
+    public StorefrontPageController(@Qualifier("storefrontPageService") StorefrontPageService pageService, HttpCacheService httpCacheService) {
         this.pageService = pageService;
+        this.httpCacheService = httpCacheService;
     }
     
     /**
@@ -47,7 +52,8 @@ public class StorefrontPageController {
             @RequestHeader(value = "X-Tenant-ID", required = false) String tenantIdHeader,
             
             @Parameter(description = "Tenant domain header for multi-tenancy")
-            @RequestHeader(value = "X-Tenant-Domain", required = false) String tenantDomain) {
+            @RequestHeader(value = "X-Tenant-Domain", required = false) String tenantDomain,
+            HttpServletRequest request) {
         
         try {
             log.info("Fetching page by slug: {} for tenant: {}", slug, tenantIdHeader != null ? tenantIdHeader : tenantDomain);
@@ -69,7 +75,18 @@ public class StorefrontPageController {
                 page = pageService.getPageBySlug(slug);
             }
             
-            return ResponseEntity.ok(ApiResponse.success(page));
+            ApiResponse<PageResponseDto> response = ApiResponse.success(page);
+            
+            // Check for conditional requests
+            String etag = httpCacheService.generateETag(response);
+            if (httpCacheService.hasMatchingETag(request, etag)) {
+                return ResponseEntity.status(HttpStatus.NOT_MODIFIED)
+                        .eTag(etag)
+                        .build();
+            }
+            
+            // Return with caching headers (longer cache for CMS pages)
+            return httpCacheService.createCachedResponse(response, HttpCacheService.CacheConfig.longTerm());
             
         } catch (RuntimeException e) {
             log.warn("Page not found with slug: {}", slug);
@@ -92,7 +109,8 @@ public class StorefrontPageController {
             @RequestHeader(value = "X-Tenant-ID", required = false) String tenantIdHeader,
             
             @Parameter(description = "Tenant domain header for multi-tenancy")
-            @RequestHeader(value = "X-Tenant-Domain", required = false) String tenantDomain) {
+            @RequestHeader(value = "X-Tenant-Domain", required = false) String tenantDomain,
+            HttpServletRequest request) {
         
         try {
             log.info("Fetching all pages for tenant: {}", tenantIdHeader != null ? tenantIdHeader : tenantDomain);
@@ -114,7 +132,18 @@ public class StorefrontPageController {
                 return ResponseEntity.ok(ApiResponse.success(List.of()));
             }
             
-            return ResponseEntity.ok(ApiResponse.success(pages));
+            ApiResponse<List<PageResponseDto>> response = ApiResponse.success(pages);
+            
+            // Check for conditional requests
+            String etag = httpCacheService.generateETag(response);
+            if (httpCacheService.hasMatchingETag(request, etag)) {
+                return ResponseEntity.status(HttpStatus.NOT_MODIFIED)
+                        .eTag(etag)
+                        .build();
+            }
+            
+            // Return with caching headers (longer cache for pages list)
+            return httpCacheService.createCachedResponse(response, HttpCacheService.CacheConfig.longTerm());
             
         } catch (Exception e) {
             log.error("Error fetching pages", e);

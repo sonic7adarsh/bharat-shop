@@ -5,6 +5,7 @@ import com.bharatshop.shared.entity.Product;
 import com.bharatshop.shared.entity.ProductVariant;
 import com.bharatshop.shared.repository.ProductRepository;
 import com.bharatshop.shared.service.FeatureFlagService;
+import com.bharatshop.shared.service.CacheService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -27,6 +28,7 @@ public class PlatformProductService {
     private final ProductRepository productRepository;
     private final FeatureFlagService featureFlagService;
     private final ProductVariantService productVariantService;
+    private final CacheService cacheService;
 
     public List<Product> getAllProductsByTenant(Long tenantId) {
         return productRepository.findByTenantIdAndDeletedAtIsNull(tenantId);
@@ -85,6 +87,9 @@ public class PlatformProductService {
         log.info("Creating product: {} for tenant: {}", product.getName(), tenantId);
         Product savedProduct = productRepository.save(product);
         
+        // Invalidate product caches
+        cacheService.invalidateProductCaches();
+        
         // Create default variant if product has price and stock
         if (product.getPrice() != null && product.getStock() != null) {
             createDefaultVariant(savedProduct, tenantId);
@@ -139,7 +144,12 @@ public class PlatformProductService {
         existingProduct.setUpdatedAt(LocalDateTime.now());
         
         log.info("Updating product: {} for tenant: {}", existingProduct.getName(), tenantId);
-        return productRepository.save(existingProduct);
+        Product updatedProduct = productRepository.save(existingProduct);
+        
+        // Invalidate product caches
+        cacheService.invalidateProductCaches();
+        
+        return updatedProduct;
     }
 
     public void deleteProduct(Long id, Long tenantId) {
@@ -154,6 +164,9 @@ public class PlatformProductService {
         
         log.info("Deleting product: {} for tenant: {}", product.getName(), tenantId);
         productRepository.save(product);
+        
+        // Invalidate product caches
+        cacheService.invalidateProductCaches();
     }
 
     public Product updateProductStatus(Long id, Product.ProductStatus status, Long tenantId) {

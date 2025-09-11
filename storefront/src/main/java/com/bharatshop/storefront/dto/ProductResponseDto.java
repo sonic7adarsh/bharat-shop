@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 // import java.util.UUID; // Replaced with Long
 import com.bharatshop.shared.dto.ProductVariantDto;
 import com.bharatshop.shared.dto.ProductOptionDto;
@@ -50,6 +51,12 @@ public class ProductResponseDto {
     
     @Schema(description = "Product image URLs")
     private List<String> imageUrls;
+    
+    @Schema(description = "Product image thumbnails by size")
+    private List<Map<String, String>> thumbnailUrls;
+    
+    @Schema(description = "Responsive image srcset for each image")
+    private List<String> srcsets;
     
     @Schema(description = "Whether product is featured", example = "true")
     private Boolean featured;
@@ -136,6 +143,8 @@ public class ProductResponseDto {
         private String sku;
         private Integer stockQuantity;
         private List<String> imageUrls;
+        private List<Map<String, String>> thumbnailUrls;
+        private List<String> srcsets;
         private Boolean featured;
         private Boolean active;
         private BigDecimal rating;
@@ -199,6 +208,16 @@ public class ProductResponseDto {
         
         public ProductResponseDtoBuilder imageUrls(List<String> imageUrls) {
             this.imageUrls = imageUrls;
+            return this;
+        }
+        
+        public ProductResponseDtoBuilder thumbnailUrls(List<Map<String, String>> thumbnailUrls) {
+            this.thumbnailUrls = thumbnailUrls;
+            return this;
+        }
+        
+        public ProductResponseDtoBuilder srcsets(List<String> srcsets) {
+            this.srcsets = srcsets;
             return this;
         }
         
@@ -289,6 +308,8 @@ public class ProductResponseDto {
             dto.sku = this.sku;
             dto.stockQuantity = this.stockQuantity;
             dto.imageUrls = this.imageUrls;
+            dto.thumbnailUrls = this.thumbnailUrls;
+            dto.srcsets = this.srcsets;
             dto.featured = this.featured;
             dto.active = this.active;
             dto.rating = this.rating;
