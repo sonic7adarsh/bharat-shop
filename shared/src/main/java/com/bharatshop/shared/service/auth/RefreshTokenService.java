@@ -85,14 +85,12 @@ public class RefreshTokenService {
             // Save token
             DeviceRefreshToken savedToken = tokenRepository.save(token);
             
-            log.info("Created refresh token for user {} on device {}", 
-                request.getUserId(), request.getDeviceId());
+            System.out.println("Created refresh token for user " + request.getUserId() + " on device " + request.getDeviceId());
             
             return RefreshTokenResult.success("Refresh token created", savedToken.getId(), rawToken);
             
         } catch (Exception e) {
-            log.error("Error creating refresh token for user {}: {}", 
-                request.getUserId(), e.getMessage(), e);
+            System.out.println("Error creating refresh token for user " + request.getUserId() + ": " + e.getMessage());
             return RefreshTokenResult.failure("Internal error occurred");
         }
     }
@@ -118,8 +116,7 @@ public class RefreshTokenService {
             
             // Verify device consistency
             if (!token.isSameDeviceFamily(deviceId)) {
-                log.warn("Device mismatch detected for token refresh: expected={}, actual={}", 
-                    token.getDeviceId(), deviceId);
+                System.out.println("Device mismatch detected for token refresh: expected=" + token.getDeviceId() + ", actual=" + deviceId);
                 
                 // Mark as suspicious and revoke
                 token.markAsSuspicious();
@@ -131,8 +128,7 @@ public class RefreshTokenService {
             
             // Check for suspicious activity
             if (isSuspiciousActivity(token, ipAddress)) {
-                log.warn("Suspicious activity detected for token refresh: userId={}, deviceId={}", 
-                    token.getUserId(), token.getDeviceId());
+                System.out.println("Suspicious activity detected for token refresh: userId=" + token.getUserId() + ", deviceId=" + token.getDeviceId());
                 
                 token.markAsSuspicious();
                 tokenRepository.save(token);
@@ -160,14 +156,13 @@ public class RefreshTokenService {
             RefreshTokenResult newTokenResult = createRefreshToken(newTokenRequest);
             
             if (newTokenResult.isSuccess()) {
-                log.info("Successfully refreshed token for user {} on device {}", 
-                    token.getUserId(), token.getDeviceId());
+                System.out.println("Successfully refreshed token for user " + token.getUserId() + " on device " + token.getDeviceId());
             }
             
             return newTokenResult;
             
         } catch (Exception e) {
-            log.error("Error refreshing access token: {}", e.getMessage(), e);
+            System.out.println("Error refreshing access token: " + e.getMessage());
             return RefreshTokenResult.failure("Internal error occurred");
         }
     }
@@ -179,7 +174,7 @@ public class RefreshTokenService {
         // Try to find any token (including revoked/reused) that matches
         // This is a simplified approach - in production, you might want to store token hashes differently
         
-        log.warn("Potential token reuse attack detected from device {} and IP {}", deviceId, ipAddress);
+        System.out.println("Potential token reuse attack detected from device " + deviceId + " and IP " + ipAddress);
         
         // Find recent tokens for this device to check for attack patterns
         LocalDateTime recentWindow = LocalDateTime.now().minusHours(24);
@@ -187,7 +182,7 @@ public class RefreshTokenService {
         
         // If we find suspicious patterns, revoke all tokens for this device
         if (recentTokens.size() > 5) { // Threshold for suspicious activity
-            log.warn("Revoking all tokens for device {} due to suspected attack", deviceId);
+            System.out.println("Revoking all tokens for device " + deviceId + " due to suspected attack");
             
             for (DeviceRefreshToken token : recentTokens) {
                 if (!token.getRevoked()) {
@@ -209,15 +204,14 @@ public class RefreshTokenService {
                 tokenId, userId, LocalDateTime.now(), reason);
             
             if (revokedCount > 0) {
-                log.info("Revoked {} tokens in family for token {} due to: {}", 
-                    revokedCount, tokenId, reason);
+                System.out.println("Revoked " + revokedCount + " tokens in family for token " + tokenId + " due to: " + reason);
                 return true;
             }
             
             return false;
             
         } catch (Exception e) {
-            log.error("Error revoking token family {}: {}", tokenId, e.getMessage(), e);
+            System.out.println("Error revoking token family " + tokenId + ": " + e.getMessage());
             return false;
         }
     }
@@ -231,11 +225,11 @@ public class RefreshTokenService {
             int revokedCount = tokenRepository.revokeAllUserTokens(
                 userId, LocalDateTime.now(), reason);
             
-            log.info("Revoked {} tokens for user {} due to: {}", revokedCount, userId, reason);
+            System.out.println("Revoked " + revokedCount + " tokens for user " + userId + " due to: " + reason);
             return true;
             
         } catch (Exception e) {
-            log.error("Error revoking all tokens for user {}: {}", userId, e.getMessage(), e);
+            System.out.println("Error revoking all tokens for user " + userId + ": " + e.getMessage());
             return false;
         }
     }
@@ -249,13 +243,11 @@ public class RefreshTokenService {
             int revokedCount = tokenRepository.revokeAllUserDeviceTokens(
                 userId, deviceId, LocalDateTime.now(), reason);
             
-            log.info("Revoked {} tokens for user {} on device {} due to: {}", 
-                revokedCount, userId, deviceId, reason);
+            System.out.println("Revoked " + revokedCount + " tokens for user " + userId + " on device " + deviceId + " due to: " + reason);
             return true;
             
         } catch (Exception e) {
-            log.error("Error revoking tokens for user {} on device {}: {}", 
-                userId, deviceId, e.getMessage(), e);
+            System.out.println("Error revoking tokens for user " + userId + " on device " + deviceId + ": " + e.getMessage());
             return false;
         }
     }
@@ -361,7 +353,7 @@ public class RefreshTokenService {
         }
         
         if (revokedCount > 0) {
-            log.info("Cleaned up {} stale tokens for user {}", revokedCount, userId);
+            System.out.println("Cleaned up " + revokedCount + " stale tokens for user " + userId);
         }
     }
     
@@ -374,7 +366,7 @@ public class RefreshTokenService {
         int deletedCount = tokenRepository.deleteExpiredTokens(cutoff);
         
         if (deletedCount > 0) {
-            log.info("Deleted {} expired refresh tokens", deletedCount);
+            System.out.println("Deleted " + deletedCount + " expired refresh tokens");
         }
     }
     

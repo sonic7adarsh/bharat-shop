@@ -97,4 +97,16 @@ public interface PageRepository extends TenantAwareRepository<Page> {
      */
     @Query(value = "SELECT * FROM pages WHERE (LOWER(title) LIKE LOWER(CONCAT('%', ?1, '%')) OR LOWER(content) LIKE LOWER(CONCAT('%', ?1, '%'))) AND active = true AND published = true AND tenant_id = ?2 AND deleted_at IS NULL ORDER BY sort_order ASC", nativeQuery = true)
     List<Page> searchActivePublishedByKeyword(String keyword, Long tenantId);
+    
+    /**
+     * SEO-related methods for sitemap generation
+     */
+    @Query(value = "SELECT * FROM pages WHERE featured_in_sitemap = true AND active = true AND published = true AND tenant_id = ?1 AND deleted_at IS NULL ORDER BY sort_order ASC", nativeQuery = true)
+    List<Page> findActivePublishedFeaturedInSitemap(Long tenantId);
+    
+    @Query(value = "SELECT * FROM pages WHERE featured_in_sitemap = true AND tenant_id = ?1 AND deleted_at IS NULL ORDER BY sort_order ASC", nativeQuery = true)
+    List<Page> findByTenantIdAndFeaturedInSitemapTrueAndDeletedAtIsNull(Long tenantId);
+    
+    @Query(value = "SELECT COUNT(*) FROM pages WHERE featured_in_sitemap = true AND active = true AND published = true AND tenant_id = ?1 AND deleted_at IS NULL", nativeQuery = true)
+    long countActivePublishedFeaturedInSitemap(Long tenantId);
 }

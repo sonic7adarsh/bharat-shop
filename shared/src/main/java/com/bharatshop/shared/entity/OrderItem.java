@@ -146,8 +146,32 @@ public class OrderItem {
     private LocalDateTime updatedAt;
     
     // Getter methods
+    public Long getId() {
+        return id;
+    }
+    
     public Integer getQuantity() {
         return quantity;
+    }
+    
+    public Long getVariantId() {
+        return variantId;
+    }
+    
+    public BigDecimal getPrice() {
+        return price;
+    }
+    
+    public Product getProduct() {
+        return product;
+    }
+    
+    public String getProductName() {
+        return productName;
+    }
+    
+    public String getProductSku() {
+        return productSku;
     }
     
     // Helper methods

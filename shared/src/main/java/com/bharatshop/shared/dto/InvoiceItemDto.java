@@ -47,6 +47,8 @@ public class InvoiceItemDto {
     private boolean isTaxInclusive;
     private boolean isTaxExempt;
     
+
+    
     public static InvoiceItemDto fromEntity(InvoiceItem item) {
         if (item == null) {
             return null;

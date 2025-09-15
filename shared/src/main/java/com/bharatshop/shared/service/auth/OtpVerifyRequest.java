@@ -42,4 +42,25 @@ public class OtpVerifyRequest {
     private String captchaToken;
     private String fingerprint;
     private Long timestamp;
+    
+    // Manual getter methods
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+    
+    public OtpVerification.OtpType getType() {
+        return type;
+    }
+    
+    public String getDeviceId() {
+        return deviceId;
+    }
+    
+    public String getOtpCode() {
+        return otpCode;
+    }
+    
+    public String getSessionId() {
+        return sessionId;
+    }
 }

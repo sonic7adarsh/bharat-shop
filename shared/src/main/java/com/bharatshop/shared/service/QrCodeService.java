@@ -24,6 +24,8 @@ import java.util.Map;
 @Service
 @Slf4j
 public class QrCodeService {
+    
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(QrCodeService.class);
 
     private static final int DEFAULT_WIDTH = 200;
     private static final int DEFAULT_HEIGHT = 200;

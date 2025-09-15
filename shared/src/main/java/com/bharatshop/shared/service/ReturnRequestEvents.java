@@ -14,25 +14,48 @@ public class ReturnRequestEvents {
     /**
      * Event published when a new return request is created
      */
-    @Builder
     public record ReturnRequestCreatedEvent(
             ReturnRequest returnRequest,
             String createdBy,
             LocalDateTime timestamp
     ) {
         public static ReturnRequestCreatedEvent of(ReturnRequest returnRequest, String createdBy) {
-            return ReturnRequestCreatedEvent.builder()
-                    .returnRequest(returnRequest)
-                    .createdBy(createdBy)
-                    .timestamp(LocalDateTime.now())
-                    .build();
+            return new ReturnRequestCreatedEvent(returnRequest, createdBy, LocalDateTime.now());
+        }
+        
+        public static Builder builder() {
+            return new Builder();
+        }
+        
+        public static class Builder {
+            private ReturnRequest returnRequest;
+            private String createdBy;
+            private LocalDateTime timestamp;
+            
+            public Builder returnRequest(ReturnRequest returnRequest) {
+                this.returnRequest = returnRequest;
+                return this;
+            }
+            
+            public Builder createdBy(String createdBy) {
+                this.createdBy = createdBy;
+                return this;
+            }
+            
+            public Builder timestamp(LocalDateTime timestamp) {
+                this.timestamp = timestamp;
+                return this;
+            }
+            
+            public ReturnRequestCreatedEvent build() {
+                return new ReturnRequestCreatedEvent(returnRequest, createdBy, timestamp);
+            }
         }
     }
 
     /**
      * Event published when a return request is approved
      */
-    @Builder
     public record ReturnRequestApprovedEvent(
             ReturnRequest returnRequest,
             String approvedBy,
@@ -40,19 +63,48 @@ public class ReturnRequestEvents {
             LocalDateTime timestamp
     ) {
         public static ReturnRequestApprovedEvent of(ReturnRequest returnRequest, String approvedBy, String notes) {
-            return ReturnRequestApprovedEvent.builder()
-                    .returnRequest(returnRequest)
-                    .approvedBy(approvedBy)
-                    .approvalNotes(notes)
-                    .timestamp(LocalDateTime.now())
-                    .build();
+            return new ReturnRequestApprovedEvent(returnRequest, approvedBy, notes, LocalDateTime.now());
+        }
+        
+        public static Builder builder() {
+            return new Builder();
+        }
+        
+        public static class Builder {
+            private ReturnRequest returnRequest;
+            private String approvedBy;
+            private String approvalNotes;
+            private LocalDateTime timestamp;
+            
+            public Builder returnRequest(ReturnRequest returnRequest) {
+                this.returnRequest = returnRequest;
+                return this;
+            }
+            
+            public Builder approvedBy(String approvedBy) {
+                this.approvedBy = approvedBy;
+                return this;
+            }
+            
+            public Builder approvalNotes(String approvalNotes) {
+                this.approvalNotes = approvalNotes;
+                return this;
+            }
+            
+            public Builder timestamp(LocalDateTime timestamp) {
+                this.timestamp = timestamp;
+                return this;
+            }
+            
+            public ReturnRequestApprovedEvent build() {
+                return new ReturnRequestApprovedEvent(returnRequest, approvedBy, approvalNotes, timestamp);
+            }
         }
     }
 
     /**
      * Event published when a return request is rejected
      */
-    @Builder
     public record ReturnRequestRejectedEvent(
             ReturnRequest returnRequest,
             String rejectedBy,
@@ -60,19 +112,48 @@ public class ReturnRequestEvents {
             LocalDateTime timestamp
     ) {
         public static ReturnRequestRejectedEvent of(ReturnRequest returnRequest, String rejectedBy, String reason) {
-            return ReturnRequestRejectedEvent.builder()
-                    .returnRequest(returnRequest)
-                    .rejectedBy(rejectedBy)
-                    .rejectionReason(reason)
-                    .timestamp(LocalDateTime.now())
-                    .build();
+            return new ReturnRequestRejectedEvent(returnRequest, rejectedBy, reason, LocalDateTime.now());
+        }
+        
+        public static Builder builder() {
+            return new Builder();
+        }
+        
+        public static class Builder {
+            private ReturnRequest returnRequest;
+            private String rejectedBy;
+            private String rejectionReason;
+            private LocalDateTime timestamp;
+            
+            public Builder returnRequest(ReturnRequest returnRequest) {
+                this.returnRequest = returnRequest;
+                return this;
+            }
+            
+            public Builder rejectedBy(String rejectedBy) {
+                this.rejectedBy = rejectedBy;
+                return this;
+            }
+            
+            public Builder rejectionReason(String rejectionReason) {
+                this.rejectionReason = rejectionReason;
+                return this;
+            }
+            
+            public Builder timestamp(LocalDateTime timestamp) {
+                this.timestamp = timestamp;
+                return this;
+            }
+            
+            public ReturnRequestRejectedEvent build() {
+                return new ReturnRequestRejectedEvent(returnRequest, rejectedBy, rejectionReason, timestamp);
+            }
         }
     }
 
     /**
      * Event published when a return request is completed (refund processed)
      */
-    @Builder
     public record ReturnRequestCompletedEvent(
             ReturnRequest returnRequest,
             String completedBy,
@@ -80,19 +161,48 @@ public class ReturnRequestEvents {
             LocalDateTime timestamp
     ) {
         public static ReturnRequestCompletedEvent of(ReturnRequest returnRequest, String completedBy, String refundId) {
-            return ReturnRequestCompletedEvent.builder()
-                    .returnRequest(returnRequest)
-                    .completedBy(completedBy)
-                    .refundTransactionId(refundId)
-                    .timestamp(LocalDateTime.now())
-                    .build();
+            return new ReturnRequestCompletedEvent(returnRequest, completedBy, refundId, LocalDateTime.now());
+        }
+        
+        public static Builder builder() {
+            return new Builder();
+        }
+        
+        public static class Builder {
+            private ReturnRequest returnRequest;
+            private String completedBy;
+            private String refundTransactionId;
+            private LocalDateTime timestamp;
+            
+            public Builder returnRequest(ReturnRequest returnRequest) {
+                this.returnRequest = returnRequest;
+                return this;
+            }
+            
+            public Builder completedBy(String completedBy) {
+                this.completedBy = completedBy;
+                return this;
+            }
+            
+            public Builder refundTransactionId(String refundTransactionId) {
+                this.refundTransactionId = refundTransactionId;
+                return this;
+            }
+            
+            public Builder timestamp(LocalDateTime timestamp) {
+                this.timestamp = timestamp;
+                return this;
+            }
+            
+            public ReturnRequestCompletedEvent build() {
+                return new ReturnRequestCompletedEvent(returnRequest, completedBy, refundTransactionId, timestamp);
+            }
         }
     }
 
     /**
      * Event published when return request items are updated
      */
-    @Builder
     public record ReturnRequestItemsUpdatedEvent(
             ReturnRequest returnRequest,
             String updatedBy,
@@ -100,19 +210,48 @@ public class ReturnRequestEvents {
             LocalDateTime timestamp
     ) {
         public static ReturnRequestItemsUpdatedEvent of(ReturnRequest returnRequest, String updatedBy, String reason) {
-            return ReturnRequestItemsUpdatedEvent.builder()
-                    .returnRequest(returnRequest)
-                    .updatedBy(updatedBy)
-                    .updateReason(reason)
-                    .timestamp(LocalDateTime.now())
-                    .build();
+            return new ReturnRequestItemsUpdatedEvent(returnRequest, updatedBy, reason, LocalDateTime.now());
+        }
+        
+        public static Builder builder() {
+            return new Builder();
+        }
+        
+        public static class Builder {
+            private ReturnRequest returnRequest;
+            private String updatedBy;
+            private String updateReason;
+            private LocalDateTime timestamp;
+            
+            public Builder returnRequest(ReturnRequest returnRequest) {
+                this.returnRequest = returnRequest;
+                return this;
+            }
+            
+            public Builder updatedBy(String updatedBy) {
+                this.updatedBy = updatedBy;
+                return this;
+            }
+            
+            public Builder updateReason(String updateReason) {
+                this.updateReason = updateReason;
+                return this;
+            }
+            
+            public Builder timestamp(LocalDateTime timestamp) {
+                this.timestamp = timestamp;
+                return this;
+            }
+            
+            public ReturnRequestItemsUpdatedEvent build() {
+                return new ReturnRequestItemsUpdatedEvent(returnRequest, updatedBy, updateReason, timestamp);
+            }
         }
     }
 
     /**
      * Event published when return request images are added
      */
-    @Builder
     public record ReturnRequestImagesAddedEvent(
             ReturnRequest returnRequest,
             int imageCount,
@@ -120,19 +259,48 @@ public class ReturnRequestEvents {
             LocalDateTime timestamp
     ) {
         public static ReturnRequestImagesAddedEvent of(ReturnRequest returnRequest, int count, String addedBy) {
-            return ReturnRequestImagesAddedEvent.builder()
-                    .returnRequest(returnRequest)
-                    .imageCount(count)
-                    .addedBy(addedBy)
-                    .timestamp(LocalDateTime.now())
-                    .build();
+            return new ReturnRequestImagesAddedEvent(returnRequest, count, addedBy, LocalDateTime.now());
+        }
+        
+        public static Builder builder() {
+            return new Builder();
+        }
+        
+        public static class Builder {
+            private ReturnRequest returnRequest;
+            private int imageCount;
+            private String addedBy;
+            private LocalDateTime timestamp;
+            
+            public Builder returnRequest(ReturnRequest returnRequest) {
+                this.returnRequest = returnRequest;
+                return this;
+            }
+            
+            public Builder imageCount(int imageCount) {
+                this.imageCount = imageCount;
+                return this;
+            }
+            
+            public Builder addedBy(String addedBy) {
+                this.addedBy = addedBy;
+                return this;
+            }
+            
+            public Builder timestamp(LocalDateTime timestamp) {
+                this.timestamp = timestamp;
+                return this;
+            }
+            
+            public ReturnRequestImagesAddedEvent build() {
+                return new ReturnRequestImagesAddedEvent(returnRequest, imageCount, addedBy, timestamp);
+            }
         }
     }
 
     /**
      * Event published when return request status changes (generic)
      */
-    @Builder
     public record ReturnRequestStatusChangedEvent(
             ReturnRequest returnRequest,
             ReturnRequest.ReturnStatus previousStatus,
@@ -146,14 +314,54 @@ public class ReturnRequestEvents {
                 ReturnRequest.ReturnStatus previousStatus,
                 String changedBy, 
                 String reason) {
-            return ReturnRequestStatusChangedEvent.builder()
-                    .returnRequest(returnRequest)
-                    .previousStatus(previousStatus)
-                    .newStatus(returnRequest.getStatus())
-                    .changedBy(changedBy)
-                    .reason(reason)
-                    .timestamp(LocalDateTime.now())
-                    .build();
+            return new ReturnRequestStatusChangedEvent(returnRequest, previousStatus, returnRequest.getStatus(), changedBy, reason, LocalDateTime.now());
+        }
+        
+        public static Builder builder() {
+            return new Builder();
+        }
+        
+        public static class Builder {
+            private ReturnRequest returnRequest;
+            private ReturnRequest.ReturnStatus previousStatus;
+            private ReturnRequest.ReturnStatus newStatus;
+            private String changedBy;
+            private String reason;
+            private LocalDateTime timestamp;
+            
+            public Builder returnRequest(ReturnRequest returnRequest) {
+                this.returnRequest = returnRequest;
+                return this;
+            }
+            
+            public Builder previousStatus(ReturnRequest.ReturnStatus previousStatus) {
+                this.previousStatus = previousStatus;
+                return this;
+            }
+            
+            public Builder newStatus(ReturnRequest.ReturnStatus newStatus) {
+                this.newStatus = newStatus;
+                return this;
+            }
+            
+            public Builder changedBy(String changedBy) {
+                this.changedBy = changedBy;
+                return this;
+            }
+            
+            public Builder reason(String reason) {
+                this.reason = reason;
+                return this;
+            }
+            
+            public Builder timestamp(LocalDateTime timestamp) {
+                this.timestamp = timestamp;
+                return this;
+            }
+            
+            public ReturnRequestStatusChangedEvent build() {
+                return new ReturnRequestStatusChangedEvent(returnRequest, previousStatus, newStatus, changedBy, reason, timestamp);
+            }
         }
         
         public boolean isStatusTransition(ReturnRequest.ReturnStatus from, ReturnRequest.ReturnStatus to) {

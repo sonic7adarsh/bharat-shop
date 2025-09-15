@@ -18,6 +18,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Slf4j
 public class PriceCalculationService {
+    
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(PriceCalculationService.class);
 
     private final TaxRateRepository taxRateRepository;
 

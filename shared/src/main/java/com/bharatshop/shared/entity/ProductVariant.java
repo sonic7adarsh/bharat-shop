@@ -220,4 +220,8 @@ public class ProductVariant extends BaseEntity {
     public Long getProductId() {
         return productId;
     }
+    
+    public Long getTenantId() {
+        return tenantId;
+    }
 }

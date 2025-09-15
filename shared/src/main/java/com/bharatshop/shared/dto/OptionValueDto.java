@@ -99,4 +99,8 @@ public class OptionValueDto {
     public void setOptionId(Long optionId) {
         this.optionId = optionId;
     }
+    
+    public void setId(Long id) {
+        this.id = id;
+    }
 }

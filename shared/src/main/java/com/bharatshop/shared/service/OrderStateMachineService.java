@@ -44,7 +44,7 @@ public class OrderStateMachineService {
         Orders savedOrder = orderRepository.save(order);
         publishStateChangeEvent(savedOrder, OrderStatus.PENDING_PAYMENT, OrderStatus.CONFIRMED);
         
-        log.info("Order {} transitioned to CONFIRMED for tenant {}", orderId, tenantId);
+        System.out.println("Order " + orderId + " transitioned to CONFIRMED for tenant " + tenantId);
         return savedOrder;
     }
 
@@ -64,7 +64,7 @@ public class OrderStateMachineService {
         Orders savedOrder = orderRepository.save(order);
         publishStateChangeEvent(savedOrder, OrderStatus.CONFIRMED, OrderStatus.PACKED);
         
-        log.info("Order {} transitioned to PACKED for tenant {}", orderId, tenantId);
+        System.out.println("Order " + orderId + " transitioned to PACKED for tenant " + tenantId);
         return savedOrder;
     }
 
@@ -87,8 +87,7 @@ public class OrderStateMachineService {
         Orders savedOrder = orderRepository.save(order);
         publishStateChangeEvent(savedOrder, OrderStatus.PACKED, OrderStatus.SHIPPED);
         
-        log.info("Order {} transitioned to SHIPPED for tenant {} with tracking {}", 
-                orderId, tenantId, trackingNumber);
+        System.out.println("Order " + orderId + " transitioned to SHIPPED for tenant " + tenantId + " with tracking " + trackingNumber);
         return savedOrder;
     }
 
@@ -108,7 +107,7 @@ public class OrderStateMachineService {
         Orders savedOrder = orderRepository.save(order);
         publishStateChangeEvent(savedOrder, OrderStatus.SHIPPED, OrderStatus.DELIVERED);
         
-        log.info("Order {} transitioned to DELIVERED for tenant {}", orderId, tenantId);
+        System.out.println("Order " + orderId + " transitioned to DELIVERED for tenant " + tenantId);
         return savedOrder;
     }
 
@@ -130,8 +129,7 @@ public class OrderStateMachineService {
         Orders savedOrder = orderRepository.save(order);
         publishStateChangeEvent(savedOrder, previousStatus, OrderStatus.CANCELLED);
         
-        log.info("Order {} transitioned to CANCELLED for tenant {} with reason: {}", 
-                orderId, tenantId, reason);
+        System.out.println("Order " + orderId + " transitioned to CANCELLED for tenant " + tenantId + " with reason: " + reason);
         return savedOrder;
     }
 
@@ -152,8 +150,7 @@ public class OrderStateMachineService {
         Orders savedOrder = orderRepository.save(order);
         publishStateChangeEvent(savedOrder, OrderStatus.DELIVERED, OrderStatus.RETURN_REQUESTED);
         
-        log.info("Order {} transitioned to RETURN_REQUESTED for tenant {} with reason: {}", 
-                orderId, tenantId, reason);
+        System.out.println("Order " + orderId + " transitioned to RETURN_REQUESTED for tenant " + tenantId + " with reason: " + reason);
         return savedOrder;
     }
 
@@ -173,7 +170,7 @@ public class OrderStateMachineService {
         Orders savedOrder = orderRepository.save(order);
         publishStateChangeEvent(savedOrder, OrderStatus.RETURN_REQUESTED, OrderStatus.RETURNED);
         
-        log.info("Order {} transitioned to RETURNED for tenant {}", orderId, tenantId);
+        System.out.println("Order " + orderId + " transitioned to RETURNED for tenant " + tenantId);
         return savedOrder;
     }
 
@@ -194,7 +191,7 @@ public class OrderStateMachineService {
         Orders savedOrder = orderRepository.save(order);
         publishStateChangeEvent(savedOrder, OrderStatus.RETURNED, OrderStatus.REFUNDED);
         
-        log.info("Order {} transitioned to REFUNDED for tenant {}", orderId, tenantId);
+        System.out.println("Order " + orderId + " transitioned to REFUNDED for tenant " + tenantId);
         return savedOrder;
     }
 
@@ -215,8 +212,7 @@ public class OrderStateMachineService {
         Orders savedOrder = orderRepository.save(order);
         publishStateChangeEvent(savedOrder, OrderStatus.RETURN_REQUESTED, OrderStatus.DELIVERED);
         
-        log.info("Return rejected for order {} for tenant {} with reason: {}", 
-                orderId, tenantId, reason);
+        System.out.println("Return rejected for order " + orderId + " for tenant " + tenantId + " with reason: " + reason);
         return savedOrder;
     }
 
@@ -265,15 +261,15 @@ public class OrderStateMachineService {
     }
 
     private void publishStateChangeEvent(Orders order, OrderStatus fromStatus, OrderStatus toStatus) {
-        OrderStatusChangeEvent event = OrderStatusChangeEvent.builder()
-                .orderId(order.getId())
-                .tenantId(order.getTenantId())
-                .customerId(order.getCustomerId())
-                .fromStatus(fromStatus)
-                .toStatus(toStatus)
-                .orderNumber(order.getOrderNumber())
-                .timestamp(LocalDateTime.now())
-                .build();
+        OrderStatusChangeEvent event = new OrderStatusChangeEvent(
+                order.getId(),
+                order.getTenantId(),
+                order.getCustomerId(),
+                order.getOrderNumber(),
+                fromStatus,
+                toStatus,
+                LocalDateTime.now()
+        );
         
         eventPublisher.publishEvent(event);
     }

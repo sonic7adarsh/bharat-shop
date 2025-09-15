@@ -58,12 +58,12 @@ public class InvoiceEmailService {
      */
     public void sendInvoiceEmail(Invoice invoice, String recipientEmail) {
         if (mailSender == null) {
-            log.warn("Email service not configured. Skipping invoice email for: {}", invoice.getInvoiceNumber());
+            System.out.println("Email service not configured. Skipping invoice email for: " + invoice.getInvoiceNumber());
             return;
         }
         
         try {
-            log.info("Sending invoice email for invoice: {} to: {}", invoice.getInvoiceNumber(), recipientEmail);
+            System.out.println("Sending invoice email for invoice: " + invoice.getInvoiceNumber() + " to: " + recipientEmail);
             
             String subject = String.format("Tax Invoice %s - %s", invoice.getInvoiceNumber(), companyName);
             String htmlContent = generateEmailContent(invoice);
@@ -80,10 +80,10 @@ public class InvoiceEmailService {
             attachInvoicePdf(helper, invoice);
             
             mailSender.send(message);
-            log.info("Invoice email sent successfully for invoice: {}", invoice.getInvoiceNumber());
+            System.out.println("Invoice email sent successfully for invoice: " + invoice.getInvoiceNumber());
             
         } catch (Exception e) {
-            log.error("Failed to send invoice email for invoice: {}", invoice.getInvoiceNumber(), e);
+            System.out.println("Failed to send invoice email for invoice: " + invoice.getInvoiceNumber() + ": " + e.getMessage());
             throw new RuntimeException("Failed to send invoice email: " + e.getMessage(), e);
         }
     }
@@ -93,12 +93,12 @@ public class InvoiceEmailService {
      */
     public void sendInvoiceEmail(Invoice invoice, String recipientEmail, String customMessage) {
         if (mailSender == null) {
-            log.warn("Email service not configured. Skipping custom invoice email for: {}", invoice.getInvoiceNumber());
+            System.out.println("Email service not configured. Skipping custom invoice email for: " + invoice.getInvoiceNumber());
             return;
         }
         
         try {
-            log.info("Sending custom invoice email for invoice: {} to: {}", invoice.getInvoiceNumber(), recipientEmail);
+            System.out.println("Sending custom invoice email for invoice: " + invoice.getInvoiceNumber() + " to: " + recipientEmail);
             
             String subject = String.format("Tax Invoice %s - %s", invoice.getInvoiceNumber(), companyName);
             String htmlContent = generateEmailContent(invoice, customMessage);
@@ -115,10 +115,10 @@ public class InvoiceEmailService {
             attachInvoicePdf(helper, invoice);
             
             mailSender.send(message);
-            log.info("Custom invoice email sent successfully for invoice: {}", invoice.getInvoiceNumber());
+            System.out.println("Custom invoice email sent successfully for invoice: " + invoice.getInvoiceNumber());
             
         } catch (Exception e) {
-            log.error("Failed to send custom invoice email for invoice: {}", invoice.getInvoiceNumber(), e);
+            System.out.println("Failed to send custom invoice email for invoice: " + invoice.getInvoiceNumber() + ": " + e.getMessage());
             throw new RuntimeException("Failed to send invoice email: " + e.getMessage(), e);
         }
     }
@@ -176,18 +176,19 @@ public class InvoiceEmailService {
         
         // Try to get existing PDF from MediaFile
         if (invoice.getPdfMediaId() != null) {
-            Optional<MediaFile> mediaFileOpt = mediaFileRepository.findById(invoice.getPdfMediaId());
+            Long pdfMediaId = invoice.getPdfMediaId();
+            Optional<MediaFile> mediaFileOpt = mediaFileRepository.findById(pdfMediaId);
             if (mediaFileOpt.isPresent()) {
                 MediaFile mediaFile = mediaFileOpt.get();
                 // Note: MediaFile stores files in S3, not as binary data
                 // For now, we'll regenerate the PDF instead of downloading from S3
-                log.debug("MediaFile found for invoice: {}, but will regenerate PDF", invoice.getInvoiceNumber());
+                System.out.println("MediaFile found for invoice: " + invoice.getInvoiceNumber() + ", but will regenerate PDF");
             }
         }
         
         // Generate PDF if not available
         if (pdfBytes == null) {
-            log.debug("Generating new PDF for invoice: {}", invoice.getInvoiceNumber());
+            System.out.println("Generating new PDF for invoice: " + invoice.getInvoiceNumber());
             pdfBytes = invoicePdfService.generateInvoicePdf(invoice);
         }
         
@@ -195,9 +196,9 @@ public class InvoiceEmailService {
             String filename = String.format("invoice-%s.pdf", invoice.getInvoiceNumber());
             ByteArrayResource pdfResource = new ByteArrayResource(pdfBytes);
             helper.addAttachment(filename, pdfResource);
-            log.debug("PDF attached to email for invoice: {}", invoice.getInvoiceNumber());
+            System.out.println("PDF attached to email for invoice: " + invoice.getInvoiceNumber());
         } else {
-            log.warn("No PDF available to attach for invoice: {}", invoice.getInvoiceNumber());
+            System.out.println("No PDF available to attach for invoice: " + invoice.getInvoiceNumber());
         }
     }
 
@@ -206,7 +207,7 @@ public class InvoiceEmailService {
      */
     public void sendPaymentReminderEmail(Invoice invoice, String recipientEmail) {
         try {
-            log.info("Sending payment reminder for invoice: {} to: {}", invoice.getInvoiceNumber(), recipientEmail);
+            System.out.println("Sending payment reminder for invoice: " + invoice.getInvoiceNumber() + " to: " + recipientEmail);
             
             String subject = String.format("Payment Reminder - Invoice %s", invoice.getInvoiceNumber());
             String htmlContent = generatePaymentReminderContent(invoice);
@@ -223,10 +224,10 @@ public class InvoiceEmailService {
             attachInvoicePdf(helper, invoice);
             
             mailSender.send(message);
-            log.info("Payment reminder sent successfully for invoice: {}", invoice.getInvoiceNumber());
+            System.out.println("Payment reminder sent successfully for invoice: " + invoice.getInvoiceNumber());
             
         } catch (Exception e) {
-            log.error("Failed to send payment reminder for invoice: {}", invoice.getInvoiceNumber(), e);
+            System.out.println("Failed to send payment reminder for invoice: " + invoice.getInvoiceNumber() + ": " + e.getMessage());
             throw new RuntimeException("Failed to send payment reminder: " + e.getMessage(), e);
         }
     }
@@ -265,8 +266,7 @@ public class InvoiceEmailService {
     public void sendInvoiceStatusUpdateEmail(Invoice invoice, String recipientEmail, 
                                            Invoice.InvoiceStatus oldStatus, Invoice.InvoiceStatus newStatus) {
         try {
-            log.info("Sending status update email for invoice: {} from {} to {}", 
-                invoice.getInvoiceNumber(), oldStatus, newStatus);
+            System.out.println("Sending status update email for invoice: " + invoice.getInvoiceNumber() + " from " + oldStatus + " to " + newStatus);
             
             String subject = String.format("Invoice %s Status Updated - %s", 
                 invoice.getInvoiceNumber(), newStatus.name());
@@ -281,10 +281,10 @@ public class InvoiceEmailService {
             helper.setText(htmlContent, true);
             
             mailSender.send(message);
-            log.info("Status update email sent successfully for invoice: {}", invoice.getInvoiceNumber());
+            System.out.println("Status update email sent successfully for invoice: " + invoice.getInvoiceNumber());
             
         } catch (Exception e) {
-            log.error("Failed to send status update email for invoice: {}", invoice.getInvoiceNumber(), e);
+            System.out.println("Failed to send status update email for invoice: " + invoice.getInvoiceNumber() + ": " + e.getMessage());
             throw new RuntimeException("Failed to send status update email: " + e.getMessage(), e);
         }
     }
@@ -316,7 +316,7 @@ public class InvoiceEmailService {
         try {
             return mailSender != null && fromEmail != null && !fromEmail.trim().isEmpty();
         } catch (Exception e) {
-            log.warn("Email configuration validation failed", e);
+            System.out.println("Email configuration validation failed: " + e.getMessage());
             return false;
         }
     }

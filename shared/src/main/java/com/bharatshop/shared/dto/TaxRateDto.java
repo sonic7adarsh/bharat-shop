@@ -58,6 +58,8 @@ public class TaxRateDto {
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime updatedAt;
     
+
+    
     public static TaxRateDto fromEntity(TaxRate taxRate) {
         if (taxRate == null) {
             return null;

@@ -74,6 +74,13 @@ public class ProductDto extends BaseDto {
     @Size(max = 500, message = "SEO description cannot exceed 500 characters")
     private String seoDescription;
     
+    @Size(max = 1000, message = "Canonical URL cannot exceed 1000 characters")
+    private String canonicalUrl;
+    
+    private String structuredData;
+    
+    private Boolean featuredInSitemap = false;
+    
     private List<CategoryDto> categories;
     private List<ProductImageDto> images;
     

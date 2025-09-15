@@ -26,6 +26,56 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class JwksKey {
     
+    // Manual builder method for compilation compatibility
+    public static JwksKeyBuilder builder() {
+        return new JwksKeyBuilder();
+    }
+    
+    public static class JwksKeyBuilder {
+        private Long id;
+        private String kid;
+        private String alg;
+        private String keyMaterial;
+        private Boolean active = false;
+        private LocalDateTime rotatedAt;
+        private LocalDateTime expiresAt;
+        private KeyUsage usage = KeyUsage.SIGNING;
+        private Integer keySize;
+        private String description;
+        private LocalDateTime createdAt;
+        private LocalDateTime updatedAt;
+        
+        public JwksKeyBuilder id(Long id) { this.id = id; return this; }
+        public JwksKeyBuilder kid(String kid) { this.kid = kid; return this; }
+        public JwksKeyBuilder alg(String alg) { this.alg = alg; return this; }
+        public JwksKeyBuilder keyMaterial(String keyMaterial) { this.keyMaterial = keyMaterial; return this; }
+        public JwksKeyBuilder active(Boolean active) { this.active = active; return this; }
+        public JwksKeyBuilder rotatedAt(LocalDateTime rotatedAt) { this.rotatedAt = rotatedAt; return this; }
+        public JwksKeyBuilder expiresAt(LocalDateTime expiresAt) { this.expiresAt = expiresAt; return this; }
+        public JwksKeyBuilder usage(KeyUsage usage) { this.usage = usage; return this; }
+        public JwksKeyBuilder keySize(Integer keySize) { this.keySize = keySize; return this; }
+        public JwksKeyBuilder description(String description) { this.description = description; return this; }
+        public JwksKeyBuilder createdAt(LocalDateTime createdAt) { this.createdAt = createdAt; return this; }
+        public JwksKeyBuilder updatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; return this; }
+        
+        public JwksKey build() {
+            JwksKey key = new JwksKey();
+            key.id = this.id;
+            key.kid = this.kid;
+            key.alg = this.alg;
+            key.keyMaterial = this.keyMaterial;
+            key.active = this.active;
+            key.rotatedAt = this.rotatedAt;
+            key.expiresAt = this.expiresAt;
+            key.usage = this.usage;
+            key.keySize = this.keySize;
+            key.description = this.description;
+            key.createdAt = this.createdAt;
+            key.updatedAt = this.updatedAt;
+            return key;
+        }
+    }
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -126,6 +176,23 @@ public class JwksKey {
         return expiresAt == null || LocalDateTime.now().isBefore(expiresAt);
     }
     
+    // Manual getter methods (in case Lombok is not working)
+    public String getKid() {
+        return kid;
+    }
+    
+    public String getAlg() {
+        return alg;
+    }
+    
+    public String getKeyMaterial() {
+        return keyMaterial;
+    }
+    
+    public Integer getKeySize() {
+        return keySize;
+    }
+    
     /**
      * Check if this key is in the rolling upgrade window
      * Keys in this window can still be used for verification but not signing
@@ -152,5 +219,14 @@ public class JwksKey {
         if (this.expiresAt == null) {
             this.expiresAt = LocalDateTime.now();
         }
+    }
+    
+    // Manual getter methods for compilation compatibility
+    public Boolean getActive() {
+        return active;
+    }
+    
+    public LocalDateTime getRotatedAt() {
+        return rotatedAt;
     }
 }

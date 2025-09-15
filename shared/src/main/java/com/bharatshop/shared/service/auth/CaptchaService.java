@@ -24,6 +24,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 public class CaptchaService {
     
+    // Manual logger since Lombok is not working properly
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(CaptchaService.class);
+    
     private final RestTemplate restTemplate;
     
     @Value("${app.captcha.enabled:true}")

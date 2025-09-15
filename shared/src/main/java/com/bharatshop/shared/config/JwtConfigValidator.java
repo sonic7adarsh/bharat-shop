@@ -1,5 +1,7 @@
 package com.bharatshop.shared.config;
 
+import lombok.Builder;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -75,7 +77,7 @@ public class JwtConfigValidator {
      */
     @PostConstruct
     public void validateConfiguration() {
-        log.info("Starting JWT configuration validation...");
+        System.out.println("Starting JWT configuration validation...");
         
         List<String> errors = new ArrayList<>();
         List<String> warnings = new ArrayList<>();
@@ -91,16 +93,16 @@ public class JwtConfigValidator {
         
         // Log results
         if (!errors.isEmpty()) {
-            log.error("JWT Configuration validation failed with {} errors:", errors.size());
-            errors.forEach(error -> log.error("  - {}", error));
+            System.out.println("JWT Configuration validation failed with " + errors.size() + " errors:");
+            errors.forEach(error -> System.out.println("  - " + error));
             throw new IllegalStateException("JWT configuration validation failed. Check logs for details.");
         }
         
         if (!warnings.isEmpty()) {
-            log.warn("JWT Configuration validation completed with {} warnings:", warnings.size());
-            warnings.forEach(warning -> log.warn("  - {}", warning));
+            System.out.println("JWT Configuration validation completed with " + warnings.size() + " warnings:");
+            warnings.forEach(warning -> System.out.println("  - " + warning));
         } else {
-            log.info("JWT configuration validation completed successfully");
+            System.out.println("JWT configuration validation completed successfully");
         }
     }
     
@@ -109,18 +111,16 @@ public class JwtConfigValidator {
      */
     @EventListener(ApplicationReadyEvent.class)
     public void onApplicationReady() {
-        log.info("Application ready - JWT configuration summary:");
-        log.info("  - Algorithm: {}", algorithm);
-        log.info("  - Access token expiration: {} ms ({} hours)", 
-            accessTokenExpiration, accessTokenExpiration / 3600000);
-        log.info("  - Refresh token expiration: {} ms ({} days)", 
-            refreshTokenExpiration, refreshTokenExpiration / 86400000);
-        log.info("  - Key rotation enabled: {}", keyRotationEnabled);
+        System.out.println("Application ready - JWT configuration summary:");
+        System.out.println("  - Algorithm: " + algorithm);
+        System.out.println("  - Access token expiration: " + accessTokenExpiration + " ms (" + (accessTokenExpiration / 3600000) + " hours)");
+        System.out.println("  - Refresh token expiration: " + refreshTokenExpiration + " ms (" + (refreshTokenExpiration / 86400000) + " days)");
+        System.out.println("  - Key rotation enabled: " + keyRotationEnabled);
         
         if (keyRotationEnabled) {
-            log.info("  - Rolling upgrade window: {} hours", rollingUpgradeWindowHours);
-            log.info("  - Key size: {} bits", keySize);
-            log.info("  - Cleanup expired keys: {}", cleanupExpiredKeys);
+            System.out.println("  - Rolling upgrade window: " + rollingUpgradeWindowHours + " hours");
+            System.out.println("  - Key size: " + keySize + " bits");
+            System.out.println("  - Cleanup expired keys: " + cleanupExpiredKeys);
         }
     }
     
@@ -181,7 +181,7 @@ public class JwtConfigValidator {
     private void validateExternalServices(List<String> warnings) {
         // Redis validation (optional service)
         if (redisHost != null && !redisHost.trim().isEmpty()) {
-            log.info("Redis configuration detected - host: {}, port: {}", redisHost, redisPort);
+            System.out.println("Redis configuration detected - host: " + redisHost + ", port: " + redisPort);
         } else {
             warnings.add("Redis is not configured - rate limiting will use in-memory fallback");
         }
@@ -213,34 +213,32 @@ public class JwtConfigValidator {
      * Get configuration summary for health checks
      */
     public ConfigSummary getConfigSummary() {
-        return ConfigSummary.builder()
-            .algorithm(algorithm)
-            .accessTokenExpirationHours(accessTokenExpiration / 3600000)
-            .refreshTokenExpirationDays(refreshTokenExpiration / 86400000)
-            .keyRotationEnabled(keyRotationEnabled)
-            .rollingUpgradeWindowHours(rollingUpgradeWindowHours)
-            .keySize(keySize)
-            .cleanupExpiredKeys(cleanupExpiredKeys)
-            .databaseConfigured(!datasourceUrl.isEmpty())
-            .redisConfigured(!redisHost.isEmpty())
-            .captchaConfigured(!captchaSecretKey.isEmpty())
-            .razorpayConfigured(!razorpayKeyId.isEmpty() && !razorpayKeySecret.isEmpty())
-            .build();
+        ConfigSummary summary = new ConfigSummary();
+        summary.algorithm = algorithm;
+        summary.accessTokenExpirationHours = accessTokenExpiration / 3600000;
+        summary.refreshTokenExpirationDays = refreshTokenExpiration / 86400000;
+        summary.keyRotationEnabled = keyRotationEnabled;
+        summary.rollingUpgradeWindowHours = rollingUpgradeWindowHours;
+        summary.keySize = keySize;
+        summary.cleanupExpiredKeys = cleanupExpiredKeys;
+        summary.databaseConfigured = !datasourceUrl.isEmpty();
+        summary.redisConfigured = !redisHost.isEmpty();
+        summary.captchaConfigured = !captchaSecretKey.isEmpty();
+        summary.razorpayConfigured = !razorpayKeyId.isEmpty() && !razorpayKeySecret.isEmpty();
+        return summary;
     }
     
-    @lombok.Data
-    @lombok.Builder
     public static class ConfigSummary {
-        private String algorithm;
-        private long accessTokenExpirationHours;
-        private long refreshTokenExpirationDays;
-        private boolean keyRotationEnabled;
-        private int rollingUpgradeWindowHours;
-        private int keySize;
-        private boolean cleanupExpiredKeys;
-        private boolean databaseConfigured;
-        private boolean redisConfigured;
-        private boolean captchaConfigured;
-        private boolean razorpayConfigured;
+        public String algorithm;
+        public long accessTokenExpirationHours;
+        public long refreshTokenExpirationDays;
+        public boolean keyRotationEnabled;
+        public int rollingUpgradeWindowHours;
+        public int keySize;
+        public boolean cleanupExpiredKeys;
+        public boolean databaseConfigured;
+        public boolean redisConfigured;
+        public boolean captchaConfigured;
+        public boolean razorpayConfigured;
     }
 }

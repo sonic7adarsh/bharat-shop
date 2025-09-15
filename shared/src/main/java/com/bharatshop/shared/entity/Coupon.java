@@ -121,6 +121,47 @@ public class Coupon extends BaseEntity {
         return minCartAmount == null || cartAmount.compareTo(minCartAmount) >= 0;
     }
 
+    // Manual getters since Lombok is not working properly
+    public Long getId() { return id; }
+    public Long getTenantId() { return tenantId; }
+    public String getCode() { return code; }
+    public CouponType getType() { return type; }
+    public BigDecimal getValue() { return value; }
+    public BigDecimal getMinCartAmount() { return minCartAmount; }
+    public BigDecimal getMaxDiscountAmount() { return maxDiscountAmount; }
+    public LocalDateTime getStartDate() { return startDate; }
+    public LocalDateTime getEndDate() { return endDate; }
+    public Integer getUsageLimit() { return usageLimit; }
+    public Integer getUsageCount() { return usageCount; }
+    public Integer getPerCustomerLimit() { return perCustomerLimit; }
+    public Boolean getFirstOrderOnly() { return firstOrderOnly; }
+    public Boolean getIsActive() { return isActive; }
+    public String getDescription() { return description; }
+    public String getEligibleCategories() { return eligibleCategories; }
+    public String getEligibleProducts() { return eligibleProducts; }
+    
+    // Manual getters for BaseEntity fields
+    public java.time.LocalDateTime getCreatedAt() { return createdAt; }
+    public java.time.LocalDateTime getUpdatedAt() { return updatedAt; }
+    public java.time.LocalDateTime getDeletedAt() { return deletedAt; }
+
+    // Manual setters since Lombok is not working properly
+    public void setCode(String code) { this.code = code; }
+    public void setType(CouponType type) { this.type = type; }
+    public void setValue(BigDecimal value) { this.value = value; }
+    public void setMinCartAmount(BigDecimal minCartAmount) { this.minCartAmount = minCartAmount; }
+    public void setMaxDiscountAmount(BigDecimal maxDiscountAmount) { this.maxDiscountAmount = maxDiscountAmount; }
+    public void setStartDate(LocalDateTime startDate) { this.startDate = startDate; }
+    public void setEndDate(LocalDateTime endDate) { this.endDate = endDate; }
+    public void setUsageLimit(Integer usageLimit) { this.usageLimit = usageLimit; }
+    public void setUsageCount(Integer usageCount) { this.usageCount = usageCount; }
+    public void setPerCustomerLimit(Integer perCustomerLimit) { this.perCustomerLimit = perCustomerLimit; }
+    public void setFirstOrderOnly(Boolean firstOrderOnly) { this.firstOrderOnly = firstOrderOnly; }
+    public void setIsActive(Boolean isActive) { this.isActive = isActive; }
+    public void setDescription(String description) { this.description = description; }
+    public void setEligibleCategories(String eligibleCategories) { this.eligibleCategories = eligibleCategories; }
+    public void setEligibleProducts(String eligibleProducts) { this.eligibleProducts = eligibleProducts; }
+
     /**
      * Calculate discount amount for a given cart total
      */

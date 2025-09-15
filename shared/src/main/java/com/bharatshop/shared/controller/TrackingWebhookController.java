@@ -5,6 +5,8 @@ import com.bharatshop.shared.entity.Shipment;
 import com.bharatshop.shared.repository.ShipmentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +31,7 @@ import java.util.Base64;
 @RequiredArgsConstructor
 @Slf4j
 public class TrackingWebhookController {
+    private static final Logger log = LoggerFactory.getLogger(TrackingWebhookController.class);
 
     private final ShipmentTrackingService shipmentTrackingService;
     private final ShipmentRepository shipmentRepository;
@@ -329,17 +332,17 @@ public class TrackingWebhookController {
             String description = (String) payload.get("instructions");
             String eventCode = (String) payload.get("status_code");
             
-            return ShipmentTrackingService.TrackingEvent.builder()
-                    .status(status)
-                    .eventDate(LocalDateTime.now())
-                    .location(location)
-                    .description(description)
-                    .carrierEventCode(eventCode)
-                    .eventType("WEBHOOK")
-                    .isMilestone(isMilestoneStatus(status))
-                    .isException(isExceptionStatus(status))
-                    .rawData(payload.toString())
-                    .build();
+            ShipmentTrackingService.TrackingEvent event = new ShipmentTrackingService.TrackingEvent();
+            event.status = status;
+            event.eventDate = LocalDateTime.now();
+            event.location = location;
+            event.description = description;
+            event.carrierEventCode = eventCode;
+            event.eventType = "WEBHOOK";
+            event.isMilestone = isMilestoneStatus(status);
+            event.isException = isExceptionStatus(status);
+            event.rawData = payload.toString();
+            return event;
                     
         } catch (Exception e) {
             log.error("Failed to parse Delhivery webhook: {}", e.getMessage());
@@ -359,17 +362,17 @@ public class TrackingWebhookController {
             String description = (String) payload.get("remarks");
             String eventCode = (String) payload.get("event_code");
             
-            return ShipmentTrackingService.TrackingEvent.builder()
-                    .status(status)
-                    .eventDate(LocalDateTime.now())
-                    .location(location)
-                    .description(description)
-                    .carrierEventCode(eventCode)
-                    .eventType("WEBHOOK")
-                    .isMilestone(isMilestoneStatus(status))
-                    .isException(isExceptionStatus(status))
-                    .rawData(payload.toString())
-                    .build();
+            ShipmentTrackingService.TrackingEvent event = new ShipmentTrackingService.TrackingEvent();
+            event.status = status;
+            event.eventDate = LocalDateTime.now();
+            event.location = location;
+            event.description = description;
+            event.carrierEventCode = eventCode;
+            event.eventType = "WEBHOOK";
+            event.isMilestone = isMilestoneStatus(status);
+            event.isException = isExceptionStatus(status);
+            event.rawData = payload.toString();
+            return event;
                     
         } catch (Exception e) {
             log.error("Failed to parse BlueDart webhook: {}", e.getMessage());
@@ -387,19 +390,19 @@ public class TrackingWebhookController {
             String location = (String) payload.get("location");
             String description = (String) payload.get("description");
             
-            return ShipmentTrackingService.TrackingEvent.builder()
-                    .status(status)
-                    .eventDate(LocalDateTime.now())
-                    .location(location)
-                    .description(description)
-                    .eventType("WEBHOOK")
-                    .isMilestone(isMilestoneStatus(status))
-                    .isException(isExceptionStatus(status))
-                    .rawData(payload.toString())
-                    .build();
+            ShipmentTrackingService.TrackingEvent event = new ShipmentTrackingService.TrackingEvent();
+            event.status = status;
+            event.eventDate = LocalDateTime.now();
+            event.location = location;
+            event.description = description;
+            event.eventType = "WEBHOOK";
+            event.isMilestone = isMilestoneStatus(status);
+            event.isException = isExceptionStatus(status);
+            event.rawData = payload.toString();
+            return event;
                     
         } catch (Exception e) {
-            log.error("Failed to parse DTDC webhook: {}", e.getMessage());
+            System.out.println("Failed to parse DTDC webhook: " + e.getMessage());
             return null;
         }
     }
@@ -415,20 +418,20 @@ public class TrackingWebhookController {
             String description = extractField(payload, "description", "message", "remarks", "notes");
             String eventCode = extractField(payload, "event_code", "code", "status_code");
             
-            return ShipmentTrackingService.TrackingEvent.builder()
-                    .status(status)
-                    .eventDate(LocalDateTime.now())
-                    .location(location)
-                    .description(description)
-                    .carrierEventCode(eventCode)
-                    .eventType("WEBHOOK")
-                    .isMilestone(isMilestoneStatus(status))
-                    .isException(isExceptionStatus(status))
-                    .rawData(payload.toString())
-                    .build();
+            ShipmentTrackingService.TrackingEvent event = new ShipmentTrackingService.TrackingEvent();
+            event.status = status;
+            event.eventDate = LocalDateTime.now();
+            event.location = location;
+            event.description = description;
+            event.carrierEventCode = eventCode;
+            event.eventType = "WEBHOOK";
+            event.isMilestone = isMilestoneStatus(status);
+            event.isException = isExceptionStatus(status);
+            event.rawData = payload.toString();
+            return event;
                     
         } catch (Exception e) {
-            log.error("Failed to parse generic webhook for {}: {}", carrierName, e.getMessage());
+            System.out.println("Failed to parse generic webhook for " + carrierName + ": " + e.getMessage());
             return null;
         }
     }

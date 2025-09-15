@@ -7,6 +7,8 @@ import com.bharatshop.shared.repository.CouponRepository;
 import com.bharatshop.shared.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -29,6 +31,7 @@ import java.util.Set;
 @Slf4j
 @Transactional
 public class CouponService {
+    private static final Logger log = LoggerFactory.getLogger(CouponService.class);
 
     private final CouponRepository couponRepository;
     private final OrderRepository orderRepository;

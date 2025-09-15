@@ -8,7 +8,8 @@ import com.bharatshop.shared.service.ReturnRequestEvents.*;
 import com.bharatshop.shared.service.MediaService;
 import com.bharatshop.shared.entity.MediaFile;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,9 +28,10 @@ import java.util.Optional;
  */
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class ReturnRequestService {
 
+    private static final Logger log = LoggerFactory.getLogger(ReturnRequestService.class);
+    
     private final ReturnRequestRepository returnRequestRepository;
     private final OrderRepository orderRepository;
     private final OrderStateMachineService orderStateMachineService;
@@ -400,7 +402,6 @@ public class ReturnRequestService {
 
     // DTOs and Events (inner classes for brevity)
 
-    @lombok.Data
     public static class CreateReturnRequestDto {
         private Long tenantId;
         private Long orderId;
@@ -408,26 +409,79 @@ public class ReturnRequestService {
         private String reason;
         private String customerComments;
         private List<CreateReturnItemDto> items;
+        
+        public Long getTenantId() {
+            return tenantId;
+        }
+        
+        public Long getOrderId() {
+            return orderId;
+        }
+        
+        public ReturnRequest.ReturnType getReturnType() {
+            return returnType;
+        }
+        
+        public String getReason() {
+            return reason;
+        }
+        
+        public String getCustomerComments() {
+            return customerComments;
+        }
+        
+        public List<CreateReturnItemDto> getItems() {
+            return items;
+        }
     }
 
-    @lombok.Data
     public static class CreateReturnItemDto {
         private Long orderItemId;
         private Integer returnQuantity;
         private String reason;
+        
+        public Long getOrderItemId() {
+            return orderItemId;
+        }
+        
+        public Integer getReturnQuantity() {
+            return returnQuantity;
+        }
+        
+        public String getReason() {
+            return reason;
+        }
     }
 
-    @lombok.Data
     public static class QualityCheckDto {
         private List<QualityCheckItemDto> items;
+        
+        public List<QualityCheckItemDto> getItems() {
+            return items;
+        }
     }
 
-    @lombok.Data
     public static class QualityCheckItemDto {
         private Long itemId;
         private ReturnRequestItem.ItemCondition condition;
         private Integer approvedQuantity;
         private String notes;
+        
+        public Long getItemId() {
+            return itemId;
+        }
+        
+        public ReturnRequestItem.ItemCondition getCondition() {
+            return condition;
+        }
+        
+        public Integer getApprovedQuantity() {
+            return approvedQuantity;
+        }
+        
+        public String getNotes() {
+            return notes;
+        }
     }
 
     // Event classes are now in ReturnRequestEvents.java

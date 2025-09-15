@@ -168,4 +168,204 @@ public class DeviceRefreshToken {
     public boolean isStale(int staleHours) {
         return java.time.Duration.between(lastUsedAt, LocalDateTime.now()).toHours() > staleHours;
     }
+    
+    // Manual methods in case Lombok isn't working
+    public static DeviceRefreshTokenBuilder builder() {
+        return new DeviceRefreshTokenBuilder();
+    }
+    
+    public Long getId() {
+        return this.id;
+    }
+    
+    public String getDeviceId() {
+        return this.deviceId;
+    }
+    
+    public Long getUserId() {
+        return this.userId;
+    }
+    
+    public String getDeviceName() {
+        return this.deviceName;
+    }
+    
+    public String getDeviceType() {
+        return this.deviceType;
+    }
+    
+    public String getUserAgent() {
+        return this.userAgent;
+    }
+    
+    public String getLocation() {
+        return this.location;
+    }
+    
+    public Boolean getRevoked() {
+        return revoked;
+    }
+
+    public String getIpAddress() {
+        return ipAddress;
+    }
+
+    public Integer getGenerationNumber() {
+        return generationNumber;
+    }
+    
+    public static class DeviceRefreshTokenBuilder {
+        private Long id;
+        private Long userId;
+        private String deviceId;
+        private String tokenHash;
+        private LocalDateTime expiresAt;
+        private LocalDateTime lastUsedAt;
+        private Boolean revoked = false;
+        private LocalDateTime revokedAt;
+        private String revokedReason;
+        private Long parentTokenId;
+        private Integer generationNumber = 1;
+        private String deviceName;
+        private String deviceType;
+        private String userAgent;
+        private String ipAddress;
+        private String location;
+        private Boolean suspicious = false;
+        private Boolean reused = false;
+        private LocalDateTime reuseDetectedAt;
+        private LocalDateTime createdAt;
+        private LocalDateTime updatedAt;
+        
+        public DeviceRefreshTokenBuilder id(Long id) {
+            this.id = id;
+            return this;
+        }
+        
+        public DeviceRefreshTokenBuilder userId(Long userId) {
+            this.userId = userId;
+            return this;
+        }
+        
+        public DeviceRefreshTokenBuilder deviceId(String deviceId) {
+            this.deviceId = deviceId;
+            return this;
+        }
+        
+        public DeviceRefreshTokenBuilder tokenHash(String tokenHash) {
+            this.tokenHash = tokenHash;
+            return this;
+        }
+        
+        public DeviceRefreshTokenBuilder expiresAt(LocalDateTime expiresAt) {
+            this.expiresAt = expiresAt;
+            return this;
+        }
+        
+        public DeviceRefreshTokenBuilder lastUsedAt(LocalDateTime lastUsedAt) {
+            this.lastUsedAt = lastUsedAt;
+            return this;
+        }
+        
+        public DeviceRefreshTokenBuilder revoked(Boolean revoked) {
+            this.revoked = revoked;
+            return this;
+        }
+        
+        public DeviceRefreshTokenBuilder revokedAt(LocalDateTime revokedAt) {
+            this.revokedAt = revokedAt;
+            return this;
+        }
+        
+        public DeviceRefreshTokenBuilder revokedReason(String revokedReason) {
+            this.revokedReason = revokedReason;
+            return this;
+        }
+        
+        public DeviceRefreshTokenBuilder parentTokenId(Long parentTokenId) {
+            this.parentTokenId = parentTokenId;
+            return this;
+        }
+        
+        public DeviceRefreshTokenBuilder generationNumber(Integer generationNumber) {
+            this.generationNumber = generationNumber;
+            return this;
+        }
+        
+        public DeviceRefreshTokenBuilder deviceName(String deviceName) {
+            this.deviceName = deviceName;
+            return this;
+        }
+        
+        public DeviceRefreshTokenBuilder deviceType(String deviceType) {
+            this.deviceType = deviceType;
+            return this;
+        }
+        
+        public DeviceRefreshTokenBuilder userAgent(String userAgent) {
+            this.userAgent = userAgent;
+            return this;
+        }
+        
+        public DeviceRefreshTokenBuilder ipAddress(String ipAddress) {
+            this.ipAddress = ipAddress;
+            return this;
+        }
+        
+        public DeviceRefreshTokenBuilder location(String location) {
+            this.location = location;
+            return this;
+        }
+        
+        public DeviceRefreshTokenBuilder suspicious(Boolean suspicious) {
+            this.suspicious = suspicious;
+            return this;
+        }
+        
+        public DeviceRefreshTokenBuilder reused(Boolean reused) {
+            this.reused = reused;
+            return this;
+        }
+        
+        public DeviceRefreshTokenBuilder reuseDetectedAt(LocalDateTime reuseDetectedAt) {
+            this.reuseDetectedAt = reuseDetectedAt;
+            return this;
+        }
+        
+        public DeviceRefreshTokenBuilder createdAt(LocalDateTime createdAt) {
+            this.createdAt = createdAt;
+            return this;
+        }
+        
+        public DeviceRefreshTokenBuilder updatedAt(LocalDateTime updatedAt) {
+            this.updatedAt = updatedAt;
+            return this;
+        }
+        
+        public DeviceRefreshToken build() {
+            DeviceRefreshToken token = new DeviceRefreshToken();
+            token.id = this.id;
+            token.userId = this.userId;
+            token.deviceId = this.deviceId;
+            token.tokenHash = this.tokenHash;
+            token.expiresAt = this.expiresAt;
+            token.lastUsedAt = this.lastUsedAt;
+            token.revoked = this.revoked != null ? this.revoked : false;
+            token.revokedAt = this.revokedAt;
+            token.revokedReason = this.revokedReason;
+            token.parentTokenId = this.parentTokenId;
+            token.generationNumber = this.generationNumber != null ? this.generationNumber : 1;
+            token.deviceName = this.deviceName;
+            token.deviceType = this.deviceType;
+            token.userAgent = this.userAgent;
+            token.ipAddress = this.ipAddress;
+            token.location = this.location;
+            token.suspicious = this.suspicious != null ? this.suspicious : false;
+            token.reused = this.reused != null ? this.reused : false;
+            token.reuseDetectedAt = this.reuseDetectedAt;
+            token.createdAt = this.createdAt;
+            token.updatedAt = this.updatedAt;
+            return token;
+        }
+    }
 }

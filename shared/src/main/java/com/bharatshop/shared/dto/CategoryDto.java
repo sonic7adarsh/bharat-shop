@@ -38,6 +38,20 @@ public class CategoryDto extends BaseDto {
     
     private Boolean isActive = true;
     
+    // SEO fields
+    @Size(max = 255, message = "SEO title cannot exceed 255 characters")
+    private String seoTitle;
+    
+    @Size(max = 500, message = "SEO description cannot exceed 500 characters")
+    private String seoDescription;
+    
+    @Size(max = 1000, message = "Canonical URL cannot exceed 1000 characters")
+    private String canonicalUrl;
+    
+    private String structuredData;
+    
+    private Boolean featuredInSitemap = false;
+    
     // For nested category structure
     private CategoryDto parent;
     private List<CategoryDto> children;

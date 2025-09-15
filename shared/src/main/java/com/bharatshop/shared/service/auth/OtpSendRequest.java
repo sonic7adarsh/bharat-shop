@@ -38,4 +38,29 @@ public class OtpSendRequest {
     private String locale;
     private String timezone;
     private String appVersion;
+    
+    // Manual getter methods
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+    
+    public String getIpAddress() {
+        return ipAddress;
+    }
+    
+    public String getDeviceId() {
+        return deviceId;
+    }
+    
+    public String getUserAgent() {
+        return userAgent;
+    }
+    
+    public OtpVerification.OtpType getType() {
+        return type;
+    }
+    
+    public String getSessionId() {
+        return sessionId;
+    }
 }

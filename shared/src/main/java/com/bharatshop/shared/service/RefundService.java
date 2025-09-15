@@ -116,8 +116,7 @@ public class RefundService {
             // Update payment record
             updatePaymentAfterRefund(payment, refundAmount, refund.get("id"), type);
             
-            log.info("Live refund processed: {} for payment {} amount {}", 
-                    refund.get("id"), payment.getId(), refundAmount);
+            System.out.println("Live refund processed: " + refund.get("id") + " for payment " + payment.getId() + " amount " + refundAmount);
             
             return RefundResult.builder()
                     .success(true)
@@ -128,7 +127,7 @@ public class RefundService {
                     .build();
             
         } catch (RazorpayException e) {
-            log.error("Razorpay refund failed for payment {}: {}", payment.getId(), e.getMessage(), e);
+            System.out.println("Razorpay refund failed for payment " + payment.getId() + ": " + e.getMessage());
             
             return RefundResult.builder()
                     .success(false)
@@ -147,8 +146,7 @@ public class RefundService {
         // Update payment record
         updatePaymentAfterRefund(payment, refundAmount, mockRefundId, type);
         
-        log.info("Sandbox refund processed: {} for payment {} amount {}", 
-                mockRefundId, payment.getId(), refundAmount);
+        System.out.println("Sandbox refund processed: " + mockRefundId + " for payment " + payment.getId() + " amount " + refundAmount);
         
         return RefundResult.builder()
                 .success(true)
@@ -175,7 +173,7 @@ public class RefundService {
             payment.setStatus(Payment.PaymentStatus.CAPTURED);
             paymentRepository.save(payment);
             
-            log.info("Live capture processed for payment {} amount {}", payment.getId(), captureAmount);
+            System.out.println("Live capture processed for payment " + payment.getId() + " amount " + captureAmount);
             
             return CaptureResult.builder()
                     .success(true)
@@ -185,7 +183,7 @@ public class RefundService {
                     .build();
             
         } catch (RazorpayException e) {
-            log.error("Razorpay capture failed for payment {}: {}", payment.getId(), e.getMessage(), e);
+            System.out.println("Razorpay capture failed for payment " + payment.getId() + ": " + e.getMessage());
             
             return CaptureResult.builder()
                     .success(false)
@@ -203,7 +201,7 @@ public class RefundService {
         // Note: Payment entity doesn't have capturedAmount or capturedAt fields
         paymentRepository.save(payment);
         
-        log.info("Sandbox capture processed for payment {} amount {}", payment.getId(), captureAmount);
+        System.out.println("Sandbox capture processed for payment " + payment.getId() + " amount " + captureAmount);
         
         return CaptureResult.builder()
                 .success(true)
@@ -300,6 +298,16 @@ public class RefundService {
         private String status;
         private String message;
         private String error;
+        
+        public boolean isSuccess() {
+            return success;
+        }
+        
+        public String getMessage() {
+            return message;
+        }
+        
+
     }
 
     @lombok.Data
@@ -310,5 +318,7 @@ public class RefundService {
         private String status;
         private String message;
         private String error;
+        
+
     }
 }

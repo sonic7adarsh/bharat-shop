@@ -42,7 +42,7 @@ public class JwksController {
             Map<String, Object> jwks = new HashMap<>();
             jwks.put("keys", keys);
             
-            log.debug("Serving JWKS with {} keys", keys.size());
+            System.out.println("Serving JWKS with " + keys.size() + " keys");
             
             // Cache for 1 hour to reduce load, but allow refresh for key rotation
             return ResponseEntity.ok()
@@ -53,7 +53,7 @@ public class JwksController {
                 .body(jwks);
                 
         } catch (Exception e) {
-            log.error("Error serving JWKS endpoint", e);
+            System.out.println("Error serving JWKS endpoint: " + e.getMessage());
             
             // Return empty key set on error to prevent service disruption
             Map<String, Object> emptyJwks = new HashMap<>();
@@ -87,7 +87,7 @@ public class JwksController {
                 .body(health);
                 
         } catch (Exception e) {
-            log.error("Error checking JWKS health", e);
+            System.out.println("Error checking JWKS health: " + e.getMessage());
             
             Map<String, Object> health = new HashMap<>();
             health.put("status", "unhealthy");

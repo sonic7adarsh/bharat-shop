@@ -30,6 +30,13 @@ public class CategoryResponseDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     
+    // SEO fields
+    private String seoTitle;
+    private String seoDescription;
+    private String canonicalUrl;
+    private String structuredData;
+    private Boolean featuredInSitemap;
+    
     // For nested category structure
     private CategoryResponseDto parent;
     private List<CategoryResponseDto> children;

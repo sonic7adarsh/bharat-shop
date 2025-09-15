@@ -199,6 +199,348 @@ public class Invoice extends BaseEntity {
     public boolean isInterState() {
         return taxType == TaxType.INTER_STATE;
     }
+    
+    // Manual getter methods to fix Lombok issue
+    public Long getId() {
+        return id;
+    }
+    
+    public String getInvoiceNumber() {
+        return invoiceNumber;
+    }
+    
+    public LocalDate getInvoiceDate() {
+        return invoiceDate;
+    }
+    
+    public LocalDate getDueDate() {
+        return dueDate;
+    }
+    
+    public LocalDateTime getSentAt() {
+        return sentAt;
+    }
+
+    public void setSentAt(LocalDateTime sentAt) {
+        this.sentAt = sentAt;
+    }
+    
+    public TaxType getTaxType() {
+        return taxType;
+    }
+    
+    public String getSellerGstin() {
+        return sellerGstin;
+    }
+    
+    public BigDecimal getTotalTax() {
+        return totalTax;
+    }
+    
+    public String getBuyerGstin() {
+        return buyerGstin;
+    }
+    
+    public BigDecimal getTotalAmount() {
+        return totalAmount;
+    }
+    
+    public String getCurrency() {
+        return currency;
+    }
+    
+    public String getBuyerName() {
+        return buyerName;
+    }
+    
+    public String getBuyerEmail() {
+        return buyerEmail;
+    }
+    
+    public Long getPdfMediaId() {
+        return pdfMediaId;
+    }
+    
+    public List<InvoiceItem> getItems() {
+        return items;
+    }
+    
+    public Long getTenantId() {
+        return tenantId;
+    }
+    
+    public Long getOrderId() {
+        return orderId;
+    }
+    
+    public String getSellerName() {
+        return sellerName;
+    }
+    
+    public String getSellerAddress() {
+        return sellerAddress;
+    }
+    
+    public String getSellerPan() {
+        return sellerPan;
+    }
+    
+    public String getSellerStateCode() {
+        return sellerStateCode;
+    }
+    
+    public String getSellerEmail() {
+        return sellerEmail;
+    }
+    
+    public String getSellerPhone() {
+        return sellerPhone;
+    }
+    
+    public String getBuyerAddress() {
+        return buyerAddress;
+    }
+    
+    public String getBuyerStateCode() {
+        return buyerStateCode;
+    }
+    
+    public String getBuyerPhone() {
+        return buyerPhone;
+    }
+    
+    public String getPlaceOfSupply() {
+        return placeOfSupply;
+    }
+    
+    public BigDecimal getSubtotal() {
+        return subtotal;
+    }
+    
+    public BigDecimal getTotalCgst() {
+        return totalCgst;
+    }
+    
+    public BigDecimal getTotalSgst() {
+        return totalSgst;
+    }
+    
+    public BigDecimal getTotalIgst() {
+        return totalIgst;
+    }
+    
+    public BigDecimal getTotalCess() {
+        return totalCess;
+    }
+    
+    public BigDecimal getDiscountAmount() {
+        return discountAmount;
+    }
+    
+    public BigDecimal getShippingAmount() {
+        return shippingAmount;
+    }
+    
+    public String getAmountInWords() {
+        return amountInWords;
+    }
+    
+    public InvoiceStatus getStatus() {
+        return status;
+    }
+    
+    public String getNotes() {
+        return notes;
+    }
+    
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+    
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+    
+    public String getBuyerPan() {
+        return buyerPan;
+    }
+    
+    public LocalDateTime getViewedAt() {
+        return viewedAt;
+    }
+    
+    public String getPdfUrl() {
+        return pdfUrl;
+    }
+    
+    public String getQrCodeData() {
+        return qrCodeData;
+    }
+    
+    public String getTermsAndConditions() {
+        return termsAndConditions;
+    }
+
+    // Setter methods
+    public void setId(Long id) {
+        this.id = id;
+    }
+    
+    public void setTenantId(Long tenantId) {
+        this.tenantId = tenantId;
+    }
+    
+    public void setOrderId(Long orderId) {
+        this.orderId = orderId;
+    }
+    
+    public void setInvoiceNumber(String invoiceNumber) {
+        this.invoiceNumber = invoiceNumber;
+    }
+    
+    public void setSellerName(String sellerName) {
+        this.sellerName = sellerName;
+    }
+    
+    public void setSellerAddress(String sellerAddress) {
+        this.sellerAddress = sellerAddress;
+    }
+    
+    public void setSellerGstin(String sellerGstin) {
+        this.sellerGstin = sellerGstin;
+    }
+    
+    public void setSellerPan(String sellerPan) {
+        this.sellerPan = sellerPan;
+    }
+    
+    public void setSellerStateCode(String sellerStateCode) {
+        this.sellerStateCode = sellerStateCode;
+    }
+    
+    public void setSellerEmail(String sellerEmail) {
+        this.sellerEmail = sellerEmail;
+    }
+    
+    public void setSellerPhone(String sellerPhone) {
+        this.sellerPhone = sellerPhone;
+    }
+    
+    public void setBuyerName(String buyerName) {
+        this.buyerName = buyerName;
+    }
+    
+    public void setBuyerAddress(String buyerAddress) {
+        this.buyerAddress = buyerAddress;
+    }
+    
+    public void setBuyerGstin(String buyerGstin) {
+        this.buyerGstin = buyerGstin;
+    }
+    
+    public void setBuyerStateCode(String buyerStateCode) {
+        this.buyerStateCode = buyerStateCode;
+    }
+    
+    public void setBuyerEmail(String buyerEmail) {
+        this.buyerEmail = buyerEmail;
+    }
+    
+    public void setBuyerPhone(String buyerPhone) {
+        this.buyerPhone = buyerPhone;
+    }
+    
+    public void setInvoiceDate(LocalDate invoiceDate) {
+        this.invoiceDate = invoiceDate;
+    }
+    
+    public void setDueDate(LocalDate dueDate) {
+        this.dueDate = dueDate;
+    }
+    
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
+    
+    public void setPlaceOfSupply(String placeOfSupply) {
+        this.placeOfSupply = placeOfSupply;
+    }
+    
+    public void setSubtotal(BigDecimal subtotal) {
+        this.subtotal = subtotal;
+    }
+    
+    public void setTotalCgst(BigDecimal totalCgst) {
+        this.totalCgst = totalCgst;
+    }
+    
+    public void setTotalSgst(BigDecimal totalSgst) {
+        this.totalSgst = totalSgst;
+    }
+    
+    public void setTotalIgst(BigDecimal totalIgst) {
+        this.totalIgst = totalIgst;
+    }
+    
+    public void setTotalCess(BigDecimal totalCess) {
+        this.totalCess = totalCess;
+    }
+    
+    public void setTotalTax(BigDecimal totalTax) {
+        this.totalTax = totalTax;
+    }
+    
+    public void setTotalAmount(BigDecimal totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+    
+    public void setAmountInWords(String amountInWords) {
+        this.amountInWords = amountInWords;
+    }
+    
+    public void setStatus(InvoiceStatus status) {
+        this.status = status;
+    }
+    
+    public void setPdfMediaId(Long pdfMediaId) {
+        this.pdfMediaId = pdfMediaId;
+    }
+    
+    public void setTaxType(TaxType taxType) {
+        this.taxType = taxType;
+    }
+    
+    public void setBuyerPan(String buyerPan) {
+        this.buyerPan = buyerPan;
+    }
+    
+    public void setDiscountAmount(BigDecimal discountAmount) {
+        this.discountAmount = discountAmount;
+    }
+    
+    public void setShippingAmount(BigDecimal shippingAmount) {
+        this.shippingAmount = shippingAmount;
+    }
+    
+    public void setViewedAt(LocalDateTime viewedAt) {
+        this.viewedAt = viewedAt;
+    }
+    
+    public void setPdfUrl(String pdfUrl) {
+        this.pdfUrl = pdfUrl;
+    }
+    
+    public void setQrCodeData(String qrCodeData) {
+        this.qrCodeData = qrCodeData;
+    }
+    
+    public void setTermsAndConditions(String termsAndConditions) {
+        this.termsAndConditions = termsAndConditions;
+    }
+    
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
 
     /**
      * Get tax breakdown summary
@@ -213,4 +555,6 @@ public class Invoice extends BaseEntity {
                     totalIgst != null ? totalIgst : BigDecimal.ZERO);
         }
     }
+
+
 }

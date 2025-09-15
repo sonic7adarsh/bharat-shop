@@ -51,7 +51,7 @@ public class InvoicePdfService {
             return convertHtmlToPdf(html);
 
         } catch (Exception e) {
-            log.error("Error generating PDF for invoice {}: {}", invoice.getInvoiceNumber(), e.getMessage(), e);
+            System.out.println("Error generating PDF for invoice " + invoice.getInvoiceNumber() + ": " + e.getMessage());
             throw new RuntimeException("Failed to generate invoice PDF", e);
         }
     }
@@ -90,7 +90,7 @@ public class InvoicePdfService {
             context.setVariable("qrCode", qrCodeBase64);
             context.setVariable("hasQrCode", true);
         } catch (Exception e) {
-            log.warn("Failed to generate QR code for invoice {}: {}", invoice.getInvoiceNumber(), e.getMessage());
+            System.out.println("Failed to generate QR code for invoice " + invoice.getInvoiceNumber() + ": " + e.getMessage());
             context.setVariable("hasQrCode", false);
         }
 

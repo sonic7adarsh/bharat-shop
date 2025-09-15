@@ -71,6 +71,26 @@ public class TaxRate extends BaseEntity {
         INACTIVE
     }
 
+    // Manual getters since Lombok is not working properly
+    public Long getId() { return id; }
+    public Long getTenantId() { return tenantId; }
+    public String getHsnCode() { return hsnCode; }
+    public String getStateCode() { return stateCode; }
+    public TaxType getTaxType() { return taxType; }
+    public BigDecimal getCgstRate() { return cgstRate; }
+    public BigDecimal getSgstRate() { return sgstRate; }
+    public BigDecimal getIgstRate() { return igstRate; }
+    public BigDecimal getCessRate() { return cessRate; }
+    public Boolean getIsTaxInclusive() { return isTaxInclusive; }
+    public String getDescription() { return description; }
+    public TaxRateStatus getStatus() { return status; }
+    
+    // Manual getters for BaseEntity fields
+    public java.time.LocalDateTime getCreatedAt() { return createdAt; }
+    public java.time.LocalDateTime getUpdatedAt() { return updatedAt; }
+    
+
+
     /**
      * Get total tax rate (CGST + SGST for intra-state, IGST for inter-state)
      */

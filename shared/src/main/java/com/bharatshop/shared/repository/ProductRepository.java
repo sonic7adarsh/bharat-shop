@@ -31,4 +31,13 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     
     // Add back countByTenantId since it's used by services
     long countByTenantId(Long tenantId);
+    
+    // SEO-related methods for sitemap generation
+    List<Product> findByTenantIdAndFeaturedInSitemapTrueAndDeletedAtIsNull(Long tenantId);
+    
+    List<Product> findByTenantIdAndStatusAndFeaturedInSitemapTrueAndDeletedAtIsNull(Long tenantId, Product.ProductStatus status);
+    
+    Page<Product> findByTenantIdAndFeaturedInSitemapTrueAndDeletedAtIsNull(Long tenantId, Pageable pageable);
+    
+    long countByTenantIdAndFeaturedInSitemapTrueAndDeletedAtIsNull(Long tenantId);
 }

@@ -86,11 +86,11 @@ public class ImageProcessingService {
                 // Cache the result
                 cacheImageVariants(uniqueFilename, result);
                 
-                log.info("Successfully processed image: {} with {} thumbnails", uniqueFilename, thumbnails.size());
+                System.out.println("Successfully processed image: " + uniqueFilename + " with " + thumbnails.size() + " thumbnails");
                 return result;
                 
             } catch (Exception e) {
-                log.error("Error processing image: {}", file.getOriginalFilename(), e);
+                System.out.println("Error processing image: " + file.getOriginalFilename() + ", " + e.getMessage());
                 throw new RuntimeException("Failed to process image", e);
             }
         }, executorService);
@@ -153,7 +153,7 @@ public class ImageProcessingService {
             return Optional.of(result);
             
         } catch (Exception e) {
-            log.error("Error retrieving image variants for: {}", filename, e);
+            System.out.println("Error retrieving image variants for: " + filename + ", " + e.getMessage());
             return Optional.empty();
         }
     }
@@ -179,11 +179,11 @@ public class ImageProcessingService {
             // Remove from cache
             cacheService.evict(CacheService.IMAGE_VARIANTS_CACHE, filename);
             
-            log.info("Successfully deleted image and variants: {}", filename);
+            System.out.println("Successfully deleted image and variants: " + filename);
             return true;
             
         } catch (Exception e) {
-            log.error("Error deleting image: {}", filename, e);
+            System.out.println("Error deleting image: " + filename + ", " + e.getMessage());
             return false;
         }
     }

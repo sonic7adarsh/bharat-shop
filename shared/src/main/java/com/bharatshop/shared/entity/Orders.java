@@ -269,6 +269,13 @@ public class Orders {
         return status == OrderStatus.DELIVERED && deliveredAt != null;
     }
     
+    // Manual getters since Lombok is not working properly
+    public OrderStatus getStatus() { return status; }
+    public Long getTenantId() { return tenantId; }
+    public Long getCustomerId() { return customerId; }
+    public String getOrderNumber() { return orderNumber; }
+    public LocalDateTime getDeliveredAt() { return deliveredAt; }
+    
     public void markAsDelivered() {
         this.status = OrderStatus.DELIVERED;
         this.deliveredAt = LocalDateTime.now();
@@ -277,6 +284,10 @@ public class Orders {
     public void markAsCancelled() {
         this.status = OrderStatus.CANCELLED;
         this.cancelledAt = LocalDateTime.now();
+    }
+    
+    public Long getId() {
+        return id;
     }
     
     public void markAsPacked() {
@@ -368,5 +379,64 @@ public class Orders {
             return 0;
         }
         return java.time.Duration.between(estimatedDeliveryDate, actualDeliveryDate).toDays();
+    }
+    
+    public BigDecimal getTotalAmount() {
+        return totalAmount;
+    }
+    
+    public List<OrderItem> getItems() {
+        return items;
+    }
+    
+    public void setStatus(OrderStatus status) {
+        this.status = status;
+    }
+    
+    public void setConfirmedAt(LocalDateTime confirmedAt) {
+        this.confirmedAt = confirmedAt;
+    }
+    
+    public void setPackedAt(LocalDateTime packedAt) {
+        this.packedAt = packedAt;
+    }
+    
+    public void setShippedAt(LocalDateTime shippedAt) {
+        this.shippedAt = shippedAt;
+    }
+    
+    public void setTrackingNumber(String trackingNumber) {
+        this.trackingNumber = trackingNumber;
+    }
+    
+    public void setCourierPartner(String courierPartner) {
+        this.courierPartner = courierPartner;
+    }
+    
+    public void setDeliveredAt(LocalDateTime deliveredAt) {
+        this.deliveredAt = deliveredAt;
+    }
+    
+    public void setCancelledAt(LocalDateTime cancelledAt) {
+        this.cancelledAt = cancelledAt;
+    }
+    
+    public void setCancellationReason(String cancellationReason) {
+        this.cancellationReason = cancellationReason;
+    }
+    
+    public void setPaymentStatus(PaymentStatus paymentStatus) {
+        this.paymentStatus = paymentStatus;
+    }
+
+    /**
+     * Manual getter methods to ensure compatibility
+     */
+    public String getShippingName() {
+        return shippingName;
+    }
+
+    public String getShippingPhone() {
+        return shippingPhone;
     }
 }

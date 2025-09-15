@@ -199,6 +199,21 @@ public class Shipment extends BaseEntity {
         DAMAGED         // Package damaged
     }
 
+    // Manual getters and setters since Lombok is not working properly
+    public String getCarrierName() { return carrierName; }
+    public String getTrackingNumber() { return trackingNumber; }
+    public void setLastTrackingUpdate(LocalDateTime lastTrackingUpdate) { this.lastTrackingUpdate = lastTrackingUpdate; }
+    public void setDeliveredDate(LocalDateTime deliveredDate) { this.deliveredDate = deliveredDate; }
+    public Long getOrderId() { return orderId; }
+    public Long getId() { return id; }
+    public LocalDateTime getLastTrackingUpdate() { return lastTrackingUpdate; }
+    public ShipmentStatus getStatus() { return status; }
+    public void setStatus(ShipmentStatus status) { this.status = status; }
+    public String getCurrentLocation() { return currentLocation; }
+    public void setCurrentLocation(String currentLocation) { this.currentLocation = currentLocation; }
+    public String getTrackingStatusMessage() { return trackingStatusMessage; }
+    public void setTrackingStatusMessage(String trackingStatusMessage) { this.trackingStatusMessage = trackingStatusMessage; }
+
     // Helper methods
     public boolean isDelivered() {
         return status == ShipmentStatus.DELIVERED && deliveredDate != null;
@@ -296,4 +311,11 @@ public class Shipment extends BaseEntity {
             }
         }
     }
+    
+    // Manual getters since Lombok is not working properly
+    public String getCarrierCode() { return carrierCode; }
+    public String getDeliveryContactPhone() { return deliveryContactPhone; }
+    public Integer getDeliveryAttempts() { return deliveryAttempts; }
+    public java.time.LocalDateTime getShippedDate() { return shippedDate; }
+    public java.time.LocalDateTime getDeliveredDate() { return deliveredDate; }
 }

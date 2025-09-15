@@ -35,6 +35,8 @@ import java.util.Map;
 @Slf4j
 public class WebhookService {
 
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(WebhookService.class);
+    
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
     
@@ -280,7 +282,7 @@ public class WebhookService {
             String expectedSignature = generateSignature(payload);
             return expectedSignature.equals(signature);
         } catch (Exception e) {
-            log.error("Failed to verify webhook signature: {}", e.getMessage());
+            System.out.println("Failed to verify webhook signature: " + e.getMessage());
             return false;
         }
     }
@@ -301,7 +303,7 @@ public class WebhookService {
                 .build();
         
         sendWebhookToAllEndpoints(payload, "test." + eventType);
-        log.info("Test webhook triggered for event type: {}", eventType);
+        System.out.println("Test webhook triggered for event type: " + eventType);
     }
 
     // Webhook payload class
@@ -319,6 +321,8 @@ public class WebhookService {
         
         @lombok.Builder.Default
         private String source = "bharatshop";
+        
+
     }
 
     // Webhook configuration

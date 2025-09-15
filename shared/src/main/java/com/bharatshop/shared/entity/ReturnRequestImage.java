@@ -124,19 +124,46 @@ public class ReturnRequestImage extends BaseEntity {
                 mimeType.equals("image/gif") || 
                 mimeType.equals("image/webp"));
     }
+    
+    // Setter methods
+    public void setOriginalFileName(String originalFileName) {
+        this.originalFileName = originalFileName;
+    }
+    
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
+    
+    public void setFileSize(Long fileSize) {
+        this.fileSize = fileSize;
+    }
+    
+    public void setMimeType(String mimeType) {
+        this.mimeType = mimeType;
+    }
+    
+    public void setImageType(ImageType imageType) {
+        this.imageType = imageType;
+    }
+    
+    public void setReturnRequest(ReturnRequest returnRequest) {
+        this.returnRequest = returnRequest;
+    }
+    
+    public void setTenantId(Long tenantId) {
+        this.tenantId = tenantId;
+    }
 
     public String getFileSizeFormatted() {
         if (fileSize == null) {
-            return "Unknown";
+            return "0 B";
         }
         
-        if (fileSize < 1024) {
-            return fileSize + " B";
-        } else if (fileSize < 1024 * 1024) {
-            return String.format("%.1f KB", fileSize / 1024.0);
-        } else {
-            return String.format("%.1f MB", fileSize / (1024.0 * 1024.0));
-        }
+        long bytes = fileSize;
+        if (bytes < 1024) return bytes + " B";
+        int exp = (int) (Math.log(bytes) / Math.log(1024));
+        String pre = "KMGTPE".charAt(exp-1) + "";
+        return String.format("%.1f %sB", bytes / Math.pow(1024, exp), pre);
     }
 
     public boolean isWithinSizeLimit(long maxSizeInBytes) {

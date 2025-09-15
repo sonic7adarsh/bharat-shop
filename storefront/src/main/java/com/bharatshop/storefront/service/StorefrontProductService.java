@@ -63,6 +63,16 @@ public class StorefrontProductService {
         return mapToResponseDto(product);
     }
     
+    /**
+     * Get Product entity by ID for internal use
+     */
+    public Product getProductEntityById(Long id, String tenantId) {
+        log.debug("Fetching product entity with id: {} for tenant: {}", id, tenantId);
+        
+        return productRepository.findByIdAndStatus(id, Product.ProductStatus.ACTIVE)
+                .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
+    }
+    
     @Cacheable(value = "product", key = "'slug_' + #slug")
     public ProductResponseDto getProductBySlug(String slug) {
         log.debug("Fetching product with slug: {}", slug);

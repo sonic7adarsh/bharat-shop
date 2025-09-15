@@ -27,6 +27,8 @@ import java.util.function.Function;
 @Slf4j
 public class JwtService {
     
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(JwtService.class);
+    
     private final JwtKeyRotationService jwtKeyRotationService;
 
     @Value("${jwt.access-token.expiration:86400000}") // 24 hours

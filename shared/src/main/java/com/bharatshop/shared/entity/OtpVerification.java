@@ -103,6 +103,127 @@ public class OtpVerification {
         PHONE_VERIFICATION
     }
     
+    // Manual setter methods
+    public void setProviderMessageId(String providerMessageId) {
+        this.providerMessageId = providerMessageId;
+    }
+    
+    public void setProviderResponse(String providerResponse) {
+        this.providerResponse = providerResponse;
+    }
+    
+    // Manual getter methods
+    public Long getId() {
+        return id;
+    }
+    
+    public String getHashedOtp() {
+        return hashedOtp;
+    }
+    
+    public String getDeviceId() {
+        return deviceId;
+    }
+    
+    public String getSessionId() {
+        return sessionId;
+    }
+    
+    public static OtpVerificationBuilder builder() {
+        return new OtpVerificationBuilder();
+    }
+    
+    public static class OtpVerificationBuilder {
+        private String phoneNumber;
+        private String otpCode;
+        private String hashedOtp;
+        private OtpStatus status;
+        private OtpType type;
+        private LocalDateTime expiresAt;
+        private Integer maxAttempts;
+        private String deviceId;
+        private String ipAddress;
+        private String sessionId;
+        private String providerId;
+        
+        public OtpVerificationBuilder phoneNumber(String phoneNumber) {
+            this.phoneNumber = phoneNumber;
+            return this;
+        }
+        
+        public OtpVerificationBuilder otpCode(String otpCode) {
+            this.otpCode = otpCode;
+            return this;
+        }
+        
+        public OtpVerificationBuilder hashedOtp(String hashedOtp) {
+            this.hashedOtp = hashedOtp;
+            return this;
+        }
+        
+        public OtpVerificationBuilder status(OtpStatus status) {
+            this.status = status;
+            return this;
+        }
+        
+        public OtpVerificationBuilder type(OtpType type) {
+            this.type = type;
+            return this;
+        }
+        
+        public OtpVerificationBuilder expiresAt(LocalDateTime expiresAt) {
+            this.expiresAt = expiresAt;
+            return this;
+        }
+        
+        public OtpVerificationBuilder maxAttempts(Integer maxAttempts) {
+            this.maxAttempts = maxAttempts;
+            return this;
+        }
+        
+        public OtpVerificationBuilder deviceId(String deviceId) {
+            this.deviceId = deviceId;
+            return this;
+        }
+        
+        public OtpVerificationBuilder ipAddress(String ipAddress) {
+            this.ipAddress = ipAddress;
+            return this;
+        }
+        
+        public OtpVerificationBuilder sessionId(String sessionId) {
+            this.sessionId = sessionId;
+            return this;
+        }
+        
+        public OtpVerificationBuilder providerId(String providerId) {
+            this.providerId = providerId;
+            return this;
+        }
+        
+        public OtpVerificationBuilder verificationAttempts(int verificationAttempts) {
+            // This method is needed for builder pattern compatibility
+            return this;
+        }
+        
+        public OtpVerification build() {
+            OtpVerification otp = new OtpVerification();
+            otp.phoneNumber = this.phoneNumber;
+            otp.otpCode = this.otpCode;
+            otp.hashedOtp = this.hashedOtp;
+            otp.status = this.status;
+            otp.type = this.type;
+            otp.expiresAt = this.expiresAt;
+            otp.maxAttempts = this.maxAttempts;
+            otp.deviceId = this.deviceId;
+            otp.ipAddress = this.ipAddress;
+            otp.sessionId = this.sessionId;
+            otp.providerId = this.providerId;
+            otp.verificationAttempts = 0;
+            return otp;
+        }
+    }
+    
     /**
      * Check if OTP is expired
      */

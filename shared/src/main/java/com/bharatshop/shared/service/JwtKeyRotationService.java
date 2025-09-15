@@ -28,6 +28,8 @@ import java.util.UUID;
 @Slf4j
 public class JwtKeyRotationService {
     
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(JwtKeyRotationService.class);
+    
     private final JwksKeyRepository jwksKeyRepository;
     private final SecureRandom secureRandom = new SecureRandom();
     
@@ -276,11 +278,37 @@ public class JwtKeyRotationService {
     @lombok.Data
     @lombok.Builder
     public static class KeyRotationStats {
+        
+
         private long activeSigningKeys;
         private int keysInRollingUpgradeWindow;
         private int expiredKeys;
         private int rollingUpgradeWindowHours;
         private boolean keyRotationEnabled;
         private LocalDateTime lastRotationTime;
+        
+        public long getActiveSigningKeys() {
+            return activeSigningKeys;
+        }
+        
+        public int getKeysInRollingUpgradeWindow() {
+            return keysInRollingUpgradeWindow;
+        }
+        
+        public int getExpiredKeys() {
+            return expiredKeys;
+        }
+        
+        public int getRollingUpgradeWindowHours() {
+            return rollingUpgradeWindowHours;
+        }
+        
+        public boolean isKeyRotationEnabled() {
+            return keyRotationEnabled;
+        }
+        
+        public LocalDateTime getLastRotationTime() {
+            return lastRotationTime;
+        }
     }
 }

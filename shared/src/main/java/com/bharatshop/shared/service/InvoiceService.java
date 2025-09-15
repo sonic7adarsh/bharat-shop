@@ -5,6 +5,8 @@ import com.bharatshop.shared.repository.*;
 import com.bharatshop.shared.service.PriceCalculationService.PriceBreakdown;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +24,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Slf4j
 public class InvoiceService {
+
+    private static final Logger log = LoggerFactory.getLogger(InvoiceService.class);
 
     private final InvoiceRepository invoiceRepository;
     private final InvoiceItemRepository invoiceItemRepository;
@@ -119,7 +123,7 @@ public class InvoiceService {
         updateInvoiceTotals(invoice, invoiceItems);
         invoice = invoiceRepository.save(invoice);
 
-        log.info("Generated invoice {} for order {}", invoiceNumber, orderId);
+        System.out.println("Generated invoice " + invoiceNumber + " for order " + orderId);
         return invoice;
     }
 
@@ -217,7 +221,7 @@ public class InvoiceService {
         for (OrderItem orderItem : orderItems) {
             Product product = orderItem.getProduct();
             if (product == null) {
-                log.warn("Product not found for order item {}", orderItem.getId());
+                System.out.println("Product not found for order item " + orderItem.getId());
                 continue;
             }
 
@@ -482,7 +486,7 @@ public class InvoiceService {
                     invoiceEmailService.sendInvoiceStatusUpdateEmail(invoice, recipientEmail, oldStatus, newStatus);
                 }
             } catch (Exception e) {
-                log.error("Failed to send status update notification for invoice: {}", invoice.getInvoiceNumber(), e);
+                System.out.println("Failed to send status update notification for invoice: " + invoice.getInvoiceNumber() + ", error: " + e.getMessage());
                 // Don't throw exception to avoid breaking the status update
             }
         }

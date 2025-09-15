@@ -29,6 +29,9 @@ public class Page extends BaseEntity {
     @Column(nullable = false, length = 100)
     private String slug;
     
+    @Column(name = "previous_slug", length = 255)
+    private String previousSlug; // For tracking slug changes
+    
     @Column(columnDefinition = "TEXT")
     private String content;
     
@@ -83,6 +86,25 @@ public class Page extends BaseEntity {
     
     @Column(name = "status", length = 50)
     private String status = "draft";
+    
+    // SEO metadata relationship
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "seo_metadata_id")
+    private SeoMetadata seoMetadata;
+    
+    // Structured data for SEO
+    @Column(name = "structured_data", columnDefinition = "TEXT")
+    private String structuredData; // JSON-LD format
+    
+    // SEO flags
+    @Column(name = "featured_in_sitemap")
+    private Boolean featuredInSitemap = true;
+    
+    @Column(name = "sitemap_priority", precision = 3, scale = 2)
+    private Double sitemapPriority = 0.5;
+    
+    @Column(name = "sitemap_change_frequency", length = 20)
+    private String sitemapChangeFrequency = "monthly";
     
     // Manual getters for BaseEntity fields that Lombok is not generating
     public java.time.LocalDateTime getDeletedAt() {
@@ -287,5 +309,20 @@ public class Page extends BaseEntity {
         this.tenantId = tenantId != null ? tenantId : null;
     }
     
+    public void setPreviousSlug(String previousSlug) {
+        this.previousSlug = previousSlug;
+    }
+    
+    public Double getSitemapPriority() {
+        return sitemapPriority;
+    }
+    
+    public String getSitemapChangeFrequency() {
+        return sitemapChangeFrequency;
+    }
+    
+    public Boolean getFeaturedInSitemap() {
+        return featuredInSitemap;
+    }
 
 }

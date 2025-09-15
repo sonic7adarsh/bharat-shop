@@ -22,6 +22,50 @@ public class OrderStatusChangeEvent {
     private OrderStatus toStatus;
     private LocalDateTime timestamp;
     
+    // Manual constructor for compatibility
+    public OrderStatusChangeEvent(Long orderId, Long tenantId, Long customerId, String orderNumber, 
+                                 OrderStatus fromStatus, OrderStatus toStatus, LocalDateTime timestamp) {
+        this.orderId = orderId;
+        this.tenantId = tenantId;
+        this.customerId = customerId;
+        this.orderNumber = orderNumber;
+        this.fromStatus = fromStatus;
+        this.toStatus = toStatus;
+        this.timestamp = timestamp;
+    }
+    
+    // Default constructor for Lombok
+    public OrderStatusChangeEvent() {}
+    
+    // Manual getter methods (in case Lombok is not working)
+    public Long getOrderId() {
+        return orderId;
+    }
+    
+    public Long getTenantId() {
+        return tenantId;
+    }
+    
+    public Long getCustomerId() {
+        return customerId;
+    }
+    
+    public String getOrderNumber() {
+        return orderNumber;
+    }
+    
+    public OrderStatus getFromStatus() {
+        return fromStatus;
+    }
+    
+    public OrderStatus getToStatus() {
+        return toStatus;
+    }
+    
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
+    
     /**
      * Check if this is a transition to a terminal state
      */

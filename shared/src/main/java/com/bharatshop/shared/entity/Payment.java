@@ -112,4 +112,45 @@ public class Payment {
         EMI,
         PAYLATER
     }
+    
+    // Manual getter methods
+    public Long getId() {
+        return id;
+    }
+    
+    public Long getOrderId() {
+        return orderId;
+    }
+    
+    public String getRazorpayPaymentId() {
+        return razorpayPaymentId;
+    }
+    
+    public void setStatus(PaymentStatus status) {
+        this.status = status;
+    }
+    
+    public BigDecimal getRefundAmount() {
+        return refundAmount;
+    }
+    
+    public void setRefundAmount(BigDecimal refundAmount) {
+        this.refundAmount = refundAmount;
+    }
+    
+    public String getRefundId() {
+        return refundId;
+    }
+    
+    public void setRefundId(String refundId) {
+        this.refundId = refundId;
+    }
+    
+    public BigDecimal getAmount() {
+        return amount;
+    }
+    
+    public PaymentStatus getStatus() {
+        return status;
+    }
 }

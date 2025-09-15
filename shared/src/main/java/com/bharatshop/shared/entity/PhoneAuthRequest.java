@@ -106,4 +106,61 @@ public class PhoneAuthRequest {
         this.blockReason = reason;
         this.blockedUntil = until;
     }
+    
+    // Manual setter methods
+    public void setStatus(RequestStatus status) {
+        this.status = status;
+    }
+    
+    public static PhoneAuthRequestBuilder builder() {
+        return new PhoneAuthRequestBuilder();
+    }
+    
+    public static class PhoneAuthRequestBuilder {
+        private String phoneNumber;
+        private String deviceId;
+        private String ipAddress;
+        private String userAgent;
+        private RequestStatus status;
+        
+        public PhoneAuthRequestBuilder phoneNumber(String phoneNumber) {
+            this.phoneNumber = phoneNumber;
+            return this;
+        }
+        
+        public PhoneAuthRequestBuilder deviceId(String deviceId) {
+            this.deviceId = deviceId;
+            return this;
+        }
+        
+        public PhoneAuthRequestBuilder ipAddress(String ipAddress) {
+            this.ipAddress = ipAddress;
+            return this;
+        }
+        
+        public PhoneAuthRequestBuilder userAgent(String userAgent) {
+            this.userAgent = userAgent;
+            return this;
+        }
+        
+        public PhoneAuthRequestBuilder status(RequestStatus status) {
+            this.status = status;
+            return this;
+        }
+        
+        public PhoneAuthRequestBuilder attemptCount(int attemptCount) {
+            // This method is needed for builder pattern compatibility
+            return this;
+        }
+        
+        public PhoneAuthRequest build() {
+            PhoneAuthRequest request = new PhoneAuthRequest();
+            request.phoneNumber = this.phoneNumber;
+            request.deviceId = this.deviceId;
+            request.ipAddress = this.ipAddress;
+            request.userAgent = this.userAgent;
+            request.status = this.status;
+            return request;
+        }
+    }
 }

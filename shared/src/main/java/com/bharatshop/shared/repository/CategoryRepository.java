@@ -39,4 +39,11 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     boolean existsBySlugAndTenantIdAndDeletedAtIsNull(String slug, Long tenantId);
 
     boolean existsBySlugAndTenantIdAndIdNotAndDeletedAtIsNull(String slug, Long tenantId, Long id);
+    
+    // SEO-related methods for sitemap generation
+    List<Category> findByTenantIdAndFeaturedInSitemapTrueAndDeletedAtIsNullOrderBySortOrderAsc(Long tenantId);
+    
+    List<Category> findByTenantIdAndIsActiveAndFeaturedInSitemapTrueAndDeletedAtIsNullOrderBySortOrderAsc(Long tenantId, Boolean isActive);
+    
+    long countByTenantIdAndFeaturedInSitemapTrueAndDeletedAtIsNull(Long tenantId);
 }

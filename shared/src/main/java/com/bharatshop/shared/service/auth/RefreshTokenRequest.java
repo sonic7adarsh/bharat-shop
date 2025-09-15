@@ -118,4 +118,16 @@ public class RefreshTokenRequest {
         
         return "****";
     }
+    
+    // Manual getters since Lombok is not working properly
+    public Long getUserId() { return userId; }
+    public String getDeviceId() { return deviceId; }
+    public Long getParentTokenId() { return parentTokenId; }
+    public String getDeviceName() { return deviceName; }
+    public String getDeviceType() { return deviceType; }
+    public String getUserAgent() { return userAgent; }
+    public String getIpAddress() { return ipAddress; }
+    public String getLocation() { return location; }
+    
+
 }

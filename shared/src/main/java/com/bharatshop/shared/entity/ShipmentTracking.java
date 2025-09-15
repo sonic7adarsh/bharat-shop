@@ -84,6 +84,8 @@ public class ShipmentTracking extends BaseEntity {
     @JoinColumn(name = "shipment_id", insertable = false, updatable = false)
     private Shipment shipment;
 
+
+
     // Helper methods
     public boolean isDeliveryEvent() {
         return status == Shipment.ShipmentStatus.DELIVERED;
@@ -121,4 +123,9 @@ public class ShipmentTracking extends BaseEntity {
             isException = true;
         }
     }
+    
+    // Manual getters since Lombok is not working properly
+    public java.time.LocalDateTime getEventDate() { return eventDate; }
+    public Shipment.ShipmentStatus getStatus() { return status; }
+    public String getLocation() { return location; }
 }

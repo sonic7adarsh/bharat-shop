@@ -164,4 +164,64 @@ public class ReturnRequestItem extends BaseEntity {
             calculateApprovedReturnAmount();
         }
     }
+    
+    // Manual getter and setter methods
+    public Long getId() {
+        return id;
+    }
+    
+    public void setConditionReceived(ItemCondition conditionReceived) {
+        this.conditionReceived = conditionReceived;
+    }
+    
+    public void setQualityCheckNotes(String qualityCheckNotes) {
+        this.qualityCheckNotes = qualityCheckNotes;
+    }
+    
+    public void setApprovedReturnQuantity(Integer approvedReturnQuantity) {
+        this.approvedReturnQuantity = approvedReturnQuantity;
+    }
+    
+    public BigDecimal getApprovedReturnAmount() {
+        return approvedReturnAmount;
+    }
+    
+    public ItemCondition getConditionReceived() {
+        return conditionReceived;
+    }
+    
+    public void setTenantId(Long tenantId) {
+        this.tenantId = tenantId;
+    }
+    
+    public void setOrderItemId(Long orderItemId) {
+        this.orderItemId = orderItemId;
+    }
+    
+    public void setReturnQuantity(Integer returnQuantity) {
+        this.returnQuantity = returnQuantity;
+    }
+    
+    public void setReason(String reason) {
+        this.reason = reason;
+    }
+    
+    public void setProductVariantId(Long productVariantId) {
+        this.productVariantId = productVariantId;
+    }
+    
+    public void setUnitPrice(BigDecimal unitPrice) {
+        this.unitPrice = unitPrice;
+    }
+    
+    public void setReturnRequest(ReturnRequest returnRequest) {
+        this.returnRequest = returnRequest;
+    }
+    
+    public BigDecimal getReturnAmount() {
+        if (unitPrice != null && returnQuantity != null) {
+            return unitPrice.multiply(BigDecimal.valueOf(returnQuantity));
+        }
+        return BigDecimal.ZERO;
+    }
 }

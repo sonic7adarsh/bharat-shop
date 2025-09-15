@@ -202,4 +202,12 @@ public class ProductVariantDto {
     public void setProductId(Long productId) {
         this.productId = productId;
     }
+    
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+    
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 }

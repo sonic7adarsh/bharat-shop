@@ -32,6 +32,7 @@ C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\service\auth\RefreshTokenRequest.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\repository\SubscriptionRepository.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\dto\PagedResponse.java
+C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\service\SlugManagementService.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\entity\ProductOption.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\filter\JwtAuthenticationFilter.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\service\auth\CaptchaService.java
@@ -44,9 +45,11 @@ C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\service\auth\OtpService.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\dto\media\PresignUploadResponse.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\repository\CouponRepository.java
+C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\entity\SlugRedirect.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\repository\OptionValueRepository.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\dto\OptionValueDto.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\dto\ProductVariantOptionValueDto.java
+C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\service\RobotsService.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\entity\CartItem.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\entity\Plan.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\dto\media\PresignUploadRequest.java
@@ -84,6 +87,7 @@ C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\entity\Category.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\config\RazorpayConfig.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\repository\ProductOptionRepository.java
+C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\repository\SlugRedirectRepository.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\dto\InvoiceGenerationRequest.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\service\PlanService.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\entity\User.java
@@ -115,13 +119,16 @@ C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\repository\InvoiceItemRepository.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\service\CacheService.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\mapper\OptionMapper.java
+C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\service\StructuredDataService.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\repository\PhoneAuthRequestRepository.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\config\PasswordConfig.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\repository\MediaFileRepository.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\service\CouponService.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\entity\ReturnRequestImage.java
+C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\entity\SeoMetadata.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\repository\CategoryRepository.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\service\MessageService.java
+C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\repository\SeoMetadataRepository.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\service\SubscriptionService.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\dto\InvoiceItemDto.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\repository\OtpVerificationRepository.java
@@ -144,6 +151,7 @@ C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\entity\InvoiceNumberSequence.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\repository\TaxRateRepository.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\repository\DeviceRefreshTokenRepository.java
+C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\service\SitemapService.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\dto\SubscriptionRequestDto.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\dto\TemplateResponseDto.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\entity\ProductVariantOptionValue.java
@@ -175,6 +183,7 @@ C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\entity\Option.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\repository\JwksKeyRepository.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\repository\ShipmentRepository.java
+C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\service\SeoMetadataService.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\entity\Vendor.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\service\JwtService.java
 C:\Users\Adarsh\Downloads\bharatshop\shared\src\main\java\com\bharatshop\shared\entity\Product.java

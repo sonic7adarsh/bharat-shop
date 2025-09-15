@@ -72,6 +72,14 @@ public class PageRequestDto {
     
     private String status;
     
+    // SEO fields
+    @Size(max = 1000, message = "Canonical URL cannot exceed 1000 characters")
+    private String canonicalUrl;
+    
+    private String structuredData;
+    
+    private Boolean featuredInSitemap = false;
+    
     // Manual getters for fields that Lombok might not be generating
     public String getTitle() {
         return title;
@@ -151,5 +159,17 @@ public class PageRequestDto {
     
     public String getStatus() {
         return status;
+    }
+    
+    public String getCanonicalUrl() {
+        return canonicalUrl;
+    }
+    
+    public String getStructuredData() {
+        return structuredData;
+    }
+    
+    public Boolean getFeaturedInSitemap() {
+        return featuredInSitemap;
     }
 }

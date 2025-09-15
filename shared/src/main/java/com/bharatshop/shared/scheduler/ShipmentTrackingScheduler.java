@@ -43,22 +43,22 @@ public class ShipmentTrackingScheduler {
     @Scheduled(fixedRateString = "${bharatshop.tracking.polling.interval:900000}") // 15 minutes
     public void pollCarrierTrackingUpdates() {
         if (!pollingEnabled) {
-            log.debug("Carrier polling is disabled, skipping tracking update");
+            System.out.println("Carrier polling is disabled, skipping tracking update");
             return;
         }
         
         try {
-            log.debug("Starting carrier tracking polling job");
+            System.out.println("Starting carrier tracking polling job");
             
             // Get active shipments that need tracking updates
             List<Shipment> activeShipments = shipmentTrackingService.getActiveShipmentsForPolling(batchSize);
             
             if (activeShipments.isEmpty()) {
-                log.debug("No active shipments found for tracking updates");
+                System.out.println("No active shipments found for tracking updates");
                 return;
             }
             
-            log.info("Processing tracking updates for {} active shipments", activeShipments.size());
+            System.out.println("Processing tracking updates for " + activeShipments.size() + " active shipments");
             
             int updatedCount = 0;
             int errorCount = 0;
@@ -68,20 +68,18 @@ public class ShipmentTrackingScheduler {
                     boolean hasUpdates = shipmentTrackingService.pollCarrierTracking(shipment);
                     if (hasUpdates) {
                         updatedCount++;
-                        log.debug("Updated tracking for shipment: {}", shipment.getTrackingNumber());
+                        System.out.println("Updated tracking for shipment: " + shipment.getTrackingNumber());
                     }
                 } catch (Exception e) {
                     errorCount++;
-                    log.error("Failed to update tracking for shipment {}: {}", 
-                            shipment.getTrackingNumber(), e.getMessage());
+                    System.out.println("Failed to update tracking for shipment " + shipment.getTrackingNumber() + ": " + e.getMessage());
                 }
             }
             
-            log.info("Tracking polling completed - Updated: {}, Errors: {}, Total: {}", 
-                    updatedCount, errorCount, activeShipments.size());
+            System.out.println("Tracking polling completed - Updated: " + updatedCount + ", Errors: " + errorCount + ", Total: " + activeShipments.size());
             
         } catch (Exception e) {
-            log.error("Failed to execute carrier tracking polling job", e);
+            System.out.println("Failed to execute carrier tracking polling job: " + e.getMessage());
         }
     }
 
@@ -92,18 +90,18 @@ public class ShipmentTrackingScheduler {
     @Scheduled(fixedRate = 300000) // 5 minutes
     public void processWebhookEvents() {
         try {
-            log.debug("Starting webhook event processing");
+            System.out.println("Starting webhook event processing");
             
             int processedCount = shipmentTrackingService.processPendingWebhookEvents(batchSize);
             
             if (processedCount > 0) {
-                log.info("Processed {} pending webhook events", processedCount);
+                System.out.println("Processed " + processedCount + " pending webhook events");
             } else {
-                log.debug("No pending webhook events to process");
+                System.out.println("No pending webhook events to process");
             }
             
         } catch (Exception e) {
-            log.error("Failed to process webhook events", e);
+            System.out.println("Failed to process webhook events: " + e.getMessage());
         }
     }
 
@@ -114,18 +112,18 @@ public class ShipmentTrackingScheduler {
     @Scheduled(fixedRate = 600000) // 10 minutes
     public void updateOrderStatusFromTracking() {
         try {
-            log.debug("Starting order status sync from tracking data");
+            System.out.println("Starting order status sync from tracking data");
             
             int updatedOrders = shipmentTrackingService.syncOrderStatusFromTracking(batchSize);
             
             if (updatedOrders > 0) {
-                log.info("Updated status for {} orders based on tracking data", updatedOrders);
+                System.out.println("Updated status for " + updatedOrders + " orders based on tracking data");
             } else {
-                log.debug("No orders required status updates from tracking");
+                System.out.println("No orders required status updates from tracking");
             }
             
         } catch (Exception e) {
-            log.error("Failed to update order statuses from tracking", e);
+            System.out.println("Failed to update order statuses from tracking: " + e.getMessage());
         }
     }
 
@@ -136,19 +134,19 @@ public class ShipmentTrackingScheduler {
     @Scheduled(fixedRate = 21600000) // 6 hours
     public void cleanupOldTrackingEvents() {
         try {
-            log.debug("Starting cleanup of old tracking events");
+            System.out.println("Starting cleanup of old tracking events");
             
             LocalDateTime cutoffDate = LocalDateTime.now().minusDays(maxAgeDays);
             int deletedCount = shipmentTrackingService.cleanupOldTrackingEvents(cutoffDate);
             
             if (deletedCount > 0) {
-                log.info("Cleaned up {} old tracking events older than {} days", deletedCount, maxAgeDays);
+                System.out.println("Cleaned up " + deletedCount + " old tracking events older than " + maxAgeDays + " days");
             } else {
-                log.debug("No old tracking events found for cleanup");
+                System.out.println("No old tracking events found for cleanup");
             }
             
         } catch (Exception e) {
-            log.error("Failed to cleanup old tracking events", e);
+            System.out.println("Failed to cleanup old tracking events: " + e.getMessage());
         }
     }
 
@@ -159,18 +157,18 @@ public class ShipmentTrackingScheduler {
     @Scheduled(fixedRate = 1800000) // 30 minutes
     public void sendDeliveryNotifications() {
         try {
-            log.debug("Starting delivery notification processing");
+            System.out.println("Starting delivery notification processing");
             
             int notificationsSent = shipmentTrackingService.sendPendingDeliveryNotifications(batchSize);
             
             if (notificationsSent > 0) {
-                log.info("Sent {} delivery notifications", notificationsSent);
+                System.out.println("Sent " + notificationsSent + " delivery notifications");
             } else {
-                log.debug("No pending delivery notifications to send");
+                System.out.println("No pending delivery notifications to send");
             }
             
         } catch (Exception e) {
-            log.error("Failed to send delivery notifications", e);
+            System.out.println("Failed to send delivery notifications: " + e.getMessage());
         }
     }
 
@@ -181,18 +179,18 @@ public class ShipmentTrackingScheduler {
     @Scheduled(fixedRate = 3600000) // 1 hour
     public void handleDeliveryExceptions() {
         try {
-            log.debug("Starting delivery exception handling");
+            System.out.println("Starting delivery exception handling");
             
             int exceptionsHandled = shipmentTrackingService.handleDeliveryExceptions(batchSize);
             
             if (exceptionsHandled > 0) {
-                log.info("Handled {} delivery exceptions", exceptionsHandled);
+                System.out.println("Handled " + exceptionsHandled + " delivery exceptions");
             } else {
-                log.debug("No delivery exceptions found to handle");
+                System.out.println("No delivery exceptions found to handle");
             }
             
         } catch (Exception e) {
-            log.error("Failed to handle delivery exceptions", e);
+            System.out.println("Failed to handle delivery exceptions: " + e.getMessage());
         }
     }
 
@@ -205,16 +203,14 @@ public class ShipmentTrackingScheduler {
         try {
             var stats = shipmentTrackingService.getTrackingStatistics();
             
-            log.info("Tracking Statistics - Active Shipments: {}, Delivered Today: {}, " +
-                    "Pending Updates: {}, Exception Count: {}, Avg Delivery Time: {} days",
-                    stats.getActiveShipments(),
-                    stats.getDeliveredToday(),
-                    stats.getPendingUpdates(),
-                    stats.getExceptionCount(),
-                    stats.getAverageDeliveryDays());
+            System.out.println("Tracking Statistics - Active Shipments: " + stats.getActiveShipments() + 
+                    ", Delivered Today: " + stats.getDeliveredToday() + 
+                    ", Pending Updates: " + stats.getPendingUpdates() + 
+                    ", Exception Count: " + stats.getExceptionCount() + 
+                    ", Avg Delivery Time: " + stats.getAverageDeliveryDays() + " days");
             
         } catch (Exception e) {
-            log.error("Failed to log tracking statistics", e);
+            System.out.println("Failed to log tracking statistics: " + e.getMessage());
         }
     }
 }

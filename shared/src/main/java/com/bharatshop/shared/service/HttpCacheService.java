@@ -112,7 +112,7 @@ public class HttpCacheService {
             return serverTime.isAfter(clientTime);
             
         } catch (Exception e) {
-            log.debug("Invalid If-Modified-Since header: {}", ifModifiedSince);
+            System.out.println("Invalid If-Modified-Since header: " + ifModifiedSince);
             return true;
         }
     }

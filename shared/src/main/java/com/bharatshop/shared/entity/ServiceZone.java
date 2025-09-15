@@ -189,6 +189,17 @@ public class ServiceZone extends BaseEntity {
         return shippingCost;
     }
 
+    // Manual getters since Lombok is not working properly
+    public ZoneType getZoneType() { return zoneType; }
+    public String getPinFrom() { return pinFrom; }
+    public String getPinTo() { return pinTo; }
+    public String getExplicitPincodes() { return explicitPincodes; }
+    public java.math.BigDecimal getBaseRate() { return baseRate; }
+    public java.math.BigDecimal getMinCharge() { return minCharge; }
+    public Boolean getCodAllowed() { return codAllowed; }
+    public java.math.BigDecimal getCodCharges() { return codCharges; }
+    public Integer getSlaDays() { return slaDays; }
+
     @PrePersist
     @PreUpdate
     private void validateZoneConfiguration() {

@@ -44,6 +44,11 @@ public class PageResponseDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     
+    // SEO fields
+    private String canonicalUrl;
+    private String structuredData;
+    private Boolean featuredInSitemap;
+    
     // Manual setters for fields that Lombok might not be generating
     public void setId(Long id) {
         this.id = id;
@@ -139,5 +144,17 @@ public class PageResponseDto {
     
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+    
+    public void setCanonicalUrl(String canonicalUrl) {
+        this.canonicalUrl = canonicalUrl;
+    }
+    
+    public void setStructuredData(String structuredData) {
+        this.structuredData = structuredData;
+    }
+    
+    public void setFeaturedInSitemap(Boolean featuredInSitemap) {
+        this.featuredInSitemap = featuredInSitemap;
     }
 }

@@ -103,4 +103,31 @@ public class InvoiceNumberSequence extends BaseEntity {
             return (year - 1) + "-" + String.format("%02d", year % 100);
         }
     }
+
+    // Manual setter methods
+    public void setTenantId(Long tenantId) {
+        this.tenantId = tenantId;
+    }
+    
+    public void setFinancialYear(String financialYear) {
+        this.financialYear = financialYear;
+    }
+
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
+    }
+
+    public void setCurrentNumber(Long currentNumber) {
+        this.currentNumber = currentNumber;
+    }
+
+    public void setPaddingLength(Integer paddingLength) {
+        this.paddingLength = paddingLength;
+    }
+
+    public void setSuffix(String suffix) {
+        this.suffix = suffix;
+    }
+
+
 }

@@ -29,18 +29,18 @@ public class ReservationCleanupScheduler {
     @Scheduled(fixedRate = 300000) // 5 minutes in milliseconds
     public void cleanupExpiredReservations() {
         try {
-            log.debug("Starting cleanup of expired reservations");
+            System.out.println("Starting cleanup of expired reservations");
             
             int releasedCount = reservationService.cleanupExpiredReservations();
             
             if (releasedCount > 0) {
-                log.info("Released {} expired reservations", releasedCount);
+                System.out.println("Released " + releasedCount + " expired reservations");
             } else {
-                log.debug("No expired reservations found to release");
+                System.out.println("No expired reservations found to release");
             }
             
         } catch (Exception e) {
-            log.error("Failed to cleanup expired reservations", e);
+            System.out.println("Failed to cleanup expired reservations: " + e.getMessage());
         }
     }
 
@@ -51,13 +51,13 @@ public class ReservationCleanupScheduler {
     @Scheduled(fixedRate = 3600000) // 1 hour in milliseconds
     public void cleanupStaleReservations() {
         try {
-            log.debug("Starting cleanup of stale reservations");
+            System.out.println("Starting cleanup of stale reservations");
             
             // Get stale reservations (older than 2 hours)
             var staleReservations = reservationService.getStaleReservations(120); // 2 hours
             
             if (!staleReservations.isEmpty()) {
-                log.warn("Found {} stale reservations older than 2 hours", staleReservations.size());
+                System.out.println("Found " + staleReservations.size() + " stale reservations older than 2 hours");
                 
                 // Release each stale reservation
                 int releasedCount = 0;
@@ -66,17 +66,17 @@ public class ReservationCleanupScheduler {
                         reservationService.releaseReservation(reservation.getTenantId(), reservation.getId());
                         releasedCount++;
                     } catch (Exception e) {
-                        log.error("Failed to release stale reservation {}", reservation.getId(), e);
+                        System.out.println("Failed to release stale reservation " + reservation.getId() + ": " + e.getMessage());
                     }
                 }
                 
-                log.info("Released {} stale reservations", releasedCount);
+                System.out.println("Released " + releasedCount + " stale reservations");
             } else {
-                log.debug("No stale reservations found");
+                System.out.println("No stale reservations found");
             }
             
         } catch (Exception e) {
-            log.error("Failed to cleanup stale reservations", e);
+            System.out.println("Failed to cleanup stale reservations: " + e.getMessage());
         }
     }
 
@@ -88,9 +88,9 @@ public class ReservationCleanupScheduler {
         try {
             // This is a simple monitoring task - in production you might want to
             // send these metrics to a monitoring system like Prometheus
-            log.info("Reservation cleanup scheduler is running normally");
+            System.out.println("Reservation cleanup scheduler is running normally");
         } catch (Exception e) {
-            log.error("Failed to log reservation statistics", e);
+            System.out.println("Failed to log reservation statistics: " + e.getMessage());
         }
     }
 }

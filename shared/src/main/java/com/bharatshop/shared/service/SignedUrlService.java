@@ -85,12 +85,12 @@ public class SignedUrlService {
             }
             
             String signedUrl = urlBuilder.toString();
-            log.debug("Generated signed URL for resource: {} (expires: {})", resourcePath, expiresAt);
+            System.out.println("Generated signed URL for resource: " + resourcePath + " (expires: " + expiresAt + ")");
             
             return signedUrl;
             
         } catch (Exception e) {
-            log.error("Error generating signed URL for resource: {}", resourcePath, e);
+            System.out.println("Error generating signed URL for resource: " + resourcePath + ", " + e.getMessage());
             throw new RuntimeException("Failed to generate signed URL", e);
         }
     }
@@ -140,13 +140,13 @@ public class SignedUrlService {
                 return ValidationResult.invalid("Invalid signature");
             }
             
-            log.debug("Successfully validated signed URL for resource: {}", resourcePath);
+            System.out.println("Successfully validated signed URL for resource: " + resourcePath);
             return ValidationResult.valid();
             
         } catch (NumberFormatException e) {
             return ValidationResult.invalid("Invalid parameter format");
         } catch (Exception e) {
-            log.error("Error validating signed URL for resource: {}", resourcePath, e);
+            System.out.println("Error validating signed URL for resource: " + resourcePath + ", " + e.getMessage());
             return ValidationResult.invalid("Validation error");
         }
     }

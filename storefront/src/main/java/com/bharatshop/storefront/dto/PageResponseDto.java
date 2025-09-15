@@ -31,6 +31,11 @@ public class PageResponseDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     
+    // SEO fields
+    private String canonicalUrl;
+    private String structuredData;
+    private Boolean featuredInSitemap;
+    
     // Manual getter methods
     public Long getId() {
         return id;
@@ -92,6 +97,18 @@ public class PageResponseDto {
         return updatedAt;
     }
     
+    public String getCanonicalUrl() {
+        return canonicalUrl;
+    }
+    
+    public String getStructuredData() {
+        return structuredData;
+    }
+    
+    public Boolean getFeaturedInSitemap() {
+        return featuredInSitemap;
+    }
+    
     // Manual builder method
     public static PageResponseDtoBuilder builder() {
         return new PageResponseDtoBuilder();
@@ -113,6 +130,11 @@ public class PageResponseDto {
         private Integer sortOrder;
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
+        
+        // SEO fields
+        private String canonicalUrl;
+        private String structuredData;
+        private Boolean featuredInSitemap;
         
         public PageResponseDtoBuilder id(Long id) {
             this.id = id;
@@ -189,6 +211,21 @@ public class PageResponseDto {
             return this;
         }
         
+        public PageResponseDtoBuilder canonicalUrl(String canonicalUrl) {
+            this.canonicalUrl = canonicalUrl;
+            return this;
+        }
+        
+        public PageResponseDtoBuilder structuredData(String structuredData) {
+            this.structuredData = structuredData;
+            return this;
+        }
+        
+        public PageResponseDtoBuilder featuredInSitemap(Boolean featuredInSitemap) {
+            this.featuredInSitemap = featuredInSitemap;
+            return this;
+        }
+        
         public PageResponseDto build() {
             PageResponseDto dto = new PageResponseDto();
             dto.id = this.id;
@@ -206,6 +243,9 @@ public class PageResponseDto {
             dto.sortOrder = this.sortOrder;
             dto.createdAt = this.createdAt;
             dto.updatedAt = this.updatedAt;
+            dto.canonicalUrl = this.canonicalUrl;
+            dto.structuredData = this.structuredData;
+            dto.featuredInSitemap = this.featuredInSitemap;
             return dto;
         }
     }

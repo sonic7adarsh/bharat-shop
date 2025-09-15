@@ -35,6 +35,7 @@ com\bharatshop\storefront\dto\auth\EmailLoginRequest$EmailLoginRequestBuilder.cl
 com\bharatshop\storefront\dto\ShippingQuoteResponse$ExpressDeliveryOption.class
 com\bharatshop\storefront\controller\PhoneAuthController.class
 com\bharatshop\storefront\repository\StorefrontUserRepository.class
+com\bharatshop\storefront\controller\StorefrontSeoController.class
 com\bharatshop\storefront\repository\StorefrontProductRepository.class
 com\bharatshop\storefront\dto\auth\PhoneLoginRequest.class
 com\bharatshop\storefront\dto\CheckoutRequest$CheckoutRequestBuilder.class

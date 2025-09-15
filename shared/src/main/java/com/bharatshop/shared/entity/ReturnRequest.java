@@ -250,4 +250,153 @@ public class ReturnRequest extends BaseEntity {
         String suffix = String.format("%03d", (int) (Math.random() * 1000));
         this.returnNumber = "RET-" + timestamp + "-" + suffix;
     }
+    
+    // Manual getter since Lombok is not working properly
+    public ReturnStatus getStatus() {
+        return status;
+    }
+    
+    public void setTenantId(Long tenantId) {
+        this.tenantId = tenantId;
+    }
+    
+    public void setOrderId(Long orderId) {
+        this.orderId = orderId;
+    }
+    
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
+    }
+    
+    public Long getCustomerId() {
+        return customerId;
+    }
+    
+    public LocalDateTime getApprovedAt() {
+        return approvedAt;
+    }
+    
+    public Long getApprovedBy() {
+        return approvedBy;
+    }
+    
+    public LocalDateTime getRejectedAt() {
+        return rejectedAt;
+    }
+    
+    public Long getRejectedBy() {
+        return rejectedBy;
+    }
+    
+    public String getRejectionReason() {
+        return rejectionReason;
+    }
+    
+    public String getReason() {
+        return reason;
+    }
+    
+    public LocalDateTime getCompletedAt() {
+        return completedAt;
+    }
+    
+    public LocalDateTime getRefundProcessedAt() {
+        return refundProcessedAt;
+    }
+    
+    public ReturnType getReturnType() {
+        return returnType;
+    }
+    
+    public void setReturnType(ReturnType returnType) {
+        this.returnType = returnType;
+    }
+    
+    public void setReason(String reason) {
+        this.reason = reason;
+    }
+    
+    public void setCustomerComments(String customerComments) {
+        this.customerComments = customerComments;
+    }
+    
+    public void setStatus(ReturnStatus status) {
+        this.status = status;
+    }
+    
+    public String getReturnNumber() {
+        return returnNumber;
+    }
+    
+    public Long getId() {
+        return id;
+    }
+    
+    public void setApprovedBy(Long approvedBy) {
+        this.approvedBy = approvedBy;
+    }
+    
+    public void setApprovedAt(LocalDateTime approvedAt) {
+        this.approvedAt = approvedAt;
+    }
+    
+    public void setAdminComments(String adminComments) {
+        this.adminComments = adminComments;
+    }
+    
+    public void setRejectedBy(Long rejectedBy) {
+        this.rejectedBy = rejectedBy;
+    }
+    
+    public void setRejectedAt(LocalDateTime rejectedAt) {
+        this.rejectedAt = rejectedAt;
+    }
+    
+    public void setRejectionReason(String rejectionReason) {
+        this.rejectionReason = rejectionReason;
+    }
+    
+    public Long getOrderId() {
+        return orderId;
+    }
+    
+    public void setPickupCompletedAt(LocalDateTime pickupCompletedAt) {
+        this.pickupCompletedAt = pickupCompletedAt;
+    }
+    
+    public List<ReturnRequestItem> getItems() {
+        return items;
+    }
+    
+    public void setRefundAmount(BigDecimal refundAmount) {
+        this.refundAmount = refundAmount;
+    }
+    
+    public void setQualityCheckCompletedAt(LocalDateTime qualityCheckCompletedAt) {
+        this.qualityCheckCompletedAt = qualityCheckCompletedAt;
+    }
+    
+    public BigDecimal getRefundAmount() {
+        return refundAmount;
+    }
+    
+    public void setRefundProcessedAt(LocalDateTime refundProcessedAt) {
+        this.refundProcessedAt = refundProcessedAt;
+    }
+    
+    public void setCompletedAt(LocalDateTime completedAt) {
+        this.completedAt = completedAt;
+    }
+    
+    public Long getTenantId() {
+        return tenantId;
+    }
+
+    public LocalDateTime getRequestedAt() {
+        return requestedAt;
+    }
+    
+    public BigDecimal getTotalReturnAmount() {
+        return totalReturnAmount;
+    }
 }

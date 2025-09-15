@@ -9,6 +9,8 @@ import com.bharatshop.shared.repository.ShipmentTrackingRepository;
 // import com.bharatshop.shared.service.ShippingValidationService; // Removed due to Mockito compatibility issues
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +35,7 @@ import java.util.concurrent.CompletableFuture;
 @RequiredArgsConstructor
 @Slf4j
 public class ShipmentTrackingService {
+    private static final Logger log = LoggerFactory.getLogger(ShipmentTrackingService.class);
     
     private final ShipmentRepository shipmentRepository;
     private final ShipmentTrackingRepository shipmentTrackingRepository;
@@ -215,15 +218,13 @@ public class ShipmentTrackingService {
             
             // Create new tracking record
             ShipmentTracking tracking = ShipmentTracking.builder()
-                    .shipment(shipment)
+                    .shipmentId(shipment.getId())
                     .status(mapEventStatusToShipmentStatus(event.getStatus()))
                     .eventDate(event.getEventDate())
                     .location(event.getLocation())
                     .description(event.getDescription())
                     .carrierStatusCode(event.getCarrierEventCode())
                     .eventType(event.getEventType())
-                    .isMilestone(event.isMilestone())
-                    .isException(event.isException())
                     .source("API_POLL")
                     .rawData(event.getRawData())
                     .build();
@@ -478,18 +479,27 @@ public class ShipmentTrackingService {
 
     // Helper classes
     
-    @lombok.Data
-    @lombok.Builder
     public static class TrackingEvent {
-        private String status;
-        private LocalDateTime eventDate;
-        private String location;
-        private String description;
-        private String carrierEventCode;
-        private String eventType;
-        private boolean isMilestone;
-        private boolean isException;
-        private String rawData;
+        public String status;
+        public LocalDateTime eventDate;
+        public String location;
+        public String description;
+        public String carrierEventCode;
+        public String eventType;
+        public boolean isMilestone;
+        public boolean isException;
+        public String rawData;
+        
+        // Manual getters since Lombok is not working properly
+        public String getStatus() { return status; }
+        public LocalDateTime getEventDate() { return eventDate; }
+        public String getLocation() { return location; }
+        public String getDescription() { return description; }
+        public String getEventType() { return eventType; }
+        public boolean isMilestone() { return isMilestone; }
+        public boolean isException() { return isException; }
+        public String getRawData() { return rawData; }
+        public String getCarrierEventCode() { return carrierEventCode; }
     }
     
     @lombok.Data
@@ -500,5 +510,14 @@ public class ShipmentTrackingService {
         private long pendingUpdates;
         private long exceptionCount;
         private double averageDeliveryDays;
+        
+        // Manual getters since Lombok is not working properly
+        public long getActiveShipments() { return activeShipments; }
+        public long getDeliveredToday() { return deliveredToday; }
+        public long getPendingUpdates() { return pendingUpdates; }
+        public long getExceptionCount() { return exceptionCount; }
+        public double getAverageDeliveryDays() { return averageDeliveryDays; }
+        
+
     }
 }

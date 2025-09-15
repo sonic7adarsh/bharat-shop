@@ -103,6 +103,212 @@ public class InvoiceItem extends BaseEntity {
     @Column(name = "tax_preference", nullable = false)
     private Product.TaxPreference taxPreference = Product.TaxPreference.TAXABLE;
 
+    // Manual getter methods to fix Lombok issue
+    public String getHsnCode() {
+        return hsnCode;
+    }
+    
+    public BigDecimal getNetAmount() {
+        return netAmount;
+    }
+    
+    public BigDecimal getCgstAmount() {
+        return cgstAmount;
+    }
+    
+    public BigDecimal getSgstAmount() {
+        return sgstAmount;
+    }
+    
+    public BigDecimal getIgstAmount() {
+        return igstAmount;
+    }
+    
+    public BigDecimal getCessAmount() {
+        return cessAmount;
+    }
+    
+    public BigDecimal getTotalTaxAmount() {
+        return totalTaxAmount;
+    }
+    
+    public BigDecimal getTotalAmount() {
+        return totalAmount;
+    }
+    
+    // Manual setter methods for tax rates
+    public void setCgstRate(BigDecimal cgstRate) {
+        this.cgstRate = cgstRate;
+    }
+    
+    public void setSgstRate(BigDecimal sgstRate) {
+        this.sgstRate = sgstRate;
+    }
+    
+    public void setIgstRate(BigDecimal igstRate) {
+        this.igstRate = igstRate;
+    }
+    
+    public void setCessRate(BigDecimal cessRate) {
+        this.cessRate = cessRate;
+    }
+    
+    public void setTotalAmount(BigDecimal totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+    
+    public void setTaxPreference(Product.TaxPreference taxPreference) {
+        this.taxPreference = taxPreference;
+    }
+    
+    public void setIsTaxInclusive(Boolean isTaxInclusive) {
+        this.isTaxInclusive = isTaxInclusive;
+    }
+    
+    public void setCgstAmount(BigDecimal cgstAmount) {
+        this.cgstAmount = cgstAmount;
+    }
+    
+    public void setSgstAmount(BigDecimal sgstAmount) {
+        this.sgstAmount = sgstAmount;
+    }
+    
+    public void setIgstAmount(BigDecimal igstAmount) {
+        this.igstAmount = igstAmount;
+    }
+    
+    public void setCessAmount(BigDecimal cessAmount) {
+        this.cessAmount = cessAmount;
+    }
+    
+    public void setTotalTaxAmount(BigDecimal totalTaxAmount) {
+        this.totalTaxAmount = totalTaxAmount;
+    }
+    
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+    
+    public void setUnitPrice(BigDecimal unitPrice) {
+        this.unitPrice = unitPrice;
+    }
+    
+    public void setDiscountAmount(BigDecimal discountAmount) {
+        this.discountAmount = discountAmount;
+    }
+    
+    public void setNetAmount(BigDecimal netAmount) {
+        this.netAmount = netAmount;
+    }
+    
+    public void setProductDescription(String productDescription) {
+        this.productDescription = productDescription;
+    }
+    
+    public void setSku(String sku) {
+        this.sku = sku;
+    }
+    
+    public void setHsnCode(String hsnCode) {
+        this.hsnCode = hsnCode;
+    }
+    
+    public void setQuantity(BigDecimal quantity) {
+        this.quantity = quantity;
+    }
+    
+    public void setProductId(Long productId) {
+        this.productId = productId;
+    }
+    
+    public void setProductVariantId(Long productVariantId) {
+        this.productVariantId = productVariantId;
+    }
+    
+    public void setOrderItemId(Long orderItemId) {
+        this.orderItemId = orderItemId;
+    }
+    
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+    
+    public void setTenantId(Long tenantId) {
+        this.tenantId = tenantId;
+    }
+    
+    public void setInvoiceId(Long invoiceId) {
+        this.invoiceId = invoiceId;
+    }
+    
+    public Boolean getIsTaxInclusive() {
+        return isTaxInclusive;
+    }
+    
+    public void setId(Long id) {
+        this.id = id;
+    }
+    
+    public BigDecimal getIgstRate() {
+        return igstRate;
+    }
+    
+    public BigDecimal getCessRate() {
+        return cessRate;
+    }
+    
+    public Product.TaxPreference getTaxPreference() {
+        return taxPreference;
+    }
+    
+    public String getUnit() {
+        return unit;
+    }
+    
+    public BigDecimal getUnitPrice() {
+        return unitPrice;
+    }
+    
+    public BigDecimal getCgstRate() {
+        return cgstRate;
+    }
+    
+    public BigDecimal getSgstRate() {
+        return sgstRate;
+    }
+    
+    public String getProductName() {
+        return productName;
+    }
+    
+    public String getProductDescription() {
+        return productDescription;
+    }
+    
+    public String getSku() {
+        return sku;
+    }
+    
+    public BigDecimal getQuantity() {
+        return quantity;
+    }
+    
+    public Invoice getInvoice() {
+        return invoice;
+    }
+    
+    public Long getProductId() {
+        return productId;
+    }
+    
+    public Long getProductVariantId() {
+        return productVariantId;
+    }
+    
+    public Long getId() {
+        return id;
+    }
+
     @Column(name = "is_tax_inclusive", nullable = false)
     private Boolean isTaxInclusive = false;
 
@@ -172,4 +378,6 @@ public class InvoiceItem extends BaseEntity {
         
         return sb.toString().trim();
     }
+    
+
 }

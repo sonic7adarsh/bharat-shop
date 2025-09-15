@@ -115,7 +115,7 @@ public class OtpService {
             );
             
             if (!providerResult.isSuccess()) {
-                log.error("Failed to send OTP via provider {}: {}", provider.getProviderId(), providerResult.getMessage());
+                System.out.println("Failed to send OTP via provider " + provider.getProviderId() + ": " + providerResult.getMessage());
                 return OtpSendResult.failure("Failed to send OTP. Please try again.");
             }
             
@@ -129,13 +129,12 @@ public class OtpService {
             phoneAuthRequest.setStatus(PhoneAuthRequest.RequestStatus.PENDING);
             phoneAuthRepository.save(phoneAuthRequest);
             
-            log.info("OTP sent successfully to {} via provider {}", 
-                maskPhoneNumber(request.getPhoneNumber()), provider.getProviderId());
+            System.out.println("OTP sent successfully to " + maskPhoneNumber(request.getPhoneNumber()) + " via provider " + provider.getProviderId());
             
             return OtpSendResult.success("OTP sent successfully", otpVerification.getId());
             
         } catch (Exception e) {
-            log.error("Error sending OTP to {}: {}", maskPhoneNumber(request.getPhoneNumber()), e.getMessage(), e);
+            System.out.println("Error sending OTP to " + maskPhoneNumber(request.getPhoneNumber()) + ": " + e.getMessage());
             return OtpSendResult.failure("Internal error occurred");
         }
     }
@@ -168,8 +167,8 @@ public class OtpService {
             
             // Verify device and session consistency (replay protection)
             if (!verifyDeviceConsistency(otp, request)) {
-                log.warn("Device inconsistency detected for OTP verification: phone={}, deviceId={}", 
-                    maskPhoneNumber(request.getPhoneNumber()), request.getDeviceId());
+                System.out.println("Device inconsistency detected for OTP verification: phone=" + 
+                    maskPhoneNumber(request.getPhoneNumber()) + ", deviceId=" + request.getDeviceId());
                 return OtpVerificationResult.failure("Security validation failed");
             }
             
@@ -202,12 +201,12 @@ public class OtpService {
                 phoneAuthRepository.save(phoneAuth);
             }
             
-            log.info("OTP verified successfully for phone: {}", maskPhoneNumber(request.getPhoneNumber()));
+            System.out.println("OTP verified successfully for phone: " + maskPhoneNumber(request.getPhoneNumber()));
             
             return OtpVerificationResult.success("OTP verified successfully", otp.getId());
             
         } catch (Exception e) {
-            log.error("Error verifying OTP for {}: {}", maskPhoneNumber(request.getPhoneNumber()), e.getMessage(), e);
+            System.out.println("Error verifying OTP for " + maskPhoneNumber(request.getPhoneNumber()) + ": " + e.getMessage());
             return OtpVerificationResult.failure("Internal error occurred");
         }
     }
@@ -344,8 +343,7 @@ public class OtpService {
                     LocalDateTime.now().plusHours(blockDurationHours));
                 phoneAuthRepository.save(phoneAuth);
                 
-                log.warn("Phone number {} blocked due to too many failed OTP attempts", 
-                    maskPhoneNumber(phoneNumber));
+                System.out.println("Phone number " + maskPhoneNumber(phoneNumber) + " blocked due to too many failed OTP attempts");
             }
         }
     }
@@ -374,14 +372,14 @@ public class OtpService {
     public void cleanupExpiredOtps() {
         int updated = otpRepository.markExpiredOtps(LocalDateTime.now());
         if (updated > 0) {
-            log.info("Marked {} expired OTPs", updated);
+            System.out.println("Marked " + updated + " expired OTPs");
         }
         
         // Delete old OTPs (older than 30 days)
         LocalDateTime cutoff = LocalDateTime.now().minusDays(30);
         int deleted = otpRepository.deleteOldOtps(cutoff);
         if (deleted > 0) {
-            log.info("Deleted {} old OTP records", deleted);
+            System.out.println("Deleted " + deleted + " old OTP records");
         }
     }
     
