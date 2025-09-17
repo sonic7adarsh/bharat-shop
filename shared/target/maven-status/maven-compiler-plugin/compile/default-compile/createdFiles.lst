@@ -20,6 +20,7 @@ com\bharatshop\shared\service\ReturnRequestEvents$ReturnRequestCompletedEvent$Bu
 com\bharatshop\shared\service\auth\CaptchaService$AttemptTracker.class
 com\bharatshop\shared\mapper\ProductVariantMapper$1.class
 com\bharatshop\shared\entity\Shipment$ShipmentBuilderImpl.class
+com\bharatshop\shared\entity\NotificationTemplate.class
 com\bharatshop\shared\repository\CouponRepository.class
 com\bharatshop\shared\entity\Payment$PaymentBuilder.class
 com\bharatshop\shared\entity\Product$ProductStatus.class
@@ -32,6 +33,7 @@ com\bharatshop\shared\entity\CustomerAddress$CustomerAddressBuilder.class
 com\bharatshop\shared\service\MediaService$PresignedUploadResponse.class
 com\bharatshop\shared\mapper\OptionMapper.class
 com\bharatshop\shared\entity\SlugRedirect$SlugRedirectBuilder.class
+com\bharatshop\shared\provider\impl\FakeWhatsAppProvider.class
 com\bharatshop\shared\entity\DeviceRefreshToken.class
 com\bharatshop\shared\entity\Invoice$InvoiceBuilderImpl.class
 com\bharatshop\shared\entity\Category$CategoryBuilderImpl.class
@@ -41,7 +43,6 @@ com\bharatshop\shared\repository\PlanRepository.class
 com\bharatshop\shared\entity\OptionValue$OptionValueBuilder.class
 com\bharatshop\shared\entity\Option.class
 com\bharatshop\shared\dto\CustomerAnalyticsDto$OrderHistoryData$OrderHistoryDataBuilder.class
-com\bharatshop\shared\entity\SlugRedirect$SlugRedirectBuilderImpl.class
 com\bharatshop\shared\service\auth\OtpService$OtpSendResult.class
 com\bharatshop\shared\config\RedisConfig$TenantAwareKeySerializer.class
 com\bharatshop\shared\dto\PageResponseDto$PageResponseDtoBuilder.class
@@ -53,8 +54,10 @@ com\bharatshop\shared\repository\SharedStorefrontUserRepository.class
 com\bharatshop\shared\entity\SeoMetadata$SeoMetadataBuilderImpl.class
 com\bharatshop\shared\dto\CustomerAnalyticsDto$OrderHistoryData.class
 com\bharatshop\shared\dto\ProductVariantDto$ProductVariantDtoBuilderImpl.class
+com\bharatshop\shared\provider\impl\FakeEmailProvider.class
 com\bharatshop\shared\service\SitemapService.class
 com\bharatshop\shared\repository\TaxRateRepository.class
+com\bharatshop\shared\event\OrderDeliveredEvent.class
 com\bharatshop\shared\entity\MediaFile.class
 com\bharatshop\shared\dto\VendorAnalyticsDto$MonthlyRevenueData.class
 com\bharatshop\shared\service\CacheService.class
@@ -73,9 +76,12 @@ com\bharatshop\shared\config\InternationalizationConfig.class
 com\bharatshop\shared\dto\ApiResponse.class
 com\bharatshop\shared\service\RefundService$CaptureResult.class
 com\bharatshop\shared\scheduler\ShipmentTrackingScheduler.class
+com\bharatshop\shared\service\NotificationTemplateService.class
+com\bharatshop\shared\provider\NotificationProvider.class
 com\bharatshop\shared\mapper\ProductVariantMapper.class
 com\bharatshop\shared\entity\Vendor$VendorStatus.class
 com\bharatshop\shared\entity\InvoiceItem$InvoiceItemBuilder.class
+com\bharatshop\shared\entity\CustomerNotificationPreference.class
 com\bharatshop\shared\entity\Orders$OrdersBuilder.class
 com\bharatshop\shared\repository\TemplateRepository.class
 com\bharatshop\shared\dto\OptionValueDto$OptionValueDtoBuilder.class
@@ -83,6 +89,7 @@ com\bharatshop\shared\repository\OrderItemRepository.class
 com\bharatshop\shared\dto\VendorAnalyticsDto$TopProductData$TopProductDataBuilder.class
 com\bharatshop\shared\service\PlanService.class
 com\bharatshop\shared\dto\VendorAnalyticsDto$VendorAnalyticsDtoBuilder.class
+com\bharatshop\shared\provider\impl\SmtpEmailProvider.class
 com\bharatshop\shared\service\ImageProcessingService$ImageProcessingResult.class
 com\bharatshop\shared\service\MediaService$StorageUsage.class
 com\bharatshop\shared\repository\CustomerAddressRepository.class
@@ -94,6 +101,7 @@ com\bharatshop\shared\entity\Cart$CartBuilder.class
 com\bharatshop\shared\entity\ProductVariantOptionValue$ProductVariantOptionValueBuilder.class
 com\bharatshop\shared\service\auth\AuthProvider$AuthProviderResult.class
 com\bharatshop\shared\service\ShipmentTrackingService$TrackingStatistics$TrackingStatisticsBuilder.class
+com\bharatshop\shared\event\DomainEvent.class
 com\bharatshop\shared\service\ReturnRequestService$QualityCheckDto.class
 com\bharatshop\shared\entity\ReturnRequestItem$1.class
 com\bharatshop\shared\repository\ProductOptionRepository.class
@@ -110,6 +118,7 @@ com\bharatshop\shared\service\SeoMetadataService.class
 com\bharatshop\shared\service\SlugManagementService$RedirectStats.class
 com\bharatshop\shared\dto\BaseDto$BaseDtoBuilder.class
 com\bharatshop\shared\repository\InvoiceItemRepository.class
+com\bharatshop\shared\dto\NotificationResponse$NotificationResponseBuilder.class
 com\bharatshop\shared\repository\InvoiceNumberSequenceRepository.class
 com\bharatshop\shared\service\PriceCalculationService$PriceBreakdown$Builder.class
 com\bharatshop\shared\config\S3Config.class
@@ -133,6 +142,7 @@ com\bharatshop\shared\service\SubscriptionService.class
 com\bharatshop\shared\entity\ProductOption$ProductOptionBuilderImpl.class
 com\bharatshop\shared\entity\Invoice$InvoiceStatus.class
 com\bharatshop\shared\dto\SubscriptionRequestDto.class
+com\bharatshop\shared\service\TemplateRenderingService.class
 com\bharatshop\shared\service\auth\CaptchaService.class
 com\bharatshop\shared\entity\PaymentGateway$PaymentGatewayBuilder.class
 com\bharatshop\shared\service\PageService.class
@@ -156,12 +166,15 @@ com\bharatshop\shared\entity\ServiceZone.class
 com\bharatshop\shared\entity\User$UserBuilder.class
 com\bharatshop\shared\entity\ServiceZone$ServiceZoneBuilder.class
 com\bharatshop\shared\entity\ReturnRequestItem.class
+com\bharatshop\shared\provider\WhatsAppProvider.class
 com\bharatshop\shared\entity\User$UserBuilderImpl.class
+com\bharatshop\shared\dto\NotificationRequest$NotificationRequestBuilder.class
 com\bharatshop\shared\config\JwtConfigValidator.class
 com\bharatshop\shared\dto\ProductDto.class
 com\bharatshop\shared\dto\CategoryDto.class
 com\bharatshop\shared\entity\Plan$PlanBuilderImpl.class
 com\bharatshop\shared\mapper\ProductOptionMapper.class
+com\bharatshop\shared\dto\NotificationResponse$NotificationStatus.class
 com\bharatshop\shared\repository\ProductVariantRepository.class
 com\bharatshop\shared\service\RefundService$RefundResult.class
 com\bharatshop\shared\repository\DeviceRefreshTokenRepository.class
@@ -179,6 +192,7 @@ com\bharatshop\shared\dto\CustomerDto$CustomerAddressDto.class
 com\bharatshop\shared\service\ReturnRequestEvents.class
 com\bharatshop\shared\entity\Wishlist$WishlistBuilderImpl.class
 com\bharatshop\shared\repository\OptionValueRepository.class
+com\bharatshop\shared\event\OrderShippedEvent.class
 com\bharatshop\shared\dto\CustomerAnalyticsDto.class
 com\bharatshop\shared\dto\CustomerDto$CustomerAddressDto$CustomerAddressDtoBuilderImpl.class
 com\bharatshop\shared\enums\SubscriptionStatus.class
@@ -186,6 +200,7 @@ com\bharatshop\shared\service\InvoiceService.class
 com\bharatshop\shared\service\WebhookService$WebhookConfig.class
 com\bharatshop\shared\controller\SubscriptionController.class
 com\bharatshop\shared\service\ShipmentTrackingService$TrackingEvent.class
+com\bharatshop\shared\dto\NotificationResponse.class
 com\bharatshop\shared\entity\Subscription$SubscriptionBuilder.class
 com\bharatshop\shared\entity\ReturnRequestImage.class
 com\bharatshop\shared\dto\SubscriptionResponseDto.class
@@ -197,6 +212,7 @@ com\bharatshop\shared\service\auth\RefreshTokenService$RefreshTokenResult.class
 com\bharatshop\shared\repository\WishlistRepository.class
 com\bharatshop\shared\entity\PhoneAuthRequest.class
 com\bharatshop\shared\entity\Invoice$InvoiceBuilder.class
+com\bharatshop\shared\dto\NotificationRequest.class
 com\bharatshop\shared\entity\TaxRate$TaxRateBuilderImpl.class
 com\bharatshop\shared\dto\SubscriptionResponseDto$SubscriptionResponseDtoBuilder.class
 com\bharatshop\shared\entity\SeoMetadata.class
@@ -219,6 +235,7 @@ com\bharatshop\shared\service\ReturnRequestEvents$ReturnRequestCreatedEvent.clas
 com\bharatshop\shared\dto\InvoiceItemDto$InvoiceItemDtoBuilder.class
 com\bharatshop\shared\dto\media\PresignUploadResponse.class
 com\bharatshop\shared\entity\DeviceRefreshToken$DeviceRefreshTokenBuilder.class
+com\bharatshop\shared\event\AbandonedCartEvent.class
 com\bharatshop\shared\dto\InvoiceGenerationRequest.class
 com\bharatshop\shared\dto\CustomerDto$CustomerStatus.class
 com\bharatshop\shared\service\ReturnRequestEvents$ReturnRequestItemsUpdatedEvent.class
@@ -261,6 +278,7 @@ com\bharatshop\shared\service\JwtKeyRotationService$KeyRotationStats.class
 com\bharatshop\shared\dto\PagedResponse.class
 com\bharatshop\shared\service\StructuredDataService.class
 com\bharatshop\shared\entity\OptionValue.class
+com\bharatshop\shared\provider\impl\FakeSmsProvider.class
 com\bharatshop\shared\dto\TaxRateDto$TaxRateDtoBuilder.class
 com\bharatshop\shared\filter\JwtAuthenticationFilter.class
 com\bharatshop\shared\service\StructuredDataService$BreadcrumbItem.class
@@ -281,6 +299,7 @@ com\bharatshop\shared\entity\ProductOption.class
 com\bharatshop\shared\entity\Coupon$CouponBuilderImpl.class
 com\bharatshop\shared\entity\ReturnRequest$ReturnType.class
 com\bharatshop\shared\service\ReturnRequestService$CreateReturnItemDto.class
+com\bharatshop\shared\service\CustomerPreferenceCenterService.class
 com\bharatshop\shared\dto\ProductDto$ProductDtoBuilder.class
 com\bharatshop\shared\entity\ShipmentTracking$ShipmentTrackingBuilder.class
 com\bharatshop\shared\service\CouponService$CouponValidationResult.class
@@ -296,6 +315,7 @@ com\bharatshop\shared\service\NotificationService.class
 com\bharatshop\shared\entity\Shipment.class
 com\bharatshop\shared\util\SlugUtils.class
 com\bharatshop\shared\entity\JwksKey$JwksKeyBuilder.class
+com\bharatshop\shared\event\BaseDomainEvent.class
 com\bharatshop\shared\controller\MediaController.class
 com\bharatshop\shared\entity\Template$TemplateBuilderImpl.class
 com\bharatshop\shared\dto\CategoryResponseDto.class
@@ -313,11 +333,13 @@ com\bharatshop\shared\entity\ServiceZone$ServiceZoneBuilderImpl.class
 com\bharatshop\shared\dto\InvoiceListResponse$InvoiceListResponseBuilder.class
 com\bharatshop\shared\entity\OtpVerification$OtpType.class
 com\bharatshop\shared\entity\ProductVariant.class
+com\bharatshop\shared\event\AbandonedCartEvent$CartItem.class
 com\bharatshop\shared\repository\VendorRepository.class
 com\bharatshop\shared\repository\PaymentRepository.class
 com\bharatshop\shared\service\FeatureFlagService.class
 com\bharatshop\shared\entity\TaxRate$TaxType.class
 com\bharatshop\shared\service\auth\RefreshTokenRequest.class
+com\bharatshop\shared\repository\NotificationTemplateRepository.class
 com\bharatshop\shared\event\OrderStatusChangeEvent$1.class
 com\bharatshop\shared\dto\CustomerAnalyticsDto$OrderItemData.class
 com\bharatshop\shared\dto\ProductOptionDto.class
@@ -326,11 +348,13 @@ com\bharatshop\shared\service\OtpService$OtpData.class
 com\bharatshop\shared\entity\Vendor$VendorBuilder.class
 com\bharatshop\shared\repository\InvoiceRepository.class
 com\bharatshop\shared\entity\MediaFile$MediaType.class
+com\bharatshop\shared\provider\SmsProvider.class
 com\bharatshop\shared\entity\User$UserRole.class
 com\bharatshop\shared\service\ImageProcessingService.class
 com\bharatshop\shared\repository\OptionRepository.class
 com\bharatshop\shared\entity\Plan$PlanBuilder.class
 com\bharatshop\shared\entity\ProductVariantOptionValue$ProductVariantOptionValueBuilderImpl.class
+com\bharatshop\shared\provider\EmailProvider.class
 com\bharatshop\shared\dto\VendorAnalyticsDto$TopProductData.class
 com\bharatshop\shared\event\OrderStatusChangeEvent.class
 com\bharatshop\shared\dto\ProductVariantOptionValueDto$ProductVariantOptionValueDtoBuilder.class
@@ -353,7 +377,9 @@ com\bharatshop\shared\entity\Template$TemplateBuilder.class
 com\bharatshop\shared\service\NotificationService$NotificationType.class
 com\bharatshop\shared\service\RefundService$CaptureResult$CaptureResultBuilder.class
 com\bharatshop\shared\service\auth\AuthProvider.class
+com\bharatshop\shared\repository\CustomerNotificationPreferenceRepository.class
 com\bharatshop\shared\dto\TemplateResponseDto.class
+com\bharatshop\shared\event\RefundProcessedEvent.class
 com\bharatshop\shared\entity\Coupon$CouponType.class
 com\bharatshop\shared\service\QrCodeService.class
 com\bharatshop\shared\entity\Product$ProductBuilder.class
@@ -367,9 +393,11 @@ com\bharatshop\shared\entity\Subscription.class
 com\bharatshop\shared\dto\media\StorageUsageResponse.class
 com\bharatshop\shared\entity\Category.class
 com\bharatshop\shared\entity\MediaFile$MediaStatus.class
+com\bharatshop\shared\entity\CustomerNotificationPreference$NotificationFrequency.class
 com\bharatshop\shared\entity\Subscription$SubscriptionBuilderImpl.class
 com\bharatshop\shared\config\JwtConfigValidator$ConfigSummary.class
 com\bharatshop\shared\dto\CustomerDto$Gender.class
+com\bharatshop\shared\event\OrderPlacedEvent.class
 com\bharatshop\shared\service\auth\OtpSendRequest.class
 com\bharatshop\shared\config\PasswordConfig.class
 com\bharatshop\shared\service\RobotsService.class
@@ -389,14 +417,17 @@ com\bharatshop\shared\service\ReturnRequestService$CreateReturnRequestDto.class
 com\bharatshop\shared\entity\Invoice.class
 com\bharatshop\shared\entity\SeoMetadata$SeoMetadataBuilder.class
 com\bharatshop\shared\service\ReturnRequestEvents$ReturnRequestImagesAddedEvent.class
+com\bharatshop\shared\entity\CustomerNotificationPreference$CustomerNotificationPreferenceBuilder.class
 com\bharatshop\shared\service\ShippingValidationService.class
 com\bharatshop\shared\repository\MediaFileRepository.class
 com\bharatshop\shared\repository\ProductImageRepository.class
 com\bharatshop\shared\entity\Option$OptionBuilderImpl.class
 com\bharatshop\shared\entity\ProductVariant$ProductVariantBuilderImpl.class
+com\bharatshop\shared\event\PaymentCapturedEvent.class
 com\bharatshop\shared\dto\CustomerAnalyticsDto$FavoriteProductData$FavoriteProductDataBuilder.class
 com\bharatshop\shared\entity\ShipmentTracking$ShipmentTrackingBuilderImpl.class
 com\bharatshop\shared\dto\CustomerAnalyticsDto$WishlistItemData.class
+com\bharatshop\shared\event\OrderPlacedEvent$OrderItem.class
 com\bharatshop\shared\dto\PlanRequestDto$PlanRequestDtoBuilder.class
 com\bharatshop\shared\enums\PageType.class
 com\bharatshop\shared\dto\PageResponseDto.class
@@ -407,6 +438,7 @@ com\bharatshop\shared\entity\OtpVerification$OtpVerificationBuilder.class
 com\bharatshop\shared\entity\Product.class
 com\bharatshop\shared\service\auth\RefreshTokenService.class
 com\bharatshop\shared\service\ShipmentTrackingService.class
+com\bharatshop\shared\entity\NotificationTemplate$NotificationTemplateBuilder.class
 com\bharatshop\shared\dto\RazorpayOrderResponseDto$RazorpayOrderResponseDtoBuilder.class
 com\bharatshop\shared\dto\ProductVariantOptionValueDto$ProductVariantOptionValueDtoBuilderImpl.class
 com\bharatshop\shared\service\RefundService$RefundResult$RefundResultBuilder.class

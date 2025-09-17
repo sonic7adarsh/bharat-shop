@@ -54,6 +54,8 @@ public class RefreshTokenRequest {
     @Size(max = 10, message = "Locale must not exceed 10 characters")
     private String locale;
     
+
+    
     @Size(max = 50, message = "Timezone must not exceed 50 characters")
     private String timezone;
     

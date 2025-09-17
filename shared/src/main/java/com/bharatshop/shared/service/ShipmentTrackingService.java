@@ -502,8 +502,6 @@ public class ShipmentTrackingService {
         public String getCarrierEventCode() { return carrierEventCode; }
     }
     
-    @lombok.Data
-    @lombok.Builder
     public static class TrackingStatistics {
         private long activeShipments;
         private long deliveredToday;
@@ -511,12 +509,60 @@ public class ShipmentTrackingService {
         private long exceptionCount;
         private double averageDeliveryDays;
         
+        // Manual builder method
+        public static TrackingStatisticsBuilder builder() {
+            return new TrackingStatisticsBuilder();
+        }
+        
         // Manual getters since Lombok is not working properly
         public long getActiveShipments() { return activeShipments; }
         public long getDeliveredToday() { return deliveredToday; }
         public long getPendingUpdates() { return pendingUpdates; }
         public long getExceptionCount() { return exceptionCount; }
         public double getAverageDeliveryDays() { return averageDeliveryDays; }
+        
+        public static class TrackingStatisticsBuilder {
+            private long activeShipments;
+            private long deliveredToday;
+            private long pendingUpdates;
+            private long exceptionCount;
+            private double averageDeliveryDays;
+            
+            public TrackingStatisticsBuilder activeShipments(long activeShipments) {
+                this.activeShipments = activeShipments;
+                return this;
+            }
+            
+            public TrackingStatisticsBuilder deliveredToday(long deliveredToday) {
+                this.deliveredToday = deliveredToday;
+                return this;
+            }
+            
+            public TrackingStatisticsBuilder pendingUpdates(long pendingUpdates) {
+                this.pendingUpdates = pendingUpdates;
+                return this;
+            }
+            
+            public TrackingStatisticsBuilder exceptionCount(long exceptionCount) {
+                this.exceptionCount = exceptionCount;
+                return this;
+            }
+            
+            public TrackingStatisticsBuilder averageDeliveryDays(double averageDeliveryDays) {
+                this.averageDeliveryDays = averageDeliveryDays;
+                return this;
+            }
+            
+            public TrackingStatistics build() {
+                TrackingStatistics stats = new TrackingStatistics();
+                stats.activeShipments = this.activeShipments;
+                stats.deliveredToday = this.deliveredToday;
+                stats.pendingUpdates = this.pendingUpdates;
+                stats.exceptionCount = this.exceptionCount;
+                stats.averageDeliveryDays = this.averageDeliveryDays;
+                return stats;
+            }
+        }
         
 
     }

@@ -119,7 +119,11 @@ public class SeoMetadata extends BaseEntity {
     public String getTwitterImage() { return twitterImage; }
     public String getTwitterSite() { return twitterSite; }
     
-
+    // Manual getter/setter for tenantId since Lombok inheritance isn't working
+    public Long getTenantId() { return tenantId; }
+    public void setTenantId(Long tenantId) { this.tenantId = tenantId; }
+    public void setEntityId(Long entityId) { this.entityId = entityId; }
+    public void setEntityType(String entityType) { this.entityType = entityType; }
     
     @PrePersist
     @PreUpdate
@@ -132,4 +136,6 @@ public class SeoMetadata extends BaseEntity {
         @UniqueConstraint(columnNames = {"entity_type", "entity_id", "tenant_id"})
     })
     public static class SeoMetadataConstraints {}
+    
+
 }

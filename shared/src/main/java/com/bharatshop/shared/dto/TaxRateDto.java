@@ -133,4 +133,100 @@ public class TaxRateDto {
     public boolean hasCess() {
         return cessRate != null && cessRate.compareTo(BigDecimal.ZERO) > 0;
     }
+    
+    public static TaxRateDtoBuilder builder() {
+        return new TaxRateDtoBuilder();
+    }
+    
+    public static class TaxRateDtoBuilder {
+        private Long id;
+        private Long tenantId;
+        private String hsnCode;
+        private String stateCode;
+        private String taxType;
+        private BigDecimal cgstRate;
+        private BigDecimal sgstRate;
+        private BigDecimal igstRate;
+        private BigDecimal cessRate;
+        private boolean isActive;
+        private LocalDateTime createdAt;
+        private LocalDateTime updatedAt;
+        
+        public TaxRateDtoBuilder id(Long id) {
+            this.id = id;
+            return this;
+        }
+        
+        public TaxRateDtoBuilder tenantId(Long tenantId) {
+            this.tenantId = tenantId;
+            return this;
+        }
+        
+        public TaxRateDtoBuilder taxType(String taxType) {
+            this.taxType = taxType;
+            return this;
+        }
+        
+        public TaxRateDtoBuilder hsnCode(String hsnCode) {
+            this.hsnCode = hsnCode;
+            return this;
+        }
+        
+        public TaxRateDtoBuilder stateCode(String stateCode) {
+            this.stateCode = stateCode;
+            return this;
+        }
+        
+        public TaxRateDtoBuilder cgstRate(BigDecimal cgstRate) {
+            this.cgstRate = cgstRate;
+            return this;
+        }
+        
+        public TaxRateDtoBuilder sgstRate(BigDecimal sgstRate) {
+            this.sgstRate = sgstRate;
+            return this;
+        }
+        
+        public TaxRateDtoBuilder igstRate(BigDecimal igstRate) {
+            this.igstRate = igstRate;
+            return this;
+        }
+        
+        public TaxRateDtoBuilder cessRate(BigDecimal cessRate) {
+            this.cessRate = cessRate;
+            return this;
+        }
+        
+        public TaxRateDtoBuilder isActive(boolean isActive) {
+            this.isActive = isActive;
+            return this;
+        }
+        
+        public TaxRateDtoBuilder createdAt(LocalDateTime createdAt) {
+            this.createdAt = createdAt;
+            return this;
+        }
+        
+        public TaxRateDtoBuilder updatedAt(LocalDateTime updatedAt) {
+            this.updatedAt = updatedAt;
+            return this;
+        }
+        
+        public TaxRateDto build() {
+            TaxRateDto dto = new TaxRateDto();
+            dto.id = this.id;
+            dto.tenantId = this.tenantId;
+            dto.hsnCode = this.hsnCode;
+            dto.stateCode = this.stateCode;
+            dto.taxType = this.taxType;
+            dto.cgstRate = this.cgstRate;
+            dto.sgstRate = this.sgstRate;
+            dto.igstRate = this.igstRate;
+            dto.cessRate = this.cessRate;
+            dto.isActive = this.isActive;
+            dto.createdAt = this.createdAt;
+            dto.updatedAt = this.updatedAt;
+            return dto;
+        }
+    }
 }

@@ -47,6 +47,192 @@ public class InvoiceItemDto {
     private boolean isTaxInclusive;
     private boolean isTaxExempt;
     
+    // Manual builder method
+    public static InvoiceItemDtoBuilder builder() {
+        return new InvoiceItemDtoBuilder();
+    }
+    
+    public static class InvoiceItemDtoBuilder {
+        private Long id;
+        private Long invoiceId;
+        private Long productId;
+        private Long productVariantId;
+        private String productName;
+        private String productDescription;
+        private String productSku;
+        private String hsnCode;
+        private BigDecimal quantity;
+        private String unit;
+        private BigDecimal unitPrice;
+        private BigDecimal netAmount;
+        private BigDecimal cgstRate;
+        private BigDecimal cgstAmount;
+        private BigDecimal sgstRate;
+        private BigDecimal sgstAmount;
+        private BigDecimal igstRate;
+        private BigDecimal igstAmount;
+        private BigDecimal cessRate;
+        private BigDecimal cessAmount;
+        private BigDecimal totalTaxAmount;
+        private BigDecimal totalAmount;
+        private String taxPreference;
+        private Boolean isTaxInclusive;
+        private Boolean isTaxExempt;
+        
+        public InvoiceItemDtoBuilder id(Long id) {
+            this.id = id;
+            return this;
+        }
+        
+        public InvoiceItemDtoBuilder invoiceId(Long invoiceId) {
+            this.invoiceId = invoiceId;
+            return this;
+        }
+        
+        public InvoiceItemDtoBuilder productId(Long productId) {
+            this.productId = productId;
+            return this;
+        }
+        
+        public InvoiceItemDtoBuilder productVariantId(Long productVariantId) {
+            this.productVariantId = productVariantId;
+            return this;
+        }
+        
+        public InvoiceItemDtoBuilder productName(String productName) {
+            this.productName = productName;
+            return this;
+        }
+        
+        public InvoiceItemDtoBuilder productDescription(String productDescription) {
+            this.productDescription = productDescription;
+            return this;
+        }
+        
+        public InvoiceItemDtoBuilder productSku(String productSku) {
+            this.productSku = productSku;
+            return this;
+        }
+        
+        public InvoiceItemDtoBuilder hsnCode(String hsnCode) {
+            this.hsnCode = hsnCode;
+            return this;
+        }
+        
+        public InvoiceItemDtoBuilder quantity(BigDecimal quantity) {
+            this.quantity = quantity;
+            return this;
+        }
+
+        public InvoiceItemDtoBuilder unit(String unit) {
+            this.unit = unit;
+            return this;
+        }
+        
+        public InvoiceItemDtoBuilder unitPrice(BigDecimal unitPrice) {
+            this.unitPrice = unitPrice;
+            return this;
+        }
+        
+        public InvoiceItemDtoBuilder netAmount(BigDecimal netAmount) {
+            this.netAmount = netAmount;
+            return this;
+        }
+        
+        public InvoiceItemDtoBuilder cgstRate(BigDecimal cgstRate) {
+            this.cgstRate = cgstRate;
+            return this;
+        }
+        
+        public InvoiceItemDtoBuilder cgstAmount(BigDecimal cgstAmount) {
+            this.cgstAmount = cgstAmount;
+            return this;
+        }
+        
+        public InvoiceItemDtoBuilder sgstRate(BigDecimal sgstRate) {
+            this.sgstRate = sgstRate;
+            return this;
+        }
+        
+        public InvoiceItemDtoBuilder sgstAmount(BigDecimal sgstAmount) {
+            this.sgstAmount = sgstAmount;
+            return this;
+        }
+        
+        public InvoiceItemDtoBuilder igstRate(BigDecimal igstRate) {
+            this.igstRate = igstRate;
+            return this;
+        }
+        
+        public InvoiceItemDtoBuilder igstAmount(BigDecimal igstAmount) {
+            this.igstAmount = igstAmount;
+            return this;
+        }
+        
+        public InvoiceItemDtoBuilder cessRate(BigDecimal cessRate) {
+            this.cessRate = cessRate;
+            return this;
+        }
+        
+        public InvoiceItemDtoBuilder cessAmount(BigDecimal cessAmount) {
+            this.cessAmount = cessAmount;
+            return this;
+        }
+        
+        public InvoiceItemDtoBuilder totalTaxAmount(BigDecimal totalTaxAmount) {
+            this.totalTaxAmount = totalTaxAmount;
+            return this;
+        }
+        
+        public InvoiceItemDtoBuilder totalAmount(BigDecimal totalAmount) {
+            this.totalAmount = totalAmount;
+            return this;
+        }
+
+        public InvoiceItemDtoBuilder taxPreference(String taxPreference) {
+            this.taxPreference = taxPreference;
+            return this;
+        }
+
+        public InvoiceItemDtoBuilder isTaxInclusive(Boolean isTaxInclusive) {
+            this.isTaxInclusive = isTaxInclusive;
+            return this;
+        }
+
+        public InvoiceItemDtoBuilder isTaxExempt(Boolean isTaxExempt) {
+            this.isTaxExempt = isTaxExempt;
+            return this;
+        }
+        
+        public InvoiceItemDto build() {
+            InvoiceItemDto dto = new InvoiceItemDto();
+            dto.id = this.id;
+            dto.invoiceId = this.invoiceId;
+            dto.productId = this.productId;
+            dto.productVariantId = this.productVariantId;
+            dto.productName = this.productName;
+            dto.productDescription = this.productDescription;
+            dto.productSku = this.productSku;
+            dto.hsnCode = this.hsnCode;
+            dto.quantity = this.quantity;
+            dto.unitPrice = this.unitPrice;
+            dto.netAmount = this.netAmount;
+            dto.cgstRate = this.cgstRate;
+            dto.cgstAmount = this.cgstAmount;
+            dto.sgstRate = this.sgstRate;
+            dto.sgstAmount = this.sgstAmount;
+            dto.igstRate = this.igstRate;
+            dto.igstAmount = this.igstAmount;
+            dto.cessRate = this.cessRate;
+            dto.cessAmount = this.cessAmount;
+            dto.totalTaxAmount = this.totalTaxAmount;
+            dto.totalAmount = this.totalAmount;
+            dto.taxPreference = this.taxPreference;
+            dto.isTaxInclusive = this.isTaxInclusive;
+            dto.isTaxExempt = this.isTaxExempt;
+            return dto;
+        }
+    }
 
     
     public static InvoiceItemDto fromEntity(InvoiceItem item) {

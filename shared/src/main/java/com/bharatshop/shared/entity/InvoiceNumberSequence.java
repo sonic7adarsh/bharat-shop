@@ -24,6 +24,8 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @SuperBuilder
 public class InvoiceNumberSequence extends BaseEntity {
+    
+
 
     @Column(name = "financial_year", nullable = false, length = 7)
     private String financialYear; // Format: 2024-25
@@ -119,6 +121,10 @@ public class InvoiceNumberSequence extends BaseEntity {
 
     public void setCurrentNumber(Long currentNumber) {
         this.currentNumber = currentNumber;
+    }
+    
+    public void setCurrentSequence(Long currentSequence) {
+        this.currentNumber = currentSequence;
     }
 
     public void setPaddingLength(Integer paddingLength) {

@@ -32,6 +32,8 @@ import java.util.List;
 @AllArgsConstructor
 @SuperBuilder
 public class Invoice extends BaseEntity {
+    
+
 
     @Column(name = "order_id", nullable = false)
     private Long orderId;

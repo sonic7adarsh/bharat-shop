@@ -280,6 +280,7 @@ public class JwtKeyRotationService {
     public static class KeyRotationStats {
         
 
+
         private long activeSigningKeys;
         private int keysInRollingUpgradeWindow;
         private int expiredKeys;

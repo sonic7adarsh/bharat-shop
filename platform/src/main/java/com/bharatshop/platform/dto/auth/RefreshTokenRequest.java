@@ -22,4 +22,24 @@ public class RefreshTokenRequest {
     public String getRefreshToken() {
         return refreshToken;
     }
+    
+    // Manual builder method for compilation compatibility
+    public static RefreshTokenRequestBuilder builder() {
+        return new RefreshTokenRequestBuilder();
+    }
+    
+    public static class RefreshTokenRequestBuilder {
+        private String refreshToken;
+        
+        public RefreshTokenRequestBuilder refreshToken(String refreshToken) {
+            this.refreshToken = refreshToken;
+            return this;
+        }
+        
+        public RefreshTokenRequest build() {
+            RefreshTokenRequest request = new RefreshTokenRequest();
+            request.refreshToken = this.refreshToken;
+            return request;
+        }
+    }
 }

@@ -25,6 +25,8 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @SuperBuilder
 public class InvoiceItem extends BaseEntity {
+    
+
 
     @Column(name = "invoice_id", nullable = false)
     private Long invoiceId;

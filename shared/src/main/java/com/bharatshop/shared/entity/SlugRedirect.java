@@ -15,10 +15,104 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@SuperBuilder
 @EqualsAndHashCode(callSuper = true)
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class SlugRedirect extends BaseEntity {
+    
+    public static SlugRedirectBuilder builder() {
+        return new SlugRedirectBuilder();
+    }
+    
+    public static class SlugRedirectBuilder {
+        private String oldSlug;
+        private String newSlug;
+        private String entityType;
+        private Long entityId;
+        private Integer redirectType;
+        private Boolean isActive;
+        private Long redirectCount;
+        private java.time.LocalDateTime lastAccessed;
+        private java.time.LocalDateTime expiresAt;
+        private String createdBy;
+        private String reason;
+        private Long tenantId;
+        
+        public SlugRedirectBuilder oldSlug(String oldSlug) {
+            this.oldSlug = oldSlug;
+            return this;
+        }
+        
+        public SlugRedirectBuilder newSlug(String newSlug) {
+            this.newSlug = newSlug;
+            return this;
+        }
+        
+        public SlugRedirectBuilder entityType(String entityType) {
+            this.entityType = entityType;
+            return this;
+        }
+        
+        public SlugRedirectBuilder entityId(Long entityId) {
+            this.entityId = entityId;
+            return this;
+        }
+        
+        public SlugRedirectBuilder tenantId(Long tenantId) {
+            this.tenantId = tenantId;
+            return this;
+        }
+        
+        public SlugRedirectBuilder redirectType(Integer redirectType) {
+            this.redirectType = redirectType;
+            return this;
+        }
+        
+        public SlugRedirectBuilder isActive(Boolean isActive) {
+            this.isActive = isActive;
+            return this;
+        }
+        
+        public SlugRedirectBuilder redirectCount(Long redirectCount) {
+            this.redirectCount = redirectCount;
+            return this;
+        }
+        
+        public SlugRedirectBuilder lastAccessed(java.time.LocalDateTime lastAccessed) {
+            this.lastAccessed = lastAccessed;
+            return this;
+        }
+        
+        public SlugRedirectBuilder expiresAt(java.time.LocalDateTime expiresAt) {
+            this.expiresAt = expiresAt;
+            return this;
+        }
+        
+        public SlugRedirectBuilder createdBy(String createdBy) {
+            this.createdBy = createdBy;
+            return this;
+        }
+        
+        public SlugRedirectBuilder reason(String reason) {
+            this.reason = reason;
+            return this;
+        }
+        
+        public SlugRedirect build() {
+            SlugRedirect redirect = new SlugRedirect();
+            redirect.oldSlug = this.oldSlug;
+            redirect.newSlug = this.newSlug;
+            redirect.entityType = this.entityType;
+            redirect.entityId = this.entityId;
+            redirect.redirectType = this.redirectType != null ? this.redirectType : 301;
+            redirect.isActive = this.isActive != null ? this.isActive : true;
+            redirect.redirectCount = this.redirectCount != null ? this.redirectCount : 0L;
+            redirect.lastAccessed = this.lastAccessed;
+            redirect.expiresAt = this.expiresAt;
+            redirect.createdBy = this.createdBy;
+            redirect.reason = this.reason;
+            return redirect;
+        }
+    }
 
     @Column(name = "old_slug", nullable = false, length = 255)
     private String oldSlug;

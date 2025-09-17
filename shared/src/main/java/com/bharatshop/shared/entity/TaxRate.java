@@ -106,4 +106,6 @@ public class TaxRate extends BaseEntity {
             return igst.add(cess);
         }
     }
+    
+
 }
